@@ -13,6 +13,8 @@
    docs/8_remote_tool.md
    docs/9_wheat_wheel_chassis.md
    docs/10_upper_computer.md
-
-
+   docs/11_Forward_inverse_kinematics.md
+   docs/12_monocular_camera.md
+   docs/14_ros_opencv.md
+   docs/15_network_configuration.md
 
