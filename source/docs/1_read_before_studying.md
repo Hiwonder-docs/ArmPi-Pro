@@ -17,10 +17,38 @@ ArmPi Pro底盘可以自由拆卸。它既可以作为桌面视觉机械臂使�
 ##  2. 动手组装
 
 :::{Note}
-购买无主板套餐的用户需要参照01ArmPi Pro无主板组装步骤，对主板进行安装
+购买无主板套餐的用户需要参照 2.1 树莓派主板组装。
 :::
 
-###  2.1 ArmPi Pro组装图文教程
+###  2.1 树莓派主板组装（仅适用于无主板用户）
+
+- #### Step 1
+
+<img src="../_static/media/chapter_1/section_2_2/image2.png"  />
+
+<img src="../_static/media/chapter_1/section_2_2/image1.png"  />
+
+- #### Step 2
+
+<img src="../_static/media/chapter_1/section_2_2/image3.jpeg"  />
+
+- #### Step 3
+
+<img src="../_static/media/chapter_1/section_2_2/image4.jpeg" style="width: 50%; margin: 0 auto 24px; display: block;"  />
+
+- #### Step 4
+
+<img src="../_static/media/chapter_1/section_2_2/image5.png"  />
+
+- #### Step 5
+
+<img src="../_static/media/chapter_1/section_2_2/image6.png"  />
+
+- #### Step 6
+
+<img src="../_static/media/chapter_1/section_2_2/image7.png"  />
+
+### 2.2 机器人组装
 
 - #### Step 1
 
@@ -101,29 +129,3 @@ ArmPi Pro底盘可以自由拆卸。它既可以作为桌面视觉机械臂使�
 - #### Step 20
 
 <img src="../_static/media/chapter_1/section_2_1/image20.png"  />
-
-###  2.2 ArmPi Pro无主板组装图文教程
-
-- #### Step 1
-
-<img src="../_static/media/chapter_1/section_2_2/image1.jpeg"  />
-
-- #### Step 2
-
-<img src="../_static/media/chapter_1/section_2_2/image3.jpeg"  />
-
-- #### Step 3
-
-<img src="../_static/media/chapter_1/section_2_2/image4.jpeg" style="width: 50%; margin: 0 auto 24px; display: block;"  />
-
-- #### Step 4
-
-<img src="../_static/media/chapter_1/section_2_2/image5.png"  />
-
-- #### Step 5
-
-<img src="../_static/media/chapter_1/section_2_2/image6.png"  />
-
-- #### Step 6
-
-<img src="../_static/media/chapter_1/section_2_2/image7.png"  />
