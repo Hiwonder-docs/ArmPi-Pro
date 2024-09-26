@@ -24,7 +24,7 @@ ArmPi Pro底盘可以自由拆卸。它既可以作为桌面视觉机械臂使�
 
 - #### Step 1
 
-<img src="../_static/media/chapter_1/section_2_2/image2.png"  />
+<img src="../_static/media/chapter_1/section_2_2/image8.png"  />
 
 <img src="../_static/media/chapter_1/section_2_2/image1.png"  />
 
@@ -34,7 +34,7 @@ ArmPi Pro底盘可以自由拆卸。它既可以作为桌面视觉机械臂使�
 
 - #### Step 3
 
-<img src="../_static/media/chapter_1/section_2_2/image4.jpeg" style="width: 50%; margin: 0 auto 24px; display: block;"  />
+<img src="../_static/media/chapter_1/section_2_2/image4.jpeg"   />
 
 - #### Step 4
 
@@ -112,15 +112,15 @@ ArmPi Pro底盘可以自由拆卸。它既可以作为桌面视觉机械臂使�
 
 - #### Step 16
 
-<img src="../_static/media/chapter_1/section_2_1/image16.jpeg"  style="width: 60%; margin: 0 auto 24px; display: block;"/>
+<img src="../_static/media/chapter_1/section_2_1/image16.jpeg"  />
 
 - #### Step 17
 
-<img src="../_static/media/chapter_1/section_2_1/image17.jpeg" style="width: 60%; margin: 0 auto 24px; display: block;" />
+<img src="../_static/media/chapter_1/section_2_1/image17.jpeg"  />
 
 - #### Step 18
 
-<img src="../_static/media/chapter_1/section_2_1/image18.png" style="width: 60%; margin: 0 auto 24px; display: block;"  />
+<img src="../_static/media/chapter_1/section_2_1/image18.png"   />
 
 - #### Step 19
 
@@ -129,3 +129,54 @@ ArmPi Pro底盘可以自由拆卸。它既可以作为桌面视觉机械臂使�
 - #### Step 20
 
 <img src="../_static/media/chapter_1/section_2_1/image20.png"  />
+
+##  3. 首次开机
+
+### 3.1 检查摄像头是否连接
+
+在开机之前请先确认摄像头连接线是否已连接牢固（摄像头连接线可接入树莓派主板上4个USB接口的任意一个）。
+
+<img src="../_static/media/chapter_1/section_3/image1.png"  alt="1" />
+
+### 3.2 电源连接与充电
+
+- #### 电源连接
+
+确认树莓派扩展板开关置于OFF档，将拓展板上的对接线与电源对接线以红接红、黑接黑的方式进行连接。
+
+<img src="../_static/media/chapter_1/section_3/image3.png"  alt="5" />
+
+- #### 充电方法
+
+1)  拿出充电器，将插头端连接至电源另一端带圆孔的插口内。
+
+2)  等待充电完成（适配器指示灯在未通电的状态下为绿色，通电后为红色代表充电中（充电时长约为3个小时左右）、指示灯由红色变为绿色代表充电完成），充电完成后，请尽快拔掉充电器，切勿一直充电。
+
+### 3.3 开关机
+
+- ####  开机
+
+1)  将树莓派扩展板的开关由“OFF”推动到“ON”，此时树莓派的LED1、LED2常亮，稍等片刻后LED2由常亮变为每隔2秒闪亮一次、机械臂回到初始姿态、蜂鸣器发出“嘀”的一声，即设备成功开机。
+
+树莓派本身也是电脑，开机启动需要一小段时间，请耐心等待。
+
+<img src="../_static/media/chapter_1/section_3/image6.png"  alt="6" />
+
+<img src="../_static/media/chapter_1/section_3/image8.png"  alt="7" />
+
+2)  设备开机成功后，出厂默认为AP直连模式，并将产生一个以HW开头的热点。
+
+<img src="../_static/media/chapter_1/section_3/image10.jpeg" width="50%" class="common_img"  alt="IMG_E0486" />
+
+- #### 关机
+
+关机可分为硬关机和软关机两种方法，具体步骤如下表格：
+
+|  方法  |                     步骤                      |
+|:------:|:---------------------------------------------:|
+| 硬关机 | 将树莓派扩展板的开关由“**ON**”推动到“**OFF**” |
+| 软关机 |       打开终端，运行“**poweroff**”命令        |
+
+注意：使用软件关机时，需在电脑端远程连接ArmPi Pro；具体步骤可前往“**[远程工具安装及容器进入方法\1. 远程桌面工具安装与连接]()**”进行学习。
+
+接下来您可前往“**[上手试玩]()**”继续学习后续内容。

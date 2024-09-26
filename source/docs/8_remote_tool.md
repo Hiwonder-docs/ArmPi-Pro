@@ -16,23 +16,23 @@ VNC是一款图形化远程控制软件。通过连接树莓派的Wi-Fi热点，
 
 1)  双击"**[软件工具\3.远程连接工具\2.VNC（可视化桌面工具）]()**"目录下的安装程序"**VNC-Viewer-6.17.731-Windows**"，将安装语言选择为"**English**"，并点击"**OK**"按键。
 
-<img src="../_static/media/chapter_8/section_1/image2.png"  />
+<img class="common_img" src="../_static/media/chapter_8/section_1/image2.png"  />
 
 2)  点击"**Next**"按键。
 
-<img src="../_static/media/chapter_8/section_1/image3.png"  />
+<img class="common_img" src="../_static/media/chapter_8/section_1/image3.png"  />
 
 3)  勾选同意协议，并点击"**Next**"按键。
 
-<img src="../_static/media/chapter_8/section_1/image4.png"  />
+<img class="common_img" src="../_static/media/chapter_8/section_1/image4.png"  />
 
 4)  保持默认安装位置，并点击"**Next**"按键。跳转至下一界面时，直接点击"**Install**"按键。
 
-<img src="../_static/media/chapter_8/section_1/image5.png"  />
+<img class="common_img" src="../_static/media/chapter_8/section_1/image5.png"  />
 
 5)  等待片刻后，出现安装完成的提示界面，点击"**Finish**"按键即可。
 
-<img src="../_static/media/chapter_8/section_1/image6.png"  />
+<img class="common_img" src="../_static/media/chapter_8/section_1/image6.png"  />
 
 6)  安装完成，点击图标<img src="../_static/media/chapter_8/section_1/image7.png" style="width:0.31458in;height:0.31458in" />即可打开VNC。
 
@@ -44,13 +44,13 @@ VNC是一款图形化远程控制软件。通过连接树莓派的Wi-Fi热点，
 
 1)  ArmPi Pro开机成功后，默认连接模式是AP直连模式，此时将会产生一个以"HW"开头的热点，我们可以在电脑端搜索并连接这个热点，如下图所示：
 
-<img src="../_static/media/chapter_8/section_1/image8.png"  alt="D:\Work\TurboPi\TurboPi图片素材\3.3.1.png3.3.1" />
+<img class="common_img" src="../_static/media/chapter_8/section_1/image8.png"  alt="D:\Work\TurboPi\TurboPi图片素材\3.3.1.png3.3.1" />
 
 2)  点击连接，输入密码"**hiwonder**"。
 
-<img src="../_static/media/chapter_8/section_1/image9.png"  alt="D:\Work\TurboPi\TurboPi图片素材\3.3.2.png3.3.2" />
+<img class="common_img" src="../_static/media/chapter_8/section_1/image9.png"  alt="D:\Work\TurboPi\TurboPi图片素材\3.3.2.png3.3.2" />
 
-<img src="../_static/media/chapter_8/section_1/image10.png"  alt="3.3.3" />
+<img class="common_img" src="../_static/media/chapter_8/section_1/image10.png"  alt="3.3.3" />
 
 3)  连接成功后，打开VNC Viewer，在地址栏输入树莓派默认的IP地址：192.168.149.1，按下回车。如果出现安全连接相关的提示框，点击"Continue"按键即可。  
 
@@ -58,7 +58,7 @@ VNC是一款图形化远程控制软件。通过连接树莓派的Wi-Fi热点，
 
 4)  在账号登录窗口填写所需信息，账号栏（Username）输入"**pi**"，密码栏（Password）输入"**raspberrypi**"，并勾选记住密码（Remember password）。点击"OK"按键后，便可远程打开树莓派桌面。
 
-<img src="../_static/media/chapter_8/section_1/image12.png"  />
+<img class="common_img" src="../_static/media/chapter_8/section_1/image12.png"  />
 
 5)  桌面如下图所示。（如果出现黑屏，只显示鼠标指针，可尝试重启树莓派。）
 
