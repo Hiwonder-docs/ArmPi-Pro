@@ -62,7 +62,7 @@ ArmPi Pro底座车轮采用的是全方位移动的麦克纳姆轮（以下简�
 指令的输入需严格区分大小写，另外可按键盘"**Tab**"键进行关键词补齐。
 :::
 
-1)  将设备开机，并参照课程资料的"**[远程工具安装及容器进入方法\1. 远程桌面工具安装与连接]()**"内容，通过VNC远程连接工具连接。
+1)  将设备开机，并参照课程资料的"**[远程工具安装及容器进入方法\1. 远程桌面工具安装与连接](https://docs.hiwonder.com/projects/ArmPi_Pro/en/latest/docs/8_remote_tool.html#id2)**"内容，通过VNC远程连接工具连接。
 
 <img src="../_static/media/chapter_9/section_2/image4.png"  />
 

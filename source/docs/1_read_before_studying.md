@@ -177,6 +177,8 @@ ArmPi Pro底盘可以自由拆卸。它既可以作为桌面视觉机械臂使�
 | 硬关机 | 将树莓派扩展板的开关由“**ON**”推动到“**OFF**” |
 | 软关机 |       打开终端，运行“**poweroff**”命令        |
 
-注意：使用软件关机时，需在电脑端远程连接ArmPi Pro；具体步骤可前往“**[远程工具安装及容器进入方法\1. 远程桌面工具安装与连接]()**”进行学习。
+:::{}
+使用软件关机时，需在电脑端远程连接ArmPi Pro；具体步骤可前往“**[远程工具安装及容器进入方法\1. 远程桌面工具安装与连接](https://docs.hiwonder.com/projects/ArmPi_Pro/en/latest/docs/8_remote_tool.html#id2)**”进行学习。
+:::
 
-接下来您可前往“**[上手试玩]()**”继续学习后续内容。
+接下来您可前往“**[上手试玩](https://docs.hiwonder.com/projects/ArmPi_Pro/en/latest/docs/2_play_first_hand.html)**”继续学习后续内容。

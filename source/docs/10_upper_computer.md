@@ -8,7 +8,7 @@
 
 双击系统桌面上的PC_Software图标即可启动上位机。
 
-<img src="../_static/media/chapter_10/section_1/image2.png"  />
+<img class="common_img" style="width:100px" src="../_static/media/chapter_10/section_1/image2.png"  />
 
 - #### 采用命令行形式启动
 
@@ -59,17 +59,20 @@
 3.  **动作组设置区域**
 
 <table class="docutils-nobg" border="1">
+<colgroup>
+<col width="30%">
+</colgroup>
 <tbody>
 <tr>
 <td style="text-align: center;"><strong>图标</strong></td>
 <td style="text-align: center;"><strong>功能说明</strong></td>
 </tr>
 <tr>
-<td style="text-align: center;"><img src="../_static/media/chapter_10/section_1/image17.png" style="width:1.94444in;height:0.31319in" alt="loading" /></td>
+<td style="text-align: center;"><img src="../_static/media/chapter_10/section_1/image17.png"  alt="loading" /></td>
 <td style="text-align: center;">运行单个动作所需的时间，点击<img src="../_static/media/chapter_10/section_1/image18.png" style="width:0.40139in;height:0.27153in" alt="loading" />可进行修改。</td>
 </tr>
 <tr>
-<td style="text-align: center;"><img src="../_static/media/chapter_10/section_1/image19.png" style="width:1.94444in;height:0.26389in" alt="loading" /></td>
+<td style="text-align: center;"><img src="../_static/media/chapter_10/section_1/image19.png" alt="loading" /></td>
 <td style="text-align: center;">动作组运行所需的总时长。</td>
 </tr>
 <tr>
@@ -187,7 +190,7 @@ ArmPi Pro出厂时内置有动作组，其动作组文件储存在"**/home/ubunt
 
 3)  然后在以下选择想要执行的动作组，再点击"**Open**"。
 
-<img src="../_static/media/chapter_10/section_2/image6.png"  />
+<img class="common_img" src="../_static/media/chapter_10/section_2/image6.png"  />
 
 4)  此时动作详情列表将显示动作组的各个动作的运行时间和舵机数值（下图仅为部分动作截图）。
 

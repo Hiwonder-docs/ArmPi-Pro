@@ -14,7 +14,7 @@
 
 - **设备开机**
 
-按照"**[学前先看\3. 首次开机]()**"所学内容，打开树莓派扩展板电源开关，等待开机完成。
+按照"**[学前先看\3. 首次开机](https://docs.hiwonder.com/projects/ArmPi_Pro/en/latest/docs/1_read_before_studying.html#id13)**"所学内容，打开树莓派扩展板电源开关，等待开机完成。
 
 ### 1.2 设备连接
 
@@ -56,7 +56,7 @@ ArmPi Pro开机成功后，会进入AP直连模式并生成一个以"**HW**"开�
 
 ### 2.1 准备工作
 
-请参照"**[上手试玩\1. 手机APP的安装和连接](https://docs.hiwonder.com/projects/ArmPi_Pro/en/latest/docs/2_play_first_hand.html)**"下的内容，安装手机APP，并连接ArmPi Pro机器人。
+请参照"**[1. 手机APP的安装和连接](https://docs.hiwonder.com/projects/ArmPi_Pro/en/latest/docs/2_play_first_hand.html)**"下的内容，安装手机APP，并连接ArmPi Pro机器人。
 
 ### 2.2 开始试玩
 
@@ -88,7 +88,7 @@ ArmPi Pro开机成功后，会进入AP直连模式并生成一个以"**HW**"开�
 :::{Note}
 1.  请在光线充足的室内环境下进行，但尽量避免在强光直射下进行。
 2.  识别时，摄像头画面内请勿应无同目标颜色相同或相近的杂物，避免干扰识别。
-3.  如识别效果不佳，可前往目录"**[2. 上手试玩\ 2.3 颜色阈值设置教学]()**"查看文档，学习颜色阈值的调节方式。
+3.  如识别效果不佳，可前往目录"**[3. 颜色阈值设置教学](#anchor_3)**"查看文档，学习颜色阈值的调节方式。
 :::
 
 1)  点击"**视觉巡线**"，进入玩法界面。
