@@ -24,11 +24,11 @@ STA模式：开发板能够主动去连接指定的热点/Wi-Fi。（可联通�
 
 以**安卓系统**为例进行演示，此操作流程同样适用于iOS系统。
 
-1) 打开手机APP“**WonderPi**”，依次点击“**初级套件**”、“**MasterPi**”。
+1) 打开手机APP"**WonderPi**"，依次点击"**初级套件**"、"**MasterPi**"。
 
 <img src="../_static/media/chapter_15/section_1/image1.png"  />
 
-2) 点击界面右下方的“**+**”按键，选择“**直连模式**”。
+2) 点击界面右下方的"**+**"按键，选择"**直连模式**"。
 
 <img src="../_static/media/chapter_15/section_1/image2.png"  />
 
@@ -36,11 +36,11 @@ STA模式：开发板能够主动去连接指定的热点/Wi-Fi。（可联通�
 如需采用局域网模式进行连接，可参考目录[4.局域网模式连接（选看）](#_4.局域网模式连接（选看）)。**
 :::
 
-3) 点击“**去连接设备热点**”按键，前往设置界面，连接机器人生成的热点。
+3) 点击"**去连接设备热点**"按键，前往设置界面，连接机器人生成的热点。
 
 <img src="../_static/media/chapter_15/section_1/image3.png"  />
 
-4) 热点名称以“**HW**”为开头，热点密码为“**hiwonder**”。
+4) 热点名称以"**HW**"为开头，热点密码为"**hiwonder**"。
 
 <img class="common_img" src="../_static/media/chapter_15/section_1/image4.png"  style="width:50%" />
 
@@ -53,10 +53,10 @@ iOS系统下，需等待手机状态栏显示Wi-Fi图标<img src="../_static/med
 <img src="../_static/media/chapter_15/section_1/image7.png"  alt="loading" />
 
 :::{Note}
-若出现“网络不可用，是否继续连接”提示弹窗，点击“保持连接”按键即可。
+若出现"网络不可用，是否继续连接"提示弹窗，点击"保持连接"按键即可。
 :::
 
-6) 若提示“**是否切换并进入搜到的产品界面**”，说明产品版本选择错误（步骤1）。可点击“**确定**”按键，直接切换至正确版本的模式选择界面。
+6) 若提示"**是否切换并进入搜到的产品界面**"，说明产品版本选择错误（步骤1）。可点击"**确定**"按键，直接切换至正确版本的模式选择界面。
 
 <img class="common_img" src="../_static/media/chapter_15/section_1/image8.png" style="width:50%" />
 
@@ -72,13 +72,13 @@ iOS系统下，需等待手机状态栏显示Wi-Fi图标<img src="../_static/med
 
 2) 双击系统桌面的图标<img src="../_static/media/chapter_15/section_1/image10.png"  />，打开命令行终端。
 
-3) 输入指令“**cd hiwonder-toolbox/**”，并按下回车，进入配置文件目录。
+3) 输入指令"**cd hiwonder-toolbox/**"，并按下回车，进入配置文件目录。
 
 ```commandline
 cd hiwonder-toolbox/
 ```
 
-4) 输入指令“**vim hiwonder_wifi_conf.py**”，并按下回车，打开配置文件。
+4) 输入指令"**vim hiwonder_wifi_conf.py**"，并按下回车，打开配置文件。
 
 ```commandline
 vim hiwonder_wifi_conf.py
@@ -88,41 +88,33 @@ vim hiwonder_wifi_conf.py
 
 <img src="../_static/media/chapter_15/section_1/image13.png"  />
 
-5) 如果周围有多台设备，则可通过修改“**HW_WIFI_AP_SSID**”和“**HW_WIFI_AP_PASSWORD**”，自行按需设置名称和密码以作区分，以名称“**HW-Robot**”和密码“**hiwonder**”为例,输入如下图所示：
+5) 如果周围有多台设备，则可通过修改"**HW_WIFI_AP_SSID**"和"**HW_WIFI_AP_PASSWORD**"，自行按需设置名称和密码以作区分，以名称"**HW-Robot**"和密码"**hiwonder**"为例,输入如下图所示：
 
 <img src="../_static/media/chapter_15/section_1/image14.png"  />
 
-6) 确认输入无误后，按下“**ESC**”键，再输入“**:wq**”，退出并保存文件。
+6) 确认输入无误后，按下"**ESC**"键，再输入"**:wq**"，退出并保存文件。
 
-<img src="../_static/media/chapter_15/section_1/image15.png"  />
-
-7) 接着，输入输入指令“**vim hw_wifi.py**”，并按下回车，打开另外一个配置文件。
+7) 接着，输入输入指令"**vim hw_wifi.py**"，并按下回车，打开另外一个配置文件。
 
 ```commandline
 vim hw_wifi.py
 ```
 
-<img src="../_static/media/chapter_15/section_1/image16.png"  />
+8) 修改"**HW_WIFI_AP_GATEWAY**"的数值，设置新的IP地址，以"**192.168.149.2**"为例。
 
-8) 修改“**HW_WIFI_AP_GATEWAY**”的数值，设置新的IP地址，以“**192.168.149.2**”为例。
+9) 确认输入无误后，按下"**ESC**"键，再输入"**:wq**"，退出并保存文件。
 
-9) 确认输入无误后，按下“**ESC**”键，再输入“**:wq**”，退出并保存文件。
-
-<img src="../_static/media/chapter_15/section_1/image18.png"  />
-
-10) 输入命令“**sudo systemctl restart hw_wifi.service**”，重启机器人WiFi服务。
+10) 输入命令"**sudo systemctl restart hw_wifi.service**"，重启机器人WiFi服务。
 
 ```commandline
 sudo systemctl restart hw_wifi.service
 ```
 
-<img src="../_static/media/chapter_15/section_1/image19.png"  />
-
 11) 等待服务重启完成，可以看到热点已经修改完成。
 
 <img class="common_img" src="../_static/media/chapter_15/section_1/image20.png"  />
 
-12) 打开远程控制软件VNC，在搜索栏输入新的IP地址，点击搜索到的连接图标。输入登录用户名“**pi**”和密码“**raspberrypi**”，再点击“**OK**”即可进入系统桌面。
+12) 打开远程控制软件VNC，在搜索栏输入新的IP地址，点击搜索到的连接图标。输入登录用户名"**pi**"和密码"**raspberrypi**"，再点击"**OK**"即可进入系统桌面。
 
 <img class="common_img" src="../_static/media/chapter_15/section_1/image21.png"  />
 
@@ -141,27 +133,27 @@ sudo systemctl restart hw_wifi.service
 局域网模式下手机需先开启定位服务。
 :::
 
-1) 先将手机连接至Wi-Fi，这里以连接“**Hiwomder_5G**”Wi-Fi为例。（支持双频的路由器，在双频分开设置的情况下，Wi-Fi 名默认会区分开，像这个 Hiwonder是 2.4G 频段，Hiwonder_5G 就是 5G 频段的）
+1) 先将手机连接至Wi-Fi，这里以连接"**Hiwomder_5G**"Wi-Fi为例。（支持双频的路由器，在双频分开设置的情况下，Wi-Fi 名默认会区分开，像这个 Hiwonder是 2.4G 频段，Hiwonder_5G 就是 5G 频段的）
 
 <img class="common_img"  style="width:50%" src="../_static/media/chapter_15/section_1/image23.jpeg"  alt="loading" />
 
-2) 打开手机APP“**WonderPi**”，依次点击“**初级套件**”、“**MasterPi**”。
+2) 打开手机APP"**WonderPi**"，依次点击"**初级套件**"、"**MasterPi**"。
 
 <img src="../_static/media/chapter_15/section_1/image1.png"  />
 
-3) 然后单击右下角“**+**”按钮，选择“**局域网模式**”。
+3) 然后单击右下角"**+**"按钮，选择"**局域网模式**"。
 
 <img src="../_static/media/chapter_15/section_1/image24.png"  alt="loading" />
 
-4) 此时APP会提示输入你所连接Wi-Fi的密码（请确认密码是否输入正确，如果输入错误会导致连接失败），输入完成后点击“**确定**”。
+4) 此时APP会提示输入你所连接Wi-Fi的密码（请确认密码是否输入正确，如果输入错误会导致连接失败），输入完成后点击"**确定**"。
 
 <img src="../_static/media/chapter_15/section_1/image25.jpeg"  alt="loading" />
 
-5) 再点击“**去连接设备热点**”。
+5) 再点击"**去连接设备热点**"。
 
 <img src="../_static/media/chapter_15/section_1/image26.jpeg"  alt="loading" />
 
-6) 此时手机会自动跳转到Wi-Fi连接页面，找到“**HW**”开头的热点，输入密码“**hiwonder**”，完成之后点击“**返回**”按钮。
+6) 此时手机会自动跳转到Wi-Fi连接页面，找到"**HW**"开头的热点，输入密码"**hiwonder**"，完成之后点击"**返回**"按钮。
 
 <img class="common_img"  style="width:50%" src="../_static/media/chapter_15/section_1/image27.jpeg"  alt="loading" />
 
@@ -189,21 +181,21 @@ sudo systemctl restart hw_wifi.service
 
 2) 双击系统桌面的图标<img src="../_static/media/chapter_15/section_1/image10.png"  />，打开命令行终端。
 
-3) 输入指令“**cd hiwonder-toolbox/**”，并按下回车，进入配置文件目录。
+3) 输入指令"**cd hiwonder-toolbox/**"，并按下回车，进入配置文件目录。
 
 ```commandline
 cd hiwonder-toolbox/
 ```
 
-4) 输入指令“**vim hiwonder_wifi_conf.py**”，并按下回车，打开配置文件。
+4) 输入指令"**vim hiwonder_wifi_conf.py**"，并按下回车，打开配置文件。
 
 ```commandline
 vim hiwonder_wifi_conf.py
 ```
 
-5) 首先，需要修改“**HW_WIFI_MODE**”的数值为2，1代表直连模式，2代表局域网模式，3代表直连共享模式。
+5) 首先，需要修改"**HW_WIFI_MODE**"的数值为2，1代表直连模式，2代表局域网模式，3代表直连共享模式。
 
-6) 然后，需要修改“**HW_WIFI_STA_SSID**”和“**HW_WIFI_STA_PASSWORD**”，设置成路由器Wi-Fi的名称和密码。
+6) 然后，需要修改"**HW_WIFI_STA_SSID**"和"**HW_WIFI_STA_PASSWORD**"，设置成路由器Wi-Fi的名称和密码。
 
 :::{Note}
 选择5G信号的Wi-Fi，传输速率会更高，如连接普通Wi-FiI感觉卡顿，可以重新修改选择5G信号的Wi-Fi。
@@ -211,13 +203,9 @@ vim hiwonder_wifi_conf.py
 
 <img src="../_static/media/chapter_15/section_1/image32.png"  />
 
-7) 确认输入无误后，按下“**ESC**”键，再输入“**:wq”**，退出并保存文件。
+7) 确认输入无误后，按下"**ESC**"键，再输入"**:wq"**，退出并保存文件。
 
-<img src="../_static/media/chapter_15/section_1/image15.png"  />
-
-<img src="../_static/media/chapter_15/section_1/image33.png"  />
-
-8) 输入命令“ **sudo systemctl restart hw_wifi.service** ”，重启机器人Wi-Fi服务。
+8) 输入命令" **sudo systemctl restart hw_wifi.service** "，重启机器人Wi-Fi服务。
 
 ```commandline
 sudo systemctl restart hw_wifi.service
