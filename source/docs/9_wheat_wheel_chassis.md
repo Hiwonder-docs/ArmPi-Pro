@@ -1,586 +1,630 @@
-# 麦轮底盘小车运动控制课程
+# 4. Mecanum Wheel Chassis Course
 
-## 1. 麦轮小车运动介绍
+## 4.1 Introduction to Mecanum Car Movement
 
-### 1.1 前言
+### 4.1.1 Preface 
 
-ArmPi Pro底座车轮采用的是全方位移动的麦克纳姆轮（以下简称为麦轮）。根据麦轮的夹角45度朝向不同，可以分为互为镜像关系的A轮和B轮，如下图所示：
+ArmPi Pro uses omnidirectional movement mecanum wheels. According to the the included angle 45° between the roller and axle of the mecanum wheels, the wheels can be divided into wheel A and wheel B which are in mirror-image relationship with each other, as the figure shown below:   
 
-<img src="../_static/media/chapter_9/section_1/image1.png"  />
+<img class="common_img" src="../_static/media/chapter_9/section_1/image1.png" width="50%" />
 
-麦轮具有万向性，灵活性，平稳性等特点，是一种很成功的全方位轮，通过这4个麦轮的组合，可以更灵活方便的实现ArmPi Pro全方位的移动功能。
+Featuring 360° movement, flexibility and stability, the mecanum wheel is a successful omnidirectional wheel. The combination of four mecanum wheels can be more flexible to realize the omnidirectional movement.
 
-### 1.2 原理说明
+### 4.1.2 Working Principle 
 
-- #### 麦轮硬件结构及物理特性
+* **Hardware Structure and Physical Characteristics** 
 
-<img src="../_static/media/chapter_9/section_1/image2.png"  />
+<img class="common_img"  src="../_static/media/chapter_9/section_1/image2.png" width="50%" />
 
-麦轮整体结构由轮毂和辊子构成，轮毂是整个轮子的主体支架，辊子则是安装在轮毂上的鼓状物，麦轮的轮毂轴与辊子转轴呈 45度角。麦轮一般是四个一组使用，两个左旋轮（A轮），两个右旋轮（B轮），A轮和B轮具有对称性。
+The mecanum wheel is composed of rollers and axle. The axle is as the main bracket of the whole wheel and a series of rubberized external rollers obliquely attached to the whole circumference of its rim. The rollers at its rim oriented at an angle of 45° to the wheel circumference. Mecanum wheels are typically used in sets of four, with two left-rotating wheels (A wheels) and two right-rotating wheels (B wheels), which are symmetrical to each other.
+There are several configuration methods of four mecanum wheels, such as AAAA, BBBB, AABB, ABAB, BABA. Not all combination methods of the wheels enable robot car move forward, backward, and sideways, etc. The combination of ArmPi Pro’s wheels are ABAB, which can realize omnidirectional movement.
 
-4个麦轮的组合方式有AAAA，BBBB，AABB，ABAB，BABA等，并不是所有的组合都可以实现前进、后退、旋转、左移、右移等功能，而ArmPi Pro的麦轮组合方式是ABAB，是一种可以实现全方位移动的组合。
+<img  class="common_img" src="../_static/media/chapter_9/section_1/image3.png" width="50%" alt="介绍" />
 
-<img src="../_static/media/chapter_9/section_1/image3.png"  alt="介绍" />
+* **Physical Characteristics** 
 
-- #### 麦轮物理特性
+The omni-directional motion of the vehicle is achieved as the vector summation of propelling forces on the ground-engaging rollers can be in any direction by adjusting the wheel rotation direction and torque magnitude of the four wheels.
+Due to the rollers at its rim oriented at an certain angle to the wheel circumference, the mecanum wheels can slip in sideways direction. The generatrix of small rollers are special. When the mecanum wheel revolves around its fixed axle, the envelope of each small roller is a cylindrical surface so that the wheel can roll forward continuously.
 
-麦轮依靠各自机轮的方向和速度，这些力的最终合成在任何要求的方向上产生一个合力矢量从而保证了这个平台在最终的合力矢量的方向上能自由地移动，而不改变机轮自身的方向。
+### 4.1.3 Motion Mode Analysis
 
-由于它的轮缘上斜向分布着许多小辊子，故轮子可以横向滑移。小辊子的母线很特殊，当轮子绕着固定的轮心轴转动时，各个小辊子的包络线为圆柱面，所以该轮能够连续地向前滚动。
+Let’s demonstrate by the wheels rotating forward, and only analyze the roller in contact with the ground. When the wheels rotate forward, the roller in contact with the ground can be considered as a stationary point for friction, and the ground will give the roller a frictional force forward. This frictional force can be resolved into two components, one parallel to the roller and the other perpendicular to the roller. The specific analysis is as follow:
 
-### 1.3 运动方式分析
+<img  class="common_img" src="../_static/media/chapter_9/section_1/image4.png"  />
 
-我们以轮子向前转为例，只对与**地面接触的辊子**分析。轮子前转的时候可以将接触地面的辊子当成一个静止的点进行摩擦，地面会给辊子一个向前的摩擦力。将这个摩擦力沿辊子、垂直辊子方向进行分解。具体分析如下：
+The component perpendicular to the roller will cause the roller to rotate, which is rolling friction and is very small. Therefore, it does not affect the motion of the wheel, and can be assumed to be canceled out due to the rolling of the roller. 
+However, because of the physical limit of the roller, it cannot roll in the direction parallel to the roller axis, Therefore, the force parallel to the roller axis produces sliding friction. This force is crucial for the motion of the wheels, and its direction is naturally the direction in which the wheel moves forward when rolling. 
 
-<img class="common_img" src="../_static/media/chapter_9/section_1/image4.png"  />
-
-分解成平行于辊子的力和垂直于辊子的力，其中垂直于辊子的力会导致辊子进行转动，这是滚动摩擦，是非常小的，因此对轮子的运动不会产生什么作用，我们可以认为这个方向上的力会因为辊子的滚动而被化掉了。
-
-但是因为辊子有物理的限位，不会在平行于辊子轴的方向上进行滚动，因此平行于辊子轴的力产生的是滑动摩擦。这个力是对我们的轮子的运动起到至关重要的作用的力，这个力的方向自然也就是轮子在向前滚动时会移动的朝向。也就是说，图中的该麦轮在向前滚的时候会向左前方运动。
+In other words, when the mecanum wheel in the diagram is rolling forward, it will move towards the left front.
 
 :::{Note}
-受力分析是对与地面接触的辊子进行的，与它对应在正上方的辊子，和它是交叉的。在后面课程的受力分析，我们是以俯视的视角进行的，受力方向就与上面的辊子垂直。
+The force analysis is conducted on the roller that is in contact with the ground, and the corresponding roller directly above it is perpendicular to it. In the following lessons, the force will be analyzed from an overhead view, and the direction of force will be perpendicular to the roller directly above it.
 :::
 
-<img src="../_static/media/chapter_9/section_1/image5.png"  alt="IMG_256" />
+<img class="common_img" src="../_static/media/chapter_9/section_1/image5.png" width="50%" alt="IMG_256" />
 
-## 2. 小车前进
+## 4.2 Move Forward
 
-### 2.1 本节原理
+### 4.2.1 Working Principle
 
-根据麦克纳姆轮的特性，我们的小车要前进时，四个轮子都必须正转，如以下受力分析
+According to the characteristic of mecanum wheel, when the car moves forward, the four wheels must rotate clockwise. The force analysis is shown in the following figure: 
 
 <img class="common_img" src="../_static/media/chapter_9/section_2/image2.png" style="width:4.91458in;height:6.10764in" alt="3.小车前进" />
 
-根据物理运动学知识可知，大小相等，方向相反的力可以互相抵消，假设A轮和B轮正转的速度一样快，那么A轮分解出向右的力和B轮分解出向左的力刚好互相抵消，合力方向向前，根据牛顿第二运动定律 **(F=ma)** 可知，加速度方向向前，则最终合速度"**V合**"方向也向前。
+According to physical kinematics, when forces are equal and opposite to each other, they will counteract each other. Any force can be decomposed into two perpendicular vectors. Suppose the speed of wheel A and wheel B rotates at the same speed, a right force decomposed by wheel A and a left force decomposed by wheel B will counteract each other, which the direction of resultant velocity is forward. 
+Based on Newton’s second law (F=ma), if the direction of acceleration is forward, the final resultant force is also forward.
 
 <p id="anchor_2_2"></p>
 
-### 2.2 玩法开启及关闭
+### 4.2.2 Operation Steps
 
 :::{Note}
-指令的输入需严格区分大小写，另外可按键盘"**Tab**"键进行关键词补齐。
+It should be case sensitive when entering command, and the **“Tab”** key can be used to complete the keywords.
 :::
 
-1)  将设备开机，并参照课程资料的"**[远程工具安装及容器进入方法\1. 远程桌面工具安装与连接](https://docs.hiwonder.com/projects/ArmPi_Pro/en/latest/docs/8_remote_tool.html#id2)**"内容，通过VNC远程连接工具连接。
+(1) Power on the robot and use VNC Viewer to connect to the remote desktop.
 
-<img src="../_static/media/chapter_9/section_2/image4.png"  />
+<img class="common_img" src="../_static/media/chapter_9/section_2/image4.png"  />
 
-2)  点击系统桌面左上角的图标<img src="../_static/media/chapter_9/section_2/image5.png" style="width:0.32292in;height:0.30208in" />，打开Terminator终端。
+(2) Click <img src="../_static/media/chapter_9/section_2/image5.png" style="width:0.32292in;height:0.30208in" /> in the upper left corner of the system desktop to open the “Terminator”.
 
-<img src="../_static/media/chapter_9/section_2/image6.png"  />
+<img class="common_img" src="../_static/media/chapter_9/section_2/image6.png"  />
 
-3)  输入玩法程序目录所在的指令：
+(3) Enter the following command and press “Enter” to enter the directory of game programmings. 
 
 ```commandline
 cd armpi_pro/src/armpi_pro_demo/chassis_control_demo
 ```
 
-<img src="../_static/media/chapter_9/section_2/image7.png"  />
+<img class="common_img" src="../_static/media/chapter_9/section_2/image7.png"  />
 
-4)  输入玩法执行指令：
+(4) Enter the command below and press “Enter” to start game.
 
 ```commandline
 python3 car_forward_demo.py
 ```
 
-<img src="../_static/media/chapter_9/section_2/image8.png"  />
+(5) If want to exit the game, press “Ctrl+C” in terminal. If fail to exit, please keep trying until the program is closed. 
 
-5)  如需关闭此玩法，只需终端界面中按下"**Ctrl+C**"，若关闭失败，可重复此操作，直至程序关闭。
+### 4.2.3 Project Outcome
 
-### 2.3 实现效果
+After starting the game, ArmPi Pro will move forward.
 
-玩法开启后，ArmPi Pro就会开始一直前进。
 
-### 2.4 功能延伸
+### 4.2.4 Program Analysis
 
-**程序默认前进的速度是60，我们可以尝试调节小车的速度，这里我们把速度修改为90**，具体的修改步骤如下：
+The source code of program is located in: [home/ubuntu/armpi_pro/src/armpi_pro_demo/chassis_control_demo/car_forward_demo.py]()
 
-1)  点击系统桌面左上角的图标<img src="../_static/media/chapter_9/section_2/image5.png" style="width:0.32292in;height:0.30208in" />，打开Terminator终端。
+{lineno-start=25}
 
-<img src="../_static/media/chapter_9/section_2/image6.png"  />
+```
+start = True
+#关闭前处理
+def stop():
+    global start
 
-2)  输入进到玩法程序所在目录的指令：
+    start = False
+    print('关闭中...')
+    set_velocity.publish(0,0,0)  # 发布底盘控制消息,停止移动
+    
+if __name__ == '__main__':
+    # 初始化节点
+    rospy.init_node('car_forward_demo', log_level=rospy.DEBUG)
+    rospy.on_shutdown(stop)
+    # 麦轮底盘控制
+    set_velocity = rospy.Publisher('/chassis_control/set_velocity', SetVelocity, queue_size=1)
+    
+    while start:
+        # 发布底盘控制消息,线速度60，方向角90，偏航角速度0(小于0，为顺时针方向)
+        set_velocity.publish(60,90,0) # 向前移动
+        rospy.sleep(1)
+        
+    set_velocity.publish(0,0,0)  # 发布底盘控制消息,停止移动
+    print('已关闭')
+```
+
+Control motor through the `set_velocity.publish()` function. There are three parameters in function. Take the code `chassis.set_velocity(60,90,0)` as an example:
+
+(1) The first parameter `60` represents the motor speed in the unit of mm/s and it ranges from -100 to 100. When the value is negative, the motor rotates counterclockwise.
+
+(2) The second parameter `90` represents the movement direction of car, the unit is degree and it ranges from 0 to 360. The value of 90°refers to move forward. 270°refers to move backward. 0°refers to move to the right. 180°refers to move the left. Other movement directions are obtained according to the same reference method.  
+
+(3) The third parameter `0` represents the rotation speed of the car, its unit is 5°/s and it ranges from -2 to 2. When the parameter value is positive, the car will rotate clockwise. When the parameter value is negative, the car will rotate counterclockwise.
+
+### 4.2.5 Function Extension
+
+The default movement speed is 60. In this section, change the car speed to 90. Please refer to the following specific steps: 
+
+(1) Click <img src="../_static/media/chapter_9/section_2/image5.png" style="width:0.32292in;height:0.30208in" /> in the upper left corner of the system desktop to open the “Terminator”.
+
+<img class="common_img" src="../_static/media/chapter_9/section_2/image6.png"  />
+
+(2) Enter the following command and press **“Enter”** to come to the directory of game programmings.
 
 ```commandline
 cd armpi_pro/src/armpi_pro_demo/chassis_control_demo/
 ```
 
-<img src="../_static/media/chapter_9/section_2/image9.png"  />
-
-3)  输入打开程序文件的指令
+(3) Enter the following command and press “Enter” to open the program file.
 
 ```commandline
 vim car_forward_demo.py
 ```
 
-<img src="../_static/media/chapter_9/section_2/image10.png"  />
+(4) Find the code to be modified and press “i” to switch to the editing mode.
 
-4)  找到要修改的代码部分，按下键盘的"**i**"键，当出现左下角框出内容时，即进入编辑模式。
+<img class="common_img" src="../_static/media/chapter_9/section_2/image11.jpeg"   />
 
-<img src="../_static/media/chapter_9/section_2/image11.jpeg"   />
+(5) In `set_velocity.publish()` function, the first parameter represents the motor speed and we change it to 90. After changing , press “Esc” and enter “:wq”, and then press “Enter” to save and exit.
 
-5)  在"**set_velocity.publish()**"函数中，第一个参数代表电机的速度，这里我们修改为90，修改完成后，按下键盘的"**Esc**"键，并输入"**:wq**"，按下回车，即可完成保存与退出操作。
-
-<img src="../_static/media/chapter_9/section_2/image12.jpeg"  />
+<img class="common_img" src="../_static/media/chapter_9/section_2/image12.jpeg"  />
 
 :::{Note}
-速度的调整范围是"-100~100"，为正数时电机正转，为负数时电机反转。在修改成负数时可能会改变小车的移动方向，这里建议大家修改范围在"0~100"之间
+ The adjustable range of speed is “-100~100”. When the value is positive, the motor will rotate clockwise. When the value is negative, the motor will rotate counterclockwise. When the positive value is changed to negative value, it may change the movement direction. Therefore, it is recommended to modify the value between 0 and 100.
 :::
 
-6)  修改完成后，可按照"[2.2 玩法开启及关闭](#anchor_2_2)"内容，再次运行程序，查看修改后的效果。
+(6) After modifying, please refer to the content of “[4.2.2 Operation Steps]()” to check the outcome.
 
-### 2.5 程序简析
+## 4.3 Turning
 
-程序逻辑流程图如下图所示。
+### 4.3.1 Working Principle
 
-<img src="../_static/media/chapter_9/section_2/image13.png"  />
+According to the characteristics of mecanum wheel , running (all at the same speed) both wheels on one side in one direction while the other side in the opposite direction, will result in a stationary rotation of the chassis car.
+Therefore, when the left mecanum wheels rotate clockwise and the right mecanum wheels rotate counterclockwise, the chassis car will be counterclockwise stationary rotation. When the left mecanum wheels rotate clockwise and the right wheels rotates counterclockwise, the chassis car will be clockwise stationary rotation. 
+The force analysis of two situation is as follow: 
 
-该程序的源代码位于：**home/ubuntu/armpi_pro/src/armpi_pro_demo/chassis_control_demo/car_forward_demo.py**
-
-<img class="common_img" src="../_static/media/chapter_9/section_2/image14.png"  />
-
-主要通过**set_velocity.publish()**函数来控制电机。该函数中有三个参数，以代码"**chassis.set_velocity(60,90,0)**"为例：
-
-第一个参数"**60**"，表示的是电机的速度，单位是毫米每秒，范围是"**-100~100**"，数值为负数时电机是反转。
-
-第二个参数"**90**"，代表的是小车移动的方向，单位是度，范围是"**0~360**"，其中90度是向前方，270度是向后，0度是向右，180度向左，其他方向角度以此类推。
-
-第三个参数"**0**"，代表的是小车的偏移速率，单位是5度每秒，范围是"**-2~2**"，正数是顺时针转动，负数是逆时针转动。
-
-## 3. 小车转向
-
-### 3.1 本节原理
-
-根据麦克纳姆轮的特性，当小车左边的轮子反转，右边的轮子正转时，小车会原地逆时针旋转；当小车左边的轮子正转，右边的轮子反转时，小车会原地顺时针旋转。
-
-两种情况的受力分析图如下所示：
-
-<img src="../_static/media/chapter_9/section_3/image2.png"  alt="4.小车转向" /> 
-
-<img src="../_static/media/chapter_9/section_3/image2.png"  alt="4.小车转向" />
+<img class="common_img" src="../_static/media/chapter_9/section_3/image2.png"  alt="4.小车转向" />
 
 <p id="anchor_3_2"></p>
 
-### 3.2 玩法开启及关闭
+### 4.3.2 Start and Close the Game
 
 :::{Note}
-指令的输入需严格区分大小写，另外可按键盘"**Tab**"键进行关键词补齐。
+It should be case sensitive when entering command, and the “Tab” key can be used to complete the keywords.
 :::
 
-1)  将设备开机，并参照课程资料的"**[远程工具安装及容器进入方法\ 1. 远程桌面工具安装与连接]()**"内容，通过VNC远程连接工具连接。
+(1) Power on the robot and use VNC Viewer to connect to the remote desktop.
 
-<img src="../_static/media/chapter_9/section_3/image4.png"  />
+<img class="common_img" src="../_static/media/chapter_9/section_3/image4.png"  />
 
-2)  点击系统桌面左上角的图标<img src="../_static/media/chapter_9/section_3/image5.png" style="width:0.32292in;height:0.30208in" />，打开Terminator终端。
+(2) Click <img src="../_static/media/chapter_9/section_3/image5.png" style="width:0.32292in;height:0.30208in" /> in the upper left corner of the system desktop to open the “Terminator”.
 
-<img src="../_static/media/chapter_9/section_3/image6.png"  />
+<img class="common_img" src="../_static/media/chapter_9/section_3/image6.png"  />
 
-3)  输入玩法程序目录所在的指令：
+(3) Enter the following command and press “Enter” to enter the directory of game programmings. 
 
 ```commandline
 cd armpi_pro/src/armpi_pro_demo/chassis_control_demo/
 ```
 
-<img src="../_static/media/chapter_9/section_3/image7.png"  />
+<img class="common_img" src="../_static/media/chapter_9/section_3/image7.png"  />
 
-4)  输入玩法执行指令：
+(4) Enter the following command and press “Enter” to start game.
 
 ```commandline
 python3 car_turn_demo.py
 ```
 
-<img src="../_static/media/chapter_9/section_3/image8.png"  />
+<img class="common_img" src="../_static/media/chapter_9/section_3/image8.png"  />
 
-5)  如需关闭此玩法，只需终端界面中按下"**Ctrl+C**"，若关闭失败，可重复此操作，直至程序关闭。
+(5) If want to exit the game, press “Ctrl+C” in terminal. If fail to exit, please keep trying until the program is closed. 
 
-### 3.3 实现效果
+### 4.3.3 Project Outcome
 
-玩法开启后，ArmPi Pro小车先原地顺时针旋转，再原地逆时针旋转。
+After starting the game, ArmPi Pro will be clockwise stationary rotation, and then counterclockwise stationary rotation. 
 
-### 3.4 能延伸
 
-**程序默认前进的偏移速度是0.3，我们可以尝试调节小车旋转的速度，这里我们把顺时针速度修改为0.5**，具体的修改步骤如下：
+### 4.3.4 Program Analysis 
 
-1)  点击系统桌面左上角的图标<img src="../_static/media/chapter_9/section_3/image5.png" style="width:0.32292in;height:0.30208in" />，打开Terminator终端。
+The source code of the program is located in: [home/ubuntu/armpi_pro/src/armpi_pro_demo/chassis_control_demo/car_turn_demo.py]()
 
-<img src="../_static/media/chapter_9/section_3/image6.png"  />
+{lineno-start=24}
 
-2)  输入进到玩法程序所在目录的指令：
+```]
+start = True
+#关闭前处理
+def stop():
+    global start
+
+    start = False
+    print('关闭中...')
+    set_velocity.publish(0,0,0)  # 关闭所有电机
+    
+if __name__ == '__main__':
+    # 初始化节点
+    rospy.init_node('car_turn_demo', log_level=rospy.DEBUG)
+    rospy.on_shutdown(stop)
+    # 麦轮底盘控制
+    set_velocity = rospy.Publisher('/chassis_control/set_velocity', SetVelocity, queue_size=1)
+    
+    while start:
+        set_velocity.publish(0,90,-0.3)# 顺时针旋转
+        rospy.sleep(2)
+        set_velocity.publish(0,90, 0.3)# 逆时针旋转
+        rospy.sleep(2)
+    set_velocity.publish(0,0,0)  # 关闭所有电机
+    print('已关闭')
+```
+
+
+
+Control motor through `set_velocity.publish()` function. There are three parameters in function. Take the code `set_velocity.publish(0,90,-0.3)` as an example:
+
+(1) The first parameter `0` represents the motor speed in the unit of mm/s and it ranges from -100 to 100. When the value is negative, the motor rotates counterclockwise.
+
+(2) The second parameter `90` represents the movement direction of car, and its unit is degree and it ranges from 0 to 360. The value of 90°refer to move forward. 270°refers to move backward. 0°refers to move to the right. 180°refers to move the left. Other movement directions are obtained according to the same reference method.  
+
+(3) The third parameter `-0.3` represents the rotation speed of the car, and its unit is 5°/s and it ranges from -2 to 2. When the parameter value is positive, the car will rotate clockwise. When the parameter value is negative, the car will rotate counterclockwise.
+
+### 4.3.5 Function Extension
+
+The default rotation speed of moving forwards is 0.3. This section will modify the clockwise rotation speed of car to 0.5 and the specific operation steps are as follow:
+
+(1) Click<img src="../_static/media/chapter_9/section_3/image5.png" style="width:0.32292in;height:0.30208in" />in the upper left corner of the system desktop to open the “Terminator”.
+
+<img class="common_img" src="../_static/media/chapter_9/section_3/image6.png"  />
+
+(2) Enter the following command and press “Enter” to come to the directory of game programmings.
 
 ```commandline
 cd armpi_pro/src/armpi_pro_demo/chassis_control_demo/
 ```
 
-<img src="../_static/media/chapter_9/section_3/image9.png"  />
-
-3)  输入打开程序文件的指令：
+(3) Enter the following command and press “Enter” to open the program file.
 
 ```commandline
 vim car_turn_demo.py
 ```
 
-<img src="../_static/media/chapter_9/section_3/image10.png"  />
+(4) Find the code to be modified and press “i” to switch to the editing mode.
 
-4)  找到要修改的代码部分，按下键盘的"**i**"键，当出现左下角框出内容时，即进入编辑模式。
+<img class="common_img" src="../_static/media/chapter_9/section_3/image11.jpeg"  alt="" />
 
-<img src="../_static/media/chapter_9/section_3/image11.jpeg"  alt="" />
+(5) In `set_velocity.publish()` function, the first parameter represents the motor speed and we change it to 90. After changing , press “Esc” and enter “:wq”, and then press “Enter” to save and exit.
 
-5)  在"**set_velocity.publish()**"函数中，第三个参数代表小车偏移的速度，这里我们修改为-0.5，修改完成后，按下键盘的"**Esc**"键，并输入"**:wq**"，按下回车，即可完成保存与退出操作。
-
-<img src="../_static/media/chapter_9/section_3/image12.jpeg"  alt="" />
+<img class="common_img" src="../_static/media/chapter_9/section_3/image12.jpeg"  alt="" />
 
 :::{Note}
-速度的调整范围是"-2~2"，为负数时小车顺时针旋转，为正数时小车逆时针旋转。修改时建议根据实际情况小幅度调节。
+The adjustable range of speed is “-2~2”. When the value is positive, the motor will rotate clockwise. When the value is negative, the motor will rotate counterclockwise. It is recommended to modify the value between 0 and 100.
 :::
 
-6)  修改完成后，可按照"[3.2 玩法开启及关闭](#anchor_3_2)"内容，再次运行程序，查看修改后的效果。
+(6) After modifying, please refer to the content of “[4.3.2 Operation Steps]()” to check the outcome.
 
-### 3.5 程序简析
+## 4.4 Robot Car Forward, Backward, and Lateral Movement
 
-程序逻辑流程图如下图所示。
+### 4.4.1 Working Principle
 
-<img src="../_static/media/chapter_9/section_3/image13.png"  />
+According to the characteristics of mecanum wheel, when all wheels rotate clockwise, the car will move forward; when all wheels rotate counterclockwise, the car will move backwards. When two A wheels rotate counterclockwise and two B wheels rotate clockwise, the car will move sideways to the left; when two wheels B rotates counterclockwise and wheels A rotates clockwise, the car will move sideways to the right. The force analysis for moving forwards, backwards and sideways is shown in the following figure:  
 
-该程序的源代码位于：**home/ubuntu/armpi_pro/src/armpi_pro_demo/chassis_control_demo/car_turn_demo.py**
+<img class="common_img" src="../_static/media/chapter_9/section_4/image2.png" width="70%"  />
 
-<img src="../_static/media/chapter_9/section_3/image14.png"  />
+According to physical kinematics, when forces are equal and opposite to each other, they will counteract each other. Any force can be decomposed into two perpendicular vectors. Suppose the speed of wheel A and wheel B rotates at the same speed, a right force decomposed by wheel A and a left force decomposed by wheel B will counteract each other, which the direction of resultant  force is forward. 
 
-主要通过**set_velocity.publish()**函数来控制电机。该函数中有三个参数，以代码"**set_velocity.publish(0,90,-0.3)**"为例：
-
-第一个参数"**0**"，表示的是电机的速度，单位是毫米每秒，范围是"**-100~100**"，数值为负数时电机是反转。
-
-第二个参数"**90**"，代表的是小车移动的方向，单位是度，范围是"0**~360**"，其中90度是向前方，270度是向后，0度是向右，180度向左，其他方向角度以此类推。
-
-第三个参数"**-0.3**"，代表的是小车的偏移速率，单位是5度每秒，范围是"**-2~2**"，正数是顺时针转动，负数是逆时针转动。
-
-## 4. 小车前后左右运动
-
-### 4.1 本节原理
-
-根据麦轮的特性，当小车轮子全部正转时，小车前进；当小车轮子全部反转时，小车后退；当A轮全部反转，B轮正转时，小车左平移；当B轮全部反转，A轮正转时，小车右平移。小车前后左右的运动受力分析图如下：
-
-<img src="../_static/media/chapter_9/section_4/image2.png"   />
-
-<img src="../_static/media/chapter_9/section_4/image2.png"   />
-
-<img src="../_static/media/chapter_9/section_4/image2.png"  />
-
-<img src="../_static/media/chapter_9/section_4/image2.png"  />
-
-根据物理运动学知识可知，大小相等，方向相反的力可以互相抵消，假设A轮和B轮正转的速度一样快，那么A轮分解出向右的力和B轮分解出向左的力刚好互相抵消，合力方向向前。
-
-根据牛顿第二运动定律（**F=ma**）可知，加速度方向向前，则最终合速度方向"**V合**"也向前。其他方向的速度解析也是以同样的思路来推导。
+Based on Newton’s second law (F=ma), if the direction of acceleration is forward, the final  resultant  force  is also forward. 
 
 <p id="anchor_4_2"></p>
 
-### 4.2 玩法开启及关闭
+### 4.4.2 Start and Close the Game
 
 :::{note}
-指令的输入需严格区分大小写，另外可按键盘"**Tab**"键进行关键词补齐。
+It should be case sensitive when entering command, and the “Tab” key can be used to complete the keywords.
 :::
 
-1)  将设备开机，并参照课程资料的"**[远程工具安装及容器进入方法\1. 远程桌面工具安装与连接]()**"内容，通过VNC远程连接工具连接。
+(1) Power on the robot and use VNC Viewer to connect to the remote desktop.
 
-<img src="../_static/media/chapter_9/section_4/image4.png"  />
+<img class="common_img" src="../_static/media/chapter_9/section_4/image4.png"  />
 
-2)  点击系统桌面左上角的图标<img src="../_static/media/chapter_9/section_4/image5.png" style="width:0.32292in;height:0.30208in" />，打开Terminator终端。
+(2) Click <img src="../_static/media/chapter_9/section_4/image5.png" style="width:0.32292in;height:0.30208in" /> in the upper left corner of the system desktop to open the “Terminator”.
 
-<img src="../_static/media/chapter_9/section_4/image6.png"  />
+<img class="common_img" src="../_static/media/chapter_9/section_4/image6.png"  />
 
-3)  输入玩法程序目录所在的指令：
+(3) Enter the following command and press “Enter” to enter the directory of game programmings. 
 
 ```commandline
 cd armpi_pro/src/armpi_pro_demo/chassis_control_demo/
 ```
 
-<img src="../_static/media/chapter_9/section_4/image7.png"  />
-
-4)  输入玩法执行指令：
+(4) Enter the command below and press “Enter” to start the game.
 
 ```commandline
 python3 car_move_demo.py
 ```
 
-<img src="../_static/media/chapter_9/section_4/image8.png"  />
+(5) If you want to exit the game, press “Ctrl+C” in terminal. If fail to exit, please keep trying until the program is closed. 
 
-5)  如需关闭此玩法，只需终端界面中按下"**Ctrl+C**"，若关闭失败，可重复此操作，直至程序关闭。
+### 4.4.3 Project Outcome
 
-### 4.3 实现效果
+After starting the game, ArmPi Pro will move forward, shift to right, backwards, shift to the left in sequence.
 
-玩法开启后，ArmPi Pro小车将在前后左右四个方向移动。
+### 4.4.4 Program Analysis 
 
-### 4.4 功能延伸
+The source code of program is located in: [home/ubuntu/armpi_pro/src/armpi_pro_demo/chassis_control_demo/car_move_demo.py]()
 
-**程序默认的速度是60，我们可以尝试调节小车的速度，这里我们把车体的移动的速度修改为90**，具体的修改步骤如下：
+{lineno-start=24}
 
-1)  点击系统桌面左上角的图标<img src="../_static/media/chapter_9/section_4/image5.png" style="width:0.32292in;height:0.30208in" />，打开Terminator终端。
+```
+start = True
+#关闭前处理
+def stop():
+    global start
 
-<img src="../_static/media/chapter_9/section_4/image6.png"  />
+    start = False
+    print('关闭中...')
+    set_velocity.publish(0,0,0)  # 发布底盘控制消息,停止移动
+    
+if __name__ == '__main__':
+    # 初始化节点
+    rospy.init_node('car_move_demo', log_level=rospy.DEBUG)
+    rospy.on_shutdown(stop)
+    # 麦轮底盘控制
+    set_velocity = rospy.Publisher('/chassis_control/set_velocity', SetVelocity, queue_size=1)
+    
+    while start:
+        # 发布底盘控制消息,线速度60，方向角90，偏航角速度0(小于0，为顺时针方向)
+        set_velocity.publish(60,90,0) # 向前移动
+        rospy.sleep(2) # 延时2秒
+        set_velocity.publish(60,0,0) # 向右移动
+        rospy.sleep(2) # 延时2秒
+        set_velocity.publish(60,270,0) # 向后移动
+        rospy.sleep(2) # 延时2秒
+        set_velocity.publish(60,180,0) # 向左移动
+        rospy.sleep(2)
+    set_velocity.publish(0,0,0)  # 发布底盘控制消息,停止移动
+    print('已关闭')
+```
 
-2)  输入进到玩法程序所在目录的指令：
+Control motor through  `set_velocity.publish()` function. There are three parameters in function. Take the code `set_velocity.publish(60,90,0)` as an example:
+
+The first parameter  `60`  represents the motor speed, its unit is mm/s and it ranges from -100 to 100. When the value is positive, the motor rotates counterclockwise.
+
+The second parameter  `90`  represents the movement direction of car, its unit is degree and it ranges from 0 to 360. The value of 90°refer to move forward. 270°refers to move backward. 0°refers to move to the right. 180°refers to move the left. Other movement directions are obtained according to the same reference method.  
+
+The third parameter  `0`  represents the rotation speed of the car, its unit is 5 degree/s and it ranges from -2 to 2. When the parameter value is positive, the car will rotate clockwise. When the parameter value is negative, the car will rotate counterclockwise.
+
+### 4.4.5 Function Extension
+
+The default speed is 60. This section will change the moving speed to 90 and the specific operation steps are as follow: 
+
+(1) click <img src="../_static/media/chapter_9/section_4/image5.png" style="width:0.32292in;height:0.30208in" /> in the upper left corner of the system desktop to open the “Terminator”.
+
+<img class="common_img" src="../_static/media/chapter_9/section_4/image6.png"  />
+
+(2) Enter the following command and press “Enter” to come to the directory of game programmings.
 
 ```commandline
 cd armpi_pro/src/armpi_pro_demo/chassis_control_demo/
 ```
 
-<img src="../_static/media/chapter_9/section_4/image14.png"  />
-
-3)  输入打开程序文件的指令：
+(3) Enter the following command and press “Enter” to open the program file.
 
 ```commandline
 vim car_move_demo.py
 ```
 
-<img src="../_static/media/chapter_9/section_4/image15.png"  />
+(4) Find the code to be modified and press “i” to switch to the editing mode.
 
-4)  找到要修改的代码部分，按下键盘的"**i**"键进入编辑模式，当出现左下角框出内容时，即进入编辑模式。
+<img class="common_img" src="../_static/media/chapter_9/section_4/image16.jpeg"  alt="" />
 
-<img src="../_static/media/chapter_9/section_4/image16.jpeg"  alt="" />
+(5) In `set_velocity.publish()` function, the first parameter represents the motor speed and we change it to 90. 
 
-5)  然后将所有"**set_velocity.publish()**"函数中的第一个参数"**60**"改为"**90**"，即将速度修改为90，如下图所示：
+<img class="common_img" src="../_static/media/chapter_9/section_4/image17.jpeg"  alt="18" />
 
-<img src="../_static/media/chapter_9/section_4/image17.jpeg"  alt="18" />
+(6) After changing , press “Esc” and enter “:wq”, and then press “Enter” to save and exit.
 
-6)  修改完成后，按下键盘的"**Esc**"键，并输入"**:wq**"，按下回车，即可完成保存与退出操作。
-
-<img src="../_static/media/chapter_9/section_4/image18.jpeg"  alt="" />
+<img class="common_img" src="../_static/media/chapter_9/section_4/image18.jpeg"  alt="" />
 
 :::{Note}
-速度的调整范围是"-100~100"，为负数时电机正转，为正数时电机反转。在修改成负数时可能会改变小车的移动方向，这里建议大家修改范围在"0~100"之间
+The adjustable range of speed is “-100~100”. When the value is positive, the motor will rotate clockwise. When the value is negative, the motor will rotate counterclockwise. Therefore, it is recommended to modify the value between 0 and 100.
 :::
 
-7)  修改完成后，再继续[4.2 玩法开启及关闭](#anchor_4_2)内容，即可查看修改好的效果。
+(7) After modifying, please refer to the content of “[4.4.2 Operation Steps]()” to check the outcome.
 
-### 4.5 程序简析
+## 4.5 Oblique Movement
 
-程序逻辑流程图如下图所示。
+### 4.5.1 Working Principle
 
-<img src="../_static/media/chapter_9/section_4/image20.png"  />
+According to the characteristics of mecanum wheel , when wheel A does not move and wheel B rotates clockwise, the car moves to the left front. When wheel B rotates counterclockwise, the car moves to the right rear. When the wheel B does not move and wheel A rotates clockwise, the car will move to the front right. When the wheel A rotates counterclockwise, the car move to the left rear. The force analysis for oblique movement: 
 
-该程序的源代码位于：**home/ubuntu/armpi_pro/src/armpi_pro_demo/chassis_control_demo/car_move_demo.py**
-
-<img src="../_static/media/chapter_9/section_4/image21.png"  />
-
-主要通过**set_velocity.publish()**函数来控制电机。该函数中有三个参数，以代码"**set_velocity.publish(60,90,0)**"为例：
-
-第一个参数"**60**"，表示的是电机的速度，单位是毫米每秒，范围是"**-100~100**"，数值为正数时电机是反转。
-
-第二个参数"**90**"，代表的是小车移动的方向，单位是度，范围是"**0~360**"，其中90度是向前方，270度是向后，0度是向右，180度向左，其他方向角度以此类推。
-
-第三个参数"**0**"，代表的是小车的偏移速率，单位是5度每秒，范围是"**-2~2**"，正数是顺时针转动，负数是逆时针转动。
-
-## 5. 小车斜向运动
-
-### 5.1 本节原理
-
-根据麦克纳姆轮的特性，当小车A轮不动，B轮正转时，小车朝左前方移动；B轮反转时，小车朝右后方移动。当小车B轮不动，A轮正转时，小车朝右前方移动；A轮反转时，小车朝左后方移动。小车斜向移动受力分析图如下：
-
-<img src="../_static/media/chapter_9/section_5/image2.png"  />
-
-<img src="../_static/media/chapter_9/section_5/image2.png"  />
-
-<img src="../_static/media/chapter_9/section_5/image2.png"  />
-
-<img src="../_static/media/chapter_9/section_5/image2.png"  />
+<img class="common_img" src="../_static/media/chapter_9/section_5/image2.png" width="70%" />
 
 <p id="anchor_5_2"></p>
 
-### 5.2 玩法开启及关闭
+### 4.5.2 Operation Steps
 
 :::{Note}
-指令的输入需严格区分大小写，另外可按键盘"**Tab**"键进行关键词补齐。
+It should be case sensitive when entering command, and the “Tab” key can be used to complete the keywords.
 :::
 
-1)  将设备开机，并参照课程资料的"**第8章 远程工具安装及容器进入方法\第1课 远程桌面工具安装与连接**"内容，通过VNC远程连接工具连接。
+(1) Power on the robot and use VNC Viewer to connect to the remote desktop.
 
-<img src="../_static/media/chapter_9/section_5/image4.png"  />
+<img class="common_img" src="../_static/media/chapter_9/section_5/image4.png"  />
 
-2)  点击系统桌面左上角的图标<img src="../_static/media/chapter_9/section_5/image5.png" style="width:0.32292in;height:0.30208in" />，打开Terminator终端。
+(2) Click <img src="../_static/media/chapter_9/section_5/image5.png" style="width:0.32292in;height:0.30208in" /> in the upper left corner of the system desktop to open the “Terminator”.
 
-<img src="../_static/media/chapter_9/section_5/image6.png"  />
-
-3)  输入玩法程序目录所在的指令：
+(3) Enter the following command and press “Enter” to enter the directory of game programmings. 
 
 ```commandline
 cd armpi_pro/src/armpi_pro_demo/chassis_control_demo/
 ```
 
-<img src="../_static/media/chapter_9/section_5/image7.png"  />
+(4) Enter the following command and press “Enter” to start game.
 
-4)  输入玩法执行指令
-
-```commandline
+```
 python3 car_slant_demo.py
 ```
 
-<img src="../_static/media/chapter_9/section_5/image8.png"  />
+(5) If want to exit the game, press “Ctrl+C” in terminal. If fail to exit, please keep trying until the program is closed. 
 
-5)  如需关闭此玩法，只需终端界面中按下"**Ctrl+C**"，若关闭失败，可重复此操作，直至程序关闭。
+### 4.5.3 Project Outcome
 
-### 5.3 实现效果
+After starting the game, ArmPi Pro will move to the right front, to the right rear, to the left rear, and to the front left in sequence.
 
-玩法开启后，ArmPi Pro小车将按照右前方，右后方，左后方，左前方的顺序移动。
+### 4.5.4 Program Analysis
 
-### 5.4 功能延伸
+The source code of program is located in: 
 
-**程序默认都是斜向45度，我们可以尝试调节小车斜向移动的角度，这里我们把左前方的角度修改为60**，具体的修改步骤如下：
+[home/ubuntu/armpi_pro/src/armpi_pro_demo/chassis_control_demo/car_slant_demo.py]()
 
-1)  点击系统桌面左上角的图标<img src="../_static/media/chapter_9/section_5/image5.png" style="width:0.32292in;height:0.30208in" />，打开Terminator终端。
+{lineno-start=24}
 
-<img src="../_static/media/chapter_9/section_5/image6.png"  />
+```
+start = True
+#关闭前处理
+def stop():
+    global start
 
-2)  输入进到玩法程序所在目录的指令：
+    start = False
+    print('关闭中...')
+    set_velocity.publish(0,0,0)  # 关闭所有电机
+    
+if __name__ == '__main__':
+    # 初始化节点
+    rospy.init_node('car_slant_demo', log_level=rospy.DEBUG)
+    rospy.on_shutdown(stop)
+    # 麦轮底盘控制
+    set_velocity = rospy.Publisher('/chassis_control/set_velocity', SetVelocity, queue_size=1)
+    
+    while start:
+        set_velocity.publish(60,45,0) # 线速度60，方向角45，偏航角速度0(小于0，为顺时针方向)
+        rospy.sleep(2)
+        set_velocity.publish(60,315,0)
+        rospy.sleep(2)
+        set_velocity.publish(60,225,0)
+        rospy.sleep(2)
+        set_velocity.publish(60,135,0)
+        rospy.sleep(2)
+    set_velocity.publish(0,0,0)  # 关闭所有电机
+    print('已关闭')
+```
+
+
+
+Control motor through the `set_velocity.publish()` function. There are three parameters in function. Take the code `chassis.set_velocity(60,45,0)` as an example:
+
+The first parameter `60` represents the motor speed in the unit of mm/s and it ranges from -100 to 100. When the value is negative, the motor rotates counterclockwise.
+
+The second parameter `45` represents the movement direction of car, the unit is degree and it ranges from 0 to 360. The value of 90°refers to move forward. 270°refers to move backward. 0°refers to move to the right. 180°refers to move the left. Other movement directions are obtained according to the same reference method.  
+
+The third parameter `0` represents the rotation speed of the car, its unit is 5°/s and it ranges from -2 to 2. When the parameter value is positive, the car will rotate clockwise. When the parameter value is negative, the car will rotate counterclockwise.
+
+### 4.5.5 Function Extension
+
+By default, the program is set to a 45-degree diagonal movement. We can adjust the angle of the robot car's diagonal movement. In this case, we will modify the angle for the front-left direction to 60 degrees. The steps for making this adjustment are as follows:
+
+(1) click <img src="../_static/media/chapter_9/section_5/image5.png" style="width:0.32292in;height:0.30208in" />in the upper left corner of the system desktop to open the “Terminator”.
+
+<img class="common_img" src="../_static/media/chapter_9/section_5/image6.png"  />
+
+(2) Enter command and press “Enter” to come to the directory of game programmings.
 
 ```commandline
 cd armpi_pro/src/armpi_pro_demo/chassis_control_demo/
 ```
 
-<img src="../_static/media/chapter_9/section_5/image14.png"  />
-
-3)  输入打开程序文件的指令
+(3) Enter the following command and press “Enter” to open the program file.
 
 ```commandline
 vim car_slant_demo.py
 ```
 
-<img src="../_static/media/chapter_9/section_5/image15.png"  />
+(4) Find the code to be modified and press “i” to switch to the editing mode.
 
-4)  找到要修改的代码部分，按下键盘的"**i**"键，当出现左下角框出内容时，即进入编辑模式。
+<img class="common_img" src="../_static/media/chapter_9/section_5/image16.jpeg"  alt="" />
 
-<img src="../_static/media/chapter_9/section_5/image16.jpeg"  alt="" />
+(5) In  `set_velocity.publish()`  function, the first parameter represents the motor speed and we change it to 90. After changing , press “Esc” and enter “:wq”, and then press “Enter” to save and exit.
 
-5)  在"**set_velocity.publish()**"函数中，第二个参数代表前进的方向角度，这里我们修改为60，修改完成后，按下键盘的"**Esc**"键，并输入"**:wq**"，按下回车，即可完成保存与退出操作。
-
-<img src="../_static/media/chapter_9/section_5/image17.jpeg"  alt="" />
+<img class="common_img" src="../_static/media/chapter_9/section_5/image17.jpeg"  alt="" />
 
 :::{Note}
-方向角度的调整范围是"0~360"，0为向右，90为向前，180为向左，270为向后。
+ The adjustable range of speed is “0-360”.  “0” moves right, “9” moves forward, “180” moves left, and “270” moves backwards.
 :::
 
-6)  修改完成后，可按照"[5.2 玩法开启及关闭](#anchor_5_2)"内容，再次运行程序，查看修改后的效果。
+(6) After modifying, please refer to the content of “[4.5.2 Operation Steps]()” to check the outcome.
 
-### 5.5 程序简析
+## 4.6 Drifting Movement
 
-程序逻辑流程图如下图所示。
+### 4.6.1 Working Principle
 
-<img src="../_static/media/chapter_9/section_5/image19.png"  />
+According to the characteristic of mecanum wheel characteristics, when the front two wheels do not move, the rear wheel A rotates clockwise and the rear wheel B rotates counterclockwise, the car drift clockwise. The force analysis for car drifting is shown in the following figure:
 
-该程序的源代码位于：**home/ubuntu/armpi_pro/src/armpi_pro_demo/chassis_control_demo/car_slant_demo.py**
+<img class="common_img" src="../_static/media/chapter_9/section_6/image2.png" width="70%" />
 
-<img src="../_static/media/chapter_9/section_5/image20.png"  />
-
-主要通过**set_velocity.publish()**函数来控制电机。该函数中有三个参数，以代码"**chassis.set_velocity(60,45,0)**"为例：
-
-第一个参数"**60**"，表示的是电机的速度，单位是毫米每秒，范围是"**-100~100**"，数值为正数时电机是反转。
-
-第二个参数"**45**"，代表的是小车移动的方向，单位是度，范围是"**0~360**"，其中90度是向前方，270度是向后，0度是向右，180度向左，其他方向角度以此类推。
-
-第三个参数"**0**"，代表的是小车的偏移速率，单位是5度每秒，范围是"**-2~2**"，正数是顺时针转动，负数是逆时针转动。
-
-## 6. 小车漂移运动
-
-### 6.1 本节原理
-
-根据麦克纳姆轮的特性，前面轮子不动时，后面A轮正转，B轮反转，小车逆时针漂移；后面B轮正转，A轮反转，小车顺时针漂移。小车漂移的受力分析图如下：
-
-<img src="../_static/media/chapter_9/section_6/image2.png"  />
-
-根据物理运动学知识可知，大小相等，方向相反的力可以互相抵消，以逆时针漂移为例，假设A轮和B轮转动的速度一样快，那么A轮分解出向上的力和B轮分解出向下的力刚好互相抵消，合力方向向右。
-
-根据牛顿第二运动定律**（F=ma）**可知，加速度方向向右，则最终合速度方向也向右，而前轮不动，则会产生漂移。顺时针漂移也是同样的思路推导。
+According to physical kinematics, when forces are equal and opposite to each other, they will counteract each other. Any force can be decomposed into two perpendicular vectors. Take counterclockwise drifting as example. Suppose the speed of wheel A and wheel B rotates at the same speed, a upward force decomposed by wheel A and a downward force decomposed by wheel B will counteract each other, which the direction of resultant velocity is to the right. 
+Based on Newton’s second law (F=ma), if the direction of acceleration is to the right, so the final resultant force is also to the right. At this time, if the front wheel does not move, the car will drift.    
 
 <p id="anchor_6_2"></p>
 
-### 6.2 玩法开启及关闭
+### 4.6.2 Operation Steps
 
 :::{Note}
-指令的输入需严格区分大小写，另外可按键盘"**Tab**"键进行关键词补齐。
+It should be case sensitive when entering command, and the “Tab” key can be used to complete the keywords.
 :::
 
-1)  将设备开机，并参照课程资料的"**[远程工具安装及容器进入方法1. 远程桌面工具安装与连接]()**"内容，通过VNC远程连接工具连接。
+(1) Power on the robot and use VNC Viewer to connect to the remote desktop.
 
-<img src="../_static/media/chapter_9/section_6/image4.png"  />
+<img class="common_img" src="../_static/media/chapter_9/section_6/image4.png"  />
 
-2)  点击系统桌面左上角的图标<img src="../_static/media/chapter_9/section_6/image5.png" style="width:0.32292in;height:0.30208in" />，打开Terminator终端。
+(2) click <img src="../_static/media/chapter_9/section_6/image5.png" style="width:0.32292in;height:0.30208in" /> in the upper left corner of the system desktop to open the “Terminator”.
 
-<img src="../_static/media/chapter_9/section_6/image6.png"  />
-
-3)  输入玩法程序目录所在的指令：
+(3) Enter the following command and press “Enter” to enter the directory of game programmings. 
 
 ```commandline
 cd armpi_pro/src/armpi_pro_demo/chassis_control_demo/
 ```
 
-<img src="../_static/media/chapter_9/section_6/image7.png"  />
-
-4)  输入玩法执行指令：
+(4) Enter the command below and press “Enter” to start game.
 
 ```commandline
 python3 car_drifting_demo.py
 ```
 
-<img src="../_static/media/chapter_9/section_6/image8.png"  />
+(5) If want to exit the game, press “Ctrl+C” in terminal. If fail to exit, please keep trying until the program is closed. 
 
-5)  如需关闭此玩法，只需终端界面中按下"**Ctrl+C**"，若关闭失败，可重复此操作，直至程序关闭。
+### 4.6.3 Project Outcome
 
-### 6.3 实现效果
+After starting game, ArmPi Pro will drift counterclockwise first, then clockwise. 
 
-玩法开启后，ArmPi Pro小车将先逆时针漂移，再顺时针漂移，以此循环偏移。
+### 4.6.4 Program Analysis 
 
-### 6.4 功能延伸
+The source code of program is located in: [home/ubuntu/armpi_pro/src/armpi_pro_demo/chassis_control_demo/car_drifting_demo.py]()
 
-**程序默认的偏移速度是0.3，我们可以尝试调节小车的偏移速度，这里我们修改顺时针漂移的偏移速度为0.5**，具体的修改步骤如下：
+Control motor through set_velocity function. There are three parameters in function. Take the code `chassis.set_velocity(50,180,0.3)` as an example:
 
-1)  点击系统桌面左上角的图标<img src="../_static/media/chapter_9/section_6/image5.png" style="width:0.32292in;height:0.30208in" />，打开Terminator终端。
+(1) The first parameter `50` represents the motor speed, its unit is mm/s and it ranges from -100 to 100. When the value is negative, the motor rotates counterclockwise.
 
-<img src="../_static/media/chapter_9/section_6/image6.png"  />
+(2) The second parameter `180` represents the movement direction of car, its unit is degree and it ranges from 0 to 360. The value of 90°refer to move forward. 270°refers to move backward. 0°refers to move to the right. 180°refers to move the left. Other movement directions are obtained according to the same reference method.  
 
-2)  输入进到玩法程序所在目录的指令：
+(3) The third parameter `0.3` represents the rotation speed of the car, its unit is 5°/s and it ranges from -2 to 2. When the parameter value is positive, the car will rotate clockwise. When the parameter value is negative, the car will rotate counterclockwise.
+
+### 4.6.5 Function Extension
+
+The default speed of rotation is 0.3. This section will modify the rotation speed of clockwise drifting to 0.5 and the specific operation steps are as follow:
+
+(1) click <img src="../_static/media/chapter_9/section_6/image5.png" style="width:0.32292in;height:0.30208in" /> in the upper left corner of the system desktop to open the “Terminator”.
+
+(2) Enter the following command and press “Enter” to come to the directory of game programmings.
 
 ```commandline
 cd armpi_pro/src/armpi_pro_demo/chassis_control_demo/
 ```
 
-<img src="../_static/media/chapter_9/section_6/image14.png"  />
-
-3)  输入打开程序文件的指令
+(3) Enter “vim car_drifting_demo.py” command and press “Enter” to open the program file.
 
 ```commandline
 vim car_drifting_demo.py
 ```
 
-<img src="../_static/media/chapter_9/section_6/image15.png"  />
+(4) Find the code to be modified and press “i” to switch to the editing mode.
 
-4)  找到要修改的代码部分，按下键盘的"**i**"键，当出现左下角框出内容时，即进入编辑模式。
+<img  class="common_img" src="../_static/media/chapter_9/section_6/image16.jpeg"  alt="" />
 
-<img src="../_static/media/chapter_9/section_6/image16.jpeg"  alt="" />
+(5) In `set_velocity.publish()` function, the third parameter represents the rotation speed of the car and we change it to -0.5. After modifying, press “Esc” and enter “:wq”, and then press “Enter” to save and exit.
 
-5)  在"**set_velocity.publish()**"函数中，第三个参数代表小车偏移的速度，这里我们修改为-0.5，修改完成后，按下键盘的"**Esc**"键，并输入"**:wq**"，按下回车，即可完成保存与退出操作。
-
-<img src="../_static/media/chapter_9/section_6/image17.jpeg"  alt="" />
+<img class="common_img"  src="../_static/media/chapter_9/section_6/image17.jpeg"  alt="" />
 
 :::{Note}
-速度的调整范围是"-2~2"，为负数时小车顺时针旋转，为正数时小车逆时针旋转。修改时建议根据实际情况小幅度调节
+The adjustable range of speed is from -2 to 2. When the value is negative, the car will rotate clockwise. When the value is positive, the car will rotate counterclockwise. Therefore, it is recommended to modify the value between 0 and 100.
 :::
 
-6)  修改完成后，可按照"[6.2 玩法开启及关闭](#anchor_6_2)"内容，再次运行程序，查看修改后的效果。
-
-### 6.5 程序简析
-
-程序逻辑流程图如下图所示:
-
-<img src="../_static/media/chapter_9/section_6/image19.png" style="width:5.4375in;height:2.53125in" />
-
-该程序的源代码位于：**home/ubuntu/armpi_pro/src/armpi_pro_demo/chassis_control_demo/car_drifting_demo.py**
-
-<img src="../_static/media/chapter_9/section_6/image20.png" style="width:5.76667in;height:2.82361in" />
-
-主要通过**set_velocity.publish()** 函数来控制电机。该函数中有三个参数，以代码"**chassis.set_velocity(50,180,0.3)**"为例：
-
-第一个参数"**50**"，表示的是电机的速度，单位是毫米每秒，范围是"**-100~100**"，数值为负数时电机是反转。
-
-第二个参数"**180**"，代表的是小车移动的方向，单位是度，范围是"**0~360**"，其中90度是向前方，270度是向后，0度是向右，180度向左，其他方向角度以此类推。
-
-第三个参数"**0.3**"，代表的是小车的偏移速率，单位是5度每秒，范围是"**-2~2**"，正数是顺时针转动，负数是逆时针转动。
+(6) After modifying, you can refer to the content of “[4.6.2 Operation Steps]()” to check the effect.
 

@@ -1,2706 +1,3446 @@
-# ROS+OpenCV课程
+# 8. ROS+OpenCV Course
 
-## 1. 颜色识别
+## 8.1 Color Recognition
 
-:::{Note}
-可在本节文件夹下观看演示效果。
-:::
+### 8.1.1 Program Logic
 
-### 1.1 实现流程
+Let’s learn about the overall process of this section.
 
-下面看一下本节课整体实现的流程：
+**Step 1: Obtain camera image**
+Process the live camera feed via OpenCV.
 
-**第一步，调取摄像头的图像：**
+**Step 2: Image binarization**
+Convert all pixels in the image to 0 and 1 using OpenCV. Pixels with a value of 0 are represented as black, and pixels with a value of 1 are represented as white.
 
-通过OpenCV处理摄像头的实时图像。
+**Step 3: Erosion and dilation**
+Erosion is performed to remove any jagged edges or noise from the image. Dilation expands the image edges to fill in any non-target pixels around the object.
 
-**第二步，图像的二值化：**
+**Step 4: Locate contour** 
+Determine the position of the object's contour by separating the black and white areas in the image.
 
-OpenCV将图像中的所有像素以0和1来表示，将值为0的像素点用黑色显示，值为1的用白色显示。
+**Step 5: Enclose identified color objects**
+Identify color objects (red, green, and blue) and convert their coordinates to the unscaled size. Then, determine if they are the largest color object.
 
-**第三步，腐蚀和膨胀：**
-
-腐蚀处理的目的是去除图像边缘的毛刺。膨胀处理会将图像的边缘扩大，用以填充目标物体边缘或内部的非目标像素点。
-
-**第四步，找出轮廓的位置：**
-
-通过对黑、白区域进行分界来找出目标物体的轮廓位置。
-
-**第五步，将识别到的颜色物体框出：**
-
-将识别到的颜色物体（红绿蓝三种）转换为未缩放前的坐标，进而判断是否为最大的颜色物体。
-
-### 1.2 玩法开启及关闭
+### 8.1.2 Operation Steps
 
 :::{Note}
-指令的输入需严格区分大小写，另外可按键盘"**Tab**"键进行关键词补齐。
+The input command is case-sensitive, and keywords can be completed using the Tab key.
 :::
 
-1)  将设备开机，并参照课程资料的"**[远程工具安装及容器进入方法\1. 远程桌面工具安装与连接]()**"内容，通过VNC远程连接工具连接。
+(1) Start the robot, and connect it to the system desktop using VNC.
 
-<img src="../_static/media/chapter_14/section_1/image2.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_1/image2.png"  />
 
-2)  点击系统桌面左上角的图标<img src="../_static/media/chapter_14/section_1/image3.png"  />，打开Terminator终端，输入指令按下回车，关闭手机APP自启服务。
+(2) Click-on <img src="../_static/media/chapter_14/section_1/image3.png"  /> to open the command-line terminal. Enter the following command and hit Enter to disable the app auto-start service.
 
 ```commandline
 sudo ./.stop_ros.sh
 ```
 
-3)  输入进入玩法程序所在目录的指令，按下回车键。
+(3) Execute the command to navigate to the directory where the game program is located.
 
 ```commandline
 cd course
 ```
 
-4)  输入运行玩法程序的指令，按下回车键
+(4) Run the following command to execute the program.
 
 ```commandline
 python3 color_recognition.py
 ```
 
-5)  如需关闭此程序，可按下"**Ctrl+C**"，若关闭失败，可多次按下。
+(5) If you want to disable the program, please press “Ctrl+C”. If it fails, try again.
 
-玩法体验完毕后，可通过指令或重启机器人来开启手机APP服务。如未开启手机APP服务，则APP相关功能会失效。（若机器人重启，手机APP服务将会自动开启）
+(6) After running the program, you can enable the app service by using a command or restarting the robot. If the app service is not enabled, the related app functions will be inactive. If the robot is restarted, the app service will be automatically activated.
 
-点击桌面左上角终端图标<img src="../_static/media/chapter_14/section_1/image10.png"  />（**注意：需要在系统路径下输入指令，而不是在docker容器中输入开启APP服务的指令**），在系统路径下输入指令，按下回车，启动APP服务，等待机械臂恢复至初始姿态，蜂鸣器"滴"一声即可。
+(7) click <img src="../_static/media/chapter_14/section_1/image10.png"  />and enter the following command. Press “Enter” to start the app. Wait for the robotic arm to return to its initial posture and the buzzer to beep.
+
+:::{Note}
+
+please enter the command in the system path, not in the Docker container. 
+
+:::
 
 ```commandline
 sudo systemctl restart start_node.service
 ```
 
-### 1.3 实现效果
+### 8.1.3 Project Outcome
 
 :::{Note}
-请在纯色背景下操作，且手持色块移动时不宜过快。
+Please perform the operation on a pure background and avoid moving the color block too quickly.
 :::
 
-程序运行后，机械臂会对视觉范围内的物体进行颜色识别。当识别到红、绿、蓝三种颜色的物体时，回传画面会框选该物体。
+After running the program, the robotic arm will perform color recognition on objects within its visual range. When an object in the color of red, green, or blue is recognized, it will be highlighted in the live camera feed.
 
-<img src="../_static/media/chapter_14/section_1/image12.png"  alt="loading" />
 
-### 1.4 程序简要分析
 
-该程序的源代码位于Docker容器中的：
+### 8.1.4 Program Analysis
 
-**/home/ubuntu/course/color_recognition.py**
+The source code of program is located in：[/home/ubuntu/course/color_recognition.py]()
 
-<img src="../_static/media/chapter_14/section_1/image14.png"  />
+The color recognition program mainly uses the functions `inRange()`, `findContours()`, and  `morphologyEx()` from the `cv2` library, as well as the `setPixelColor()` function from the `Board` library.
 
-颜色识别实验主要用到cv2库中的inRange()、findContours()和morphologyEx()函数，以及Board库中的setPixelColor()函数。其中：
+(1) The `inRange()` function is used for binarizing the input image. The first parameter within the parentheses is the input image. The second and third parameters specify the lower and upper thresholds, respectively. If the RGB color values of a pixel fall within the defined range, the pixel is set to 1; otherwise, it is set to 0.
 
-- **inRange()** 函数用于对输入图像进行二值化处理。括号内的第一个参数是输入图像。第二个、第三个参数分别是阈值的下限和上限。当像素点RGB的颜色数值处于上、下限之间时，该像素点被赋值为1，否则为0。
+{lineno-start=63}
 
-<img src="../_static/media/chapter_14/section_1/image15.png"  />
+```
+            frame_mask = cv2.inRange(frame_lab,
+                                         (lab_data[i]['min'][0],
+                                          lab_data[i]['min'][1],
+                                          lab_data[i]['min'][2]),
+                                         (lab_data[i]['max'][0],
+                                          lab_data[i]['max'][1],
+                                          lab_data[i]['max'][2]))  #对原图像和掩模进行位运算(perform bitwise operations on the original image and the mask)
+```
 
-- **findContours()** 函数用于查找图像中的目标轮廓。括号内的第一个参数是输入图像。第二个参数是轮廓的检索模式，第三个参数是轮廓的近似方法。
+(2) The `findContours()` function detects the target contours in the image. The first parameter inside the parentheses is the input image. The second parameter represents the contour retrieval mode. The third parameter indicates the contour approximation method.
 
-<img src="../_static/media/chapter_14/section_1/image16.png"  />
+{lineno-start=72}
 
-- **morphologyEx()** 函数用于进行形态学的变换。该函数的第一个参数为输入的图像数据，第二个参数为进行变化的方式，第三个参数表示方框的大小。
+```
+contours = cv2.findContours(closed, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)[-2]  # 找出轮廓(find out contour)
+```
 
-<img src="../_static/media/chapter_14/section_1/image17.png"  />
+(3) The `morphologyEx()` function is employed for morphological transformations. The first parameter is the input image data. The second parameter specifies the type of transformation. The third parameter denotes the size of the frame box.
 
-- set_rgb(color)函数用于控制扩展板上的RGB彩灯。
+{lineno-start=70}
 
-<img src="../_static/media/chapter_14/section_1/image18.png"  />
+```
+            opened = cv2.morphologyEx(frame_mask, cv2.MORPH_OPEN, np.ones((3, 3), np.uint8))  # 开运算(opening operation)
+            closed = cv2.morphologyEx(opened, cv2.MORPH_CLOSE, np.ones((3, 3), np.uint8))  # 闭运算(closing operation)
+```
 
-以代码"b**oard.set_rgb(\[\[1,** **255, 0, 0\],\[2, 255, 0, 0\])**"为例，括号内的参数含义如下：
+(4) The`setPixelColor()` function controls the RGB lights on the expansion board.
 
-第一个参数"**1**"是RGB灯序号，"**1**"代表RGB1，而"**2**"则代表RGB2；
+{lineno-start=24}
 
-第二个参数"\[**255, 0, 0\]**"是RGB的颜色通道参数，"**255**"、"**0**"、"**0**"分别代表R、G、B通道的数值，此处为红色。
+```
+def set_rgb(color):
+    if color == "red":
+        board.set_rgb([[1, 255, 0, 0], [2, 255, 0, 0]])
+    elif color == "green":
+        board.set_rgb([[1, 0, 255, 0], [2, 0, 255, 0]])
+    elif color == "blue":
+        board.set_rgb([[1, 0, 0, 255], [2, 0, 0, 255]])
+    else:
+        board.set_rgb([[1, 0, 0, 0], [2, 0, 0, 0]])
+```
 
-## 2. 色块位置识别
+Taking the example code `board.set_rgb([[1, 255, 0, 0],[2, 255, 0, 0]])`, the parameters within the parentheses have the following meanings:
+The first parameter `1` represents the RGB light number. `1` corresponds to RGB1, and `2` represents RGB2.
+The second parameter `[255, 0, 0]` determines the RGB color channel values. The `255`, `0`, and `0` respectively represent the values of R, G, and B. It is set to red.
+
+## 8.2 Target Positioning
+
+### 8.2.1 Program Logic
+
+Firstly, before positioning the color block, it is necessary to use the Lab color space to perform color recognition. Start by converting the RGB color space to Lab. Then, proceed with operations such as binarization, opening and closing, obtaining contours containing only the target color. This helps to achieve color recognition.
+
+Next, iterate through all the found contours of the target color and compare them to find the contour with the largest area. Retrieve the coordinates of the four corners of the target contour, and calculate the center coordinates.
+
+Lastly, outline the target contour with a red bounding box. Display the coordinates of the contour's center point. Then, control the LED lights on the expansion board to light up corresponding color.
+
+### 8.2.2 Operation Steps
 
 :::{Note}
-可在本节文件夹下观看演示效果。
+The input command is case-sensitive, and keywords can be completed using the Tab key.
 :::
 
-### 2.1 实现流程
+(1) Start the robot, and connect it to the system desktop using VNC.
 
-首先，色块在确定位置之前，需先进行颜色识别。我们使用Lab颜色空间来进行处理。先将RGB颜色空间转换为Lab，再进行二值化处理、开运算、闭运算等操作，获得只包含目标颜色的轮廓，即可实现物体颜色的识别。
+<img class="common_img" src="../_static/media/chapter_14/section_2/image2.png"  />
 
-接着，遍历所有找到的目标颜色轮廓，通过逐一比较，找到最大轮廓面积。然后获取目标轮廓的四个角点坐标，并计算出中心点坐标。
-
-最后，将目标轮廓用红框框出，显示轮廓的中心坐标，并控制扩展板的LED灯亮起目标颜色。
-
-### 2.2 玩法开启及关闭
-
-:::{Note}
-指令的输入需严格区分大小写，另外可按键盘"**Tab**"键进行关键词补齐。
-:::
-
-1)  将设备开机，并参照课程资料的"**[远程工具安装及容器进入方法\1. 远程桌面工具安装与连接]()**"内容，通过VNC远程连接工具连接。
-
-<img src="../_static/media/chapter_14/section_2/image2.png"  />
-
-2)  点击系统桌面左上角的图标<img src="../_static/media/chapter_14/section_2/image3.png"  />，打开Terminator终端，输入指令按下回车，关闭手机APP自启服务。
+(2) Click-on<img src="../_static/media/chapter_14/section_2/image3.png"  />to open the command-line terminal. Enter the following command and hit Enter to disable the app auto-start service.
 
 ```commandline
 sudo ./.stop_ros.sh
 ```
 
-3)  输入进入玩法程序所在目录的指令，按下回车键。
+(3) Execute the command to navigate to the directory where the game program is located.
 
 ```commandline
 cd course
 ```
 
-4)  输入运行玩法程序的指令，按下回车键。
+(4) Run the following command to execute the program.
 
 ```commandline
 python3 get_color_position.py
 ```
 
-5)  如需关闭此程序，可按下"**Ctrl+C**"，若关闭失败，可多次按下。
+(5) If you want to disable the program, please press “Ctrl+C”. If it fails, try again.
 
-玩法体验完毕后，可通过指令或重启机器人来开启手机APP服务。如未开启手机APP服务，则APP相关功能会失效。（若机器人重启，手机APP服务将会自动开启）
+(6) After running the program, you can enable the app service by using a command or restarting the robot. If the app service is not enabled, the related app functions will be inactive. If the robot is restarted, the app service will be automatically activated.
 
-点击桌面左上角终端图标<img src="../_static/media/chapter_14/section_2/image10.png"  />（**注意：需要在系统路径下输入指令，而不是在docker容器中输入开启APP服务的指令**），在系统路径下输入按下回车，启动APP服务，等待机械臂恢复至初始姿态，蜂鸣器"滴"一声即可。
+(7) Click<img src="../_static/media/chapter_14/section_2/image10.png"  />and enter the following command. Press “Enter” to start the app. Wait for the robotic arm to return to its initial posture and the buzzer to beep once.
 
 ```commandline
-python3 get_color_position.py
+sudo systemctl restart start_node.service
 ```
 
-<img src="../_static/media/chapter_14/section_2/image11.png"  />
+### 8.2.3 Project Outcome
 
-### 2.3 实现效果
+After running the program, the robotic arm moves to aim the camera directly at the front. In the live camera feed, when a red color block is recognized, it will be outlined in a bounding box. The x and y coordinates of the color block's center point will be displayed. The recognized color will be shown in the lower-left corner of the live camera feed.
 
-程序运行后，机械臂运动，使摄像头正对正前方。在回传画面内可以看到当红色色块被识别到后，会将红色色块框出，并显示色块中心点的x、y坐标，在回传画面左下角显示识别到的颜色。
 
-<img class="common_img" src="../_static/media/chapter_14/section_2/image12.png"  />
 
-### 2.4 程序简要分析
+### 8.2.4 Program Analysis
 
-该程序的源代码位于Docker容器中的：
+The source code of program is located in：[/home/ubuntu/course/get_color_position.py]()
 
-**/home/ubuntu/course/get_color_position.py**
+{lineno-start=1}
 
-<img src="../_static/media/chapter_14/section_2/image13.png"  />
+```
+#!/usr/bin/python3
+# coding=utf8
+import os
+import cv2
+import math
+import time
+import numpy as np
+from common.yaml_handle import get_yaml_data
+from common.ros_robot_controller_sdk import Board
 
-在获得最大轮廓面积后，通过调用cv2库内的minAreaRect()函数，可以得到其最小外接矩形，括号内是存放了点坐标的点集数组或向量。
+range_rgb = {
+    'red':   (0, 0, 255),
+    'blue':  (255, 0, 0),
+    'green': (0, 255, 0),
+    'black': (0, 0, 0),
+    'white': (255, 255, 255),
+    'None': (0, 0, 0)}
+```
 
-通过调用boxPoints()函数，可以获取目标矩形的四个顶点坐标。
+After obtaining the contour with the largest area, the minAreaRect() function from the cv2 library is called to obtain the minimum bounding rectangle of the contour. The point-set array or vector of the point coordinates are stored in the parenthesis.
+Call the `boxPoints()` function to obtain the coordinates of the four corners for the target rectangle.
 
-<img src="../_static/media/chapter_14/section_2/image15.png"  />
+{lineno-start=82}
 
-以"**box = np.int0(cv2.boxPoints(rect))**"为例，此处得到了目标轮廓最小外接矩形的四个顶点坐标，后续可以在此基础上，通过计算求得该矩形的中心坐标。
+```
+        box = np.int0(cv2.boxPoints(rect))
+```
 
-## 3. 颜色追踪
+For example, `box = np.int0(cv2.boxPoints(rect))` retrieves the coordinates of the four corners of the minimum bounding rectangle for the target contour. Using these coordinates, the center coordinates of the rectangle can be calculated.
+
+## 8.3 Color Tracking
+
+### 8.3.1 Program Description
+
+Recognize the color and process it with Lab color space. Firstly, convert RGB color space to LAB and then perform binaryzation, dilation and erosion and other operations to obtain the outline of the target color. Then frame the contour of the color to complete color recognition.
+Then process height of robotic arm after recognition. The coordinates (x,y,z) of center point of image take as the set value and the currently obtained coordinates are used as input value to update pid.
+Then, calculate on the basis the feedback of image position. Finally, the coordinate value will change linearly through the change of the position, so as to achieve the effect of tracking. 
+
+### 8.3.2 Operation Steps
 
 :::{Note}
-可在本节文件夹下观看演示效果。
-:::
-
-### 3.1 实验原理
-
-下面我们看下本节课整体实现的流程：
-
-首先需要对颜色进行识别，我们使用Lab颜色空间来进行处理。先将RGB颜色空间转换为Lab，然后进行二值化处理，再经过膨胀腐蚀等操作，可获得只包含目标颜色的轮廓，再将该颜色轮廓用圆圈框起，便可实现物体颜色的识别。
-
-接着在识别到后对机械臂高度部分进行处理，以图像的中心点的x、y、z坐标作为设定值，以当前获取的x、y、z坐标作为输入值进行更新pid。
-
-然后会根据图像位置的反馈进行计算，最后通过位置的变化使坐标数值进行线性变化，从而达到追踪的效果。
-
-该程序的源代码位于Docker容器中的：**/home/ubuntu/armpi_pro/src/color_tracking/scripts/color_tracking_node.py**
-
-<img src="../_static/media/chapter_14/section_3/image3.png"  alt="loading" />
-
-### 3.2 玩法开启及关闭
-
-:::{Note}
-指令的输入需严格区分大小写，另外可按键盘"Tab"键进行关键词补齐。
+It should be case sensitive when entering command and the “Tab” key can be used to complete the keywords.
 :::
 
 <span id="anchor_3_2_1" class="anchor"></span>
 
-- #### 3.2.1 玩法进入
+* **Enter Game** 
 
-1)  将设备开机，并参照课程资料的"**[远程工具安装及容器进入方法\1. 远程桌面工具安装与连接]()**"内容，通过VNC远程连接工具连接。
+(1) Power on the robot and use VNC Viewer to connect to the remote desktop.
 
-<img src="../_static/media/chapter_14/section_3/image4.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_3/image4.png"  />
 
 <span id="anchor_3_2_1_2" class="anchor"></span>
 
-2)  点击系统桌面左上角的图标<img src="../_static/media/chapter_14/section_3/image5.png"  />，打开Terminator终端。
+(2) Click <img src="../_static/media/chapter_14/section_3/image5.png"  />in the upper left corner of the system desktop to open the “Terminator”.
 
-<img src="../_static/media/chapter_14/section_3/image6.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_3/image6.png"  />
 
-3)  输入指令，然后按下回车进入颜色追踪玩法。当成进入后，会出现打印提示，如下图所示：
+(3) Enter the following command, and press “Enter” to access the color tracking game. After entering the game, the prompt shown in the following red box will appear.
 
 ```commandline
 rosservice call /color_tracking/enter "{}"
 ```
 
-<img src="../_static/media/chapter_14/section_3/image7.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_3/image7.png"  />
 
-- #### 3.2.2 回传图像开启
+* **Start image transmission** 
 
-1. **使用外部浏览器开启**
+**(1) Start with browser**
 
-**为避免过多占用树莓派的运行内存，建议使用外部浏览器来开启图像回传画面，具体步骤如下：**
+To avoid consuming too much running memory of Raspberry Pi. It is recommended to use an external browser to open the transmitted image. 
+The specific steps are as follows:
 
-- 选择任意一个外部浏览器，这里以谷歌浏览器为例。
+① Select a browser. Take Google Chrome as example.
 
 <img class="common_img" src="../_static/media/chapter_14/section_3/image8.jpeg"  alt="loading" />
 
--  然后在地址栏输入默认IP地址如"**192.168.149.1:8080/**"
+② Then enter the default IP address **“192.168.149.1:8080/”** (Note: this IP address is the default IP address for direction connection mode. If it is LAN mode, please enter “Device IP address：8080/” for example, “192.168.149.1:8080/”) If fail to open, you can try it several times or restart camera.
 
 :::{Note}
-此IP地址为直连模式下的默认IP地址，若为局域网模式，则输入："**设备IP地址+：8080/"，如"192.168.149.1:8080/**"
-
-如果是局域网连接模式，设备IP地址获取方法可参考"**[机器人网络课程配置\1. 修改网络连接模式]()**"
+ If it is in LAN mode, the method to obtain device IP address can refer to “[Robot Network Configuration Course]()”
 :::
 
 <img class="common_img" src="../_static/media/chapter_14/section_3/image9.png"  />
 
--  然后点击下图框出选项，即可打开回传画面。
+③ Then, click the option shown in the following figure to open the display window of the transmitted image.
 
 <img class="common_img" src="../_static/media/chapter_14/section_3/image10.png"  />
 
-<img src="../_static/media/chapter_14/section_3/image11.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_3/image11.png"  />
 
-2. **使用rqt工具开启**
+**(2) Start with rqt** 
 
--  [3.2 玩法开启及关闭\ 玩法进入](#anchor_3_2_1)终端不关闭的情况下，再打开一个新的终端。
+① After completing the steps of “[3.2.1 Enter Game]()” and do not exit the terminal, open a new terminal.
 
--  输入指令，按下回车，稍等片刻即可打开rqt工具。
+② Enter the following command and press “Enter” to open rqt.
 
 ```commandline
 rqt_image_view
 ```
 
-<img src="../_static/media/chapter_14/section_3/image12.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_3/image12.png"  />
 
-3. 单击下图所示红框位置，对视觉巡线的话题选项（topic）进行选择，选项为"**/visual_processing/image_result**"，其余设置保持不变。
+③ Click the red box as the figure shown below, select “/visual_processing/image_result” for the topic of color tracking and remain other settings unchanged. 
 
-<img src="../_static/media/chapter_14/section_3/image13.png"  alt="loading" />
+<img class="common_img" src="../_static/media/chapter_14/section_3/image13.png"  alt="loading" />
 
 :::{Note}
-图像开启后请务必选择话题选项，否则在后续玩法启动后，将无法正常显示其识别过程。
+After opening image, the topic option must be selected. Otherwise, after starting game, the recognition process can not be displayed normally.
 :::
 
 <span id="anchor_3_2_2" class="anchor"></span>
 
-- #### 3.2.3 玩法启动
+* **Start Game**
 
-1.  此时返回[3.2 玩法开启及关闭\ 玩法进入](#anchor_3_2_1)开启的终端，输入指令，同理出现下图所框提示即为启动成功。
+(1) Now, enter the terminal according to the steps in “[Enter Game]()” and input the following command. Then if the prompt shown in the following red box appears, which means game has been started successfully.
 
 ```commandline
 rosservice call /color_tracking/set_running "data: true"
 ```
 
-<img src="../_static/media/chapter_14/section_3/image14.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_3/image14.png"  />
 
-2.  启动玩法后我们还需要设置参数即选择追踪的目标颜色，这里以追踪蓝色为例，输入指令：
+(2) After starting the game, select the target color. Take blue as example. Enter the following command. 
 
 ```commandline
 rosservice call /color_tracking/set_target "data: 'blue'"
 ```
 
 :::{Note}
-追踪绿色和红色可在"data: ' '内填写green或red。（严格区分大小写）
+ If want to change to green or red, you can fill in green or red in "data: ' ' (The entered command should be case sensitive).
 :::
 
-<img src="../_static/media/chapter_14/section_3/image15.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_3/image15.png"  />
 
-- #### 3.2.4 玩法停止及退出
+* **Stop and Exit** 
 
-1)  如需停止该玩法，输入指令，在停止该玩法后可参考[2.3 玩法启动](#anchor_3_2_2)，更换绿色或红色进行追踪。
+(1) If want to stop the game, enter the following command. After stopping, you can refer to the content of “[Start Game]()” to change the tracking color to green or red.
 
 ```commandline
 rosservice call /color_tracking/set_running "data: false"
 ```
 
-<img src="../_static/media/chapter_14/section_3/image16.png"  />
-
-2)  如需退出该玩法，输入指令，按下回车即可退出。
+(2) If want to exit the game, enter the command below to exit.
 
 ```commandline
 rosservice call /color_tracking/exit "{}"
 ```
 
-<img src="../_static/media/chapter_14/section_3/image17.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_3/image17.png"  />
 
 :::{Note}
-玩法在未退出时，会在当前树莓派通电状态下持续运行。为避免过多占用树莓派的运行内存，如需执行其它AI视玩法，请先按照上述指令关闭当前玩法，并将命令行终端关闭。
+Before exiting the game, it will keep running when Raspberry Pi is powered on. To avoid consume too much running memory of Raspberry Pi, you need to exit the game first according to the operation steps above before performing other AI vision games.
 :::
 
-3)  如需关闭摄像头回传图像，返回开启rqt工具的终端，按下"Ctrl+C"即可，若关闭失败，可重复多次，直至退出。
+(3) If want exit the image transmission, press “Ctrl+C” to return and open the terminal of rqt. If fail to exit, please keep trying several times.
 
-### 3.3 功能实现
+### 8.3.3 Project Outcome
 
-玩法开启后我们将蓝方块移至摄像头范围内，在rqt工具内可以看到当识别到后，会将目标颜色框出。此时手持色块进行缓慢移动，机械臂可以跟随目标颜色的移动而移动。
+After starting game, place the blue block within the detected range of camera. The target color will be framed in rqt tool after recognition. At this time, move the block slowly. Then the robotic arm will move with the target color.
 
-<img src="../_static/media/chapter_14/section_3/image18.png"  alt="loading" />
 
-### 3.4 功能延伸
+
+### 8.4.4 Program Analysis
+
+The source code for the program corresponding to this section is located in the Docker container:
+
+[/home/ubuntu/armpi_pro/src/visual_processing/scripts/visual_processing_node.py]()（image processing）
+
+[/home/ubuntu/armpi_pro/src/color_tracking/scripts/color_tracking_node.py]()（tracking control）
+
+:::{Note}
+please back up the initial program before making any modifications. It is prohibited editing the source code files directly to prevent making changes in an incorrect manner that could lead to robot malfunctions, rendering them irreparable.
+:::
+
+**4.4.1 Import Parameter Module**
+
+| **Imported Module**                                  | **Function**                                                 |
+| ---------------------------------------------------- | ------------------------------------------------------------ |
+| import sys                                           | The sys module of Python is imported to access to system-related functionalities and variables. |
+| import cv2                                           | The OpenCV library of Python is imported to perform image processing and computer vision-related functions. |
+| import time                                          | The time module of Python is imported to perform time-related functionalities, such as delay operations. |
+| import math                                          | The math module of Python is imported to perform mathematical operations and functions. |
+| import rospy                                         | The Python library rosy is imported for  communication and interaction with ROS. |
+| import numpy as np                                   | The NumPy library is imported and is renamed as np for performing array and matrix operations. |
+| from armpi_pro import Misc                           | The Misc module is imported from arm_pi_pro package to handle the recognized rectangular data. |
+| from armpi_pro import apriltag                       | The apriltag module is imported from arm_pi_pro package  to perform Apriltag recognition and processing. |
+| from threading import RLock, Timer                   | The “RLock” class and “Timer” class is imported from the threading module of Python for thread-related operations. |
+| from std_srvs.srv import *                           | All service message types are imported from the std_srvs in ROS for defining and using standard service messages. |
+| from std_msgs.msg import *                           | All message types are imported form the std_msgs package in ROS for defining and using standard messages. |
+| from sensor_msgs.msg import Image                    | The image message type is imported from the sensor_msgs packages for processing image data. |
+| from visual_processing.msg import Result             | The Result message type is imported from the visual_processing package for the message of image processing results. |
+| from visual_processing.srv import SetParam           | The SetParam service type is imported from the visual_processing packages for using customs service related to parameter settings. |
+| from sensor.msg import Led                           | The Led message type is imported form the sensor.msg module for controlling or representing the LED status on a sensor. |
+| from chassis_control.msg import *                    | All message types are imported from the chassis_control.msg module, which indicated that all message types defined in this module is imported to perform the chassis control. |
+| from visual_patrol.srv import SetTarget              | The SetTarget service type is imported from the visual_patrol.srv module is used to set a target for line following. |
+| from hiwonder_servo_msgs.msg import MultiRawIdPosDur | The MultiRawIdPosDur message type is imported from the hiwonder_servo_msgs.msg module for controlling servos. |
+| from armpi_pro import PID                            | The PID class is imported from thearmpi_pro module to perform PID algorithm. |
+| from armpi_pro import bus_servo_control              | The bus_servo_control module is imported from the armpi_pro module, including the functions and methods related to the servo control. |
+| from kinematics import ik_transform                  | The ik_transform function is imported from the kinematics module to perform conversion of inverse kinematics. |
+
+**(1) Initializing functions and variables**
+
+{lineno-start=229}
+
+```
+	# 单颜色识别函数(single color recognition function)
+def color_detect(img, color):
+    global pub_time
+    global publish_en
+    global color_range_list
+    
+    if color == 'None':
+        return img
+    
+    msg = Result()
+    area_max = 0
+    area_max_contour = 0
+    img_copy = img.copy()
+    img_h, img_w = img.shape[:2]
+    frame_resize = cv2.resize(img_copy, size_m, interpolation=cv2.INTER_NEAREST)
+    frame_lab = cv2.cvtColor(frame_resize, cv2.COLOR_BGR2LAB)  # 将图像转换到LAB空间(convert the image to LAB space)
+
+    if color in color_range_list:
+        color_range = color_range_list[color]
+        frame_mask = cv2.inRange(frame_lab, tuple(color_range['min']), tuple(color_range['max']))  # 对原图像和掩模进行位运算(perform bitwise operation on the original image and the mask)
+        eroded = cv2.erode(frame_mask, cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2)))          # 腐蚀(erode)
+        dilated = cv2.dilate(eroded, cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2)))            # 膨胀(dilate)
+        contours = cv2.findContours(dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)[-2]         # 找出轮廓(find contours)
+        area_max_contour, area_max = getAreaMaxContour(contours)                                   # 找出最大轮廓(find the largest contour)
+
+        if area_max > 100:  # 有找到最大面积(found the maximum area)
+            (centerx, centery), radius = cv2.minEnclosingCircle(area_max_contour)  # 获取最小外接圆(obtain the minimum circumscribed circle)
+            msg.center_x = int(misc.map(centerx, 0, size_m[0], 0, img_w))
+            msg.center_y = int(misc.map(centery, 0, size_m[1], 0, img_h))
+            msg.data = int(misc.map(radius, 0, size_m[0], 0, img_w))
+            cv2.circle(img, (msg.center_x, msg.center_y), msg.data+5, range_rgb[color], 2)
+```
+
+**(2) Binarization**
+
+Using the `inRange()` function from the cv2 library to perform binarization on image. 
+
+{lineno-start=248}
+
+```
+	        frame_mask = cv2.inRange(frame_lab, tuple(color_range['min']), tuple(color_range['max']))  # 对原图像和掩模进行位运算(perform bitwise operation on the original image and the mask)
+```
+
+The first parameter `frame_lab` is the input image;
+
+The second parameter `tuple(color_range['min'])` is the lower limit of threshold;
+
+The third parameter `tuple(color_range['max'])` is the upper limit of threshold.
+
+**(3) Dilation and erosion**
+
+To reduce interference and create smoother images, erosion and dilation processes are applied.
+
+{lineno-start=249}
+
+```
+	        eroded = cv2.erode(frame_mask, cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2)))          # 腐蚀(erode)
+        dilated = cv2.dilate(eroded, cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2)))            # 膨胀(dilate)
+```
+
+erode() function is applied to erode image. Here uses an example of the code `eroded = cv2.erode(frame_mask, cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3)))`. The meaning of parameters in parentheses are as follow:
+
+The first parameter `frame_mask` is the input image.
+
+The second parameter `cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))` is the structural elements and kernel that determines the nature of operation. The first parameter in parentheses is the shape of kernel and the second parameter is the size of kernel.
+
+dilate() function is applied to dilate image. The meaning of parameters in parentheses is the same as the parameters of erode() function.
+
+**(4) Obtain the contour of the maximum area**
+
+After processing the above image, obtain the contour of the recognition target.  The findContours() function in cv2 library is involved in this process.
+
+{lineno-start=251}
+
+```
+	        contours = cv2.findContours(dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)[-2]         # 找出轮廓(find contours)
+```
+
+The `erode()` function is applied to erode. Take code “contours = cv2.findContours(dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)[-2]” as example.
+
+The first parameter `dilated` is the input image.
+
+The second parameter `cv2.RETR_EXTERNAL` is the contour retrieval mode.
+
+The third parameter `cv2.CHAIN_APPROX_NONE)[-2]` is the approximate method of contour.
+Find the maximum contour from the obtained contours. To avoid interference, set a minimum value. Only when the area is greater than this 
+minimum value, the target contour will take effect. The minimum value 
+here is  `100`.
+
+{lineno-start=252}
+
+```
+	        area_max_contour, area_max = getAreaMaxContour(contours)                                   # 找出最大轮廓(find the largest contour)
+
+        if area_max > 100:  # 有找到最大面积(found the maximum area)
+```
+
+**(5) Obtain the minimum enclosing circle and display it on the transmitted image**
+
+Using the `minEnclosingCircle()` function from the cv2 library to obtain the minimum bounding circle and its center coordinates for the target contour. Then, utilize the `circle()` function to display the enclosing circle on the live feed image.
+
+{lineno-start=254}
+
+```
+	        if area_max > 100:  # 有找到最大面积(found the maximum area)
+            (centerx, centery), radius = cv2.minEnclosingCircle(area_max_contour)  # 获取最小外接圆(obtain the minimum circumscribed circle)
+            msg.center_x = int(misc.map(centerx, 0, size_m[0], 0, img_w))
+            msg.center_y = int(misc.map(centery, 0, size_m[1], 0, img_h))
+            msg.data = int(misc.map(radius, 0, size_m[0], 0, img_w))
+            cv2.circle(img, (msg.center_x, msg.center_y), msg.data+5, range_rgb[color], 2)
+            publish_en = True
+```
+
+**(6) Tracking Control**
+
+Take the center coordinates X and Y as the set value.
+Perform an inverse kinematic calculation using the X and Y coordinates of the image center as set values and the X and Y coordinates of the currently detected target as input values to determine the target position. 
+
+{lineno-start=142}
+
+```
+                # Z轴追踪((tracking along the Z-axis)）
+                z_pid.SetPoint = img_h / 2.0  # 设定(set)
+                z_pid.update(center_y)        # 当前(current)
+                dy = z_pid.output             # 输出(output)
+                z_dis += dy
+
+                z_dis = 0.22 if z_dis > 0.22 else z_dis
+                z_dis = 0.17 if z_dis < 0.17 else z_dis
+
+	                target = ik.setPitchRanges((0, round(y_dis, 4), round(z_dis, 4)), -90, -85, -95) # 逆运动学求解（inverse kinematics solving）
+                if target:
+                    # 发布舵机控制节点消息,移动机械臂(publish node message for servo control to move the robotic arm)
+                    servo_data = target[1]
+                    bus_servo_control.set_servos(joints_pub, 0.02, (
+                        (3, servo_data['servo3']), (4, servo_data['servo4']), (5, servo_data['servo5']), (6, x_dis)))
+```
+
+The inverse kinematics takes an example of the code`ik.setPitchRanges((0, round(y_dis, 4), round(z_dis, 4)), -90, -85, -95)`, where the meaning of the parameters in parentheses are as follow:
+
+In the first parameter `(0, round(y_dis, 4), round(z_dis, 4)`, `0` represents the position on x axis; `round(y_dis, 4)` represents the position on Y axis; `round(z_dis, 4)` represents the position on Z axis.
+
+The second parameter `-90` represents the pitch angle.
+
+The third parameter `-80` represents the range of the pitch angle.
+
+The fourth parameter `-90` represents the range of the pitch angle.
+
+The servo control takes an example of `bus_servo_control.set_servos(joints_pub, 20, ( (3, servo_data['servo3']), (4, servo_data['servo4']), (5, servo_data['servo5']), (6, x_dis)))`, where the meaning of the parameters in parentheses are as follow:
+
+The first parameter, `joints_pub,` publishes messages to control the servo. 
+
+The second parameter `0.02` represents the runtime in the unit of seconds. 
+
+The third parameter, `((3, servo_data['servo3']), (4, servo_data['servo4']), (5, servo_data['servo5']), (6, x_dis)),` consists of tuples where:`3` is the servo number.
+
+`servo_data['servo3']` is the angle of the servo.
+
+Similarly, `(4, servo_data['servo4']), (5, servo_data['servo5']), (6, x_dis)` follow the same pattern.
+
+
+### 8.3.5 Function Extension
 
 <span id="canchor_3_4_1" class="anchor"></span>
 
-- #### 增加新的可识别颜色
+* **Add New Recognition Color** 
 
-颜色追踪玩法程序内置了三种颜色：红、绿、蓝。除了这三种内置的颜色，我们还可以添加其它可识别颜色，例如**我们将粉色作为新的可识别颜色，程序步骤如下：**
+Color tracking has three built-in color red, green and blue. In addition to the built-in colors, we can add other recognition colors. For example, add pink as a new recognizable color. The operation steps are as follow:
 
-1)  参照[步骤2](#anchor_3_2_1_2)，打开新的终端，输入指令，打开颜色阈值调试工具。若在弹出的界面中没有出现回传画面，说明摄像头未连接成功，需检查一下摄像头连接线是否连接好。
+(1) Open the terminal, enter the following command and press “Enter” to open the tool for color threshold adjustment. If no transmitted image appears in the pop-up interface, it means the camera fails to connect and needs to be checked whether the wire is connected.
 
 ```commandline
 python3 /home/ubuntu/software/lab_config/main.py
 ```
 
-<img src="../_static/media/chapter_14/section_3/image19.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_3/image19.png"  />
 
-<img src="../_static/media/chapter_14/section_3/image20.png"  alt="loading" />
+<img class="common_img" src="../_static/media/chapter_14/section_3/image20.png"  alt="loading" />
 
-2)  连接成功后，我们可以看到界面右侧是实时回传画面，左侧是需要被采集的颜色。在界面右下角的选项栏中选择"**Add**"增加新的颜色。
+(2) After the camera is connected completely, you can see that the right side is real-time transmitted image and the right side is the color to be collected. Then click “Add” in the lower right color to name the new color.
 
-<img src="../_static/media/chapter_14/section_3/image21.png"  alt="loading" />
+<img class="common_img" src="../_static/media/chapter_14/section_3/image21.png"  alt="loading" />
 
-3)  我们以粉色为例，填写增加的颜色的名字，点击"**OK**"即增加成功；此时右下角的颜色选项栏中会将颜色更新为"**pink**"。
+(3)  Fill in the name of added color and click “Ok”. The color will be updated to “pink” in the color options bar in the lower right corner.
 
 <img class="common_img" src="../_static/media/chapter_14/section_3/image22.png"  alt="loading" />
 
-<img src="../_static/media/chapter_14/section_3/image23.png"  alt="loading" />
+<img class="common_img" src="../_static/media/chapter_14/section_3/image23.png"  alt="loading" />
 
-4)  将摄像头对准粉色物品，然后拖动下方的六个滑杆，使得左侧画面中粉色物品的区域全部变为白色，其它区域为黑色。接着点击"**save**"按钮保存数据。
+(4) Point the camera at the pink object. Then drag the following six slider bars until the pink area becomes white and other areas become black and click “Save” to save data.
 
-<img src="../_static/media/chapter_14/section_3/image24.png"  alt="loading" />
+<img class="common_img" src="../_static/media/chapter_14/section_3/image24.png"  alt="loading" />
 
-5)  参照[步骤2](#anchor_3_2_1_2)，打开新的终端，输入进到玩法程序所在目录的指令，按下回车。
+(5) Refer to step 2 to open a new terminal. Enter the following command to navigate to the directory where the game program is located, then press “Enter”. 
 
 ```commandline
 cd /home/ubuntu/armpi_pro/src/color_tracking/scripts/
 ```
 
-<img src="../_static/media/chapter_14/section_3/image25.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_3/image25.png"  />
 
-6)  输入指令，打开程序。
+(6) Enter the command below to open the program.
 
 ```commandline
 vim color_tracking_node.py
 ```
 
-<img src="../_static/media/chapter_14/section_3/image26.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_3/image26.png"  />
 
-7)  找到要修改的代码部分，按下键盘的"i"键，当出现左下角框出内容时，即进入编辑模式。
+(7) Locate the code to be modified, press the “i” key on the keyboard, and enter the editing mode when the content shown in the following red box in the lower-left corner appears.
 
-<img src="../_static/media/chapter_14/section_3/image27.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_3/image27.png"  />
 
-8)  在源代码中输入粉色的RGB值。
+(8) Enter the pink’s RGB value “'pink': (203, 192, 255),” into the source code.
+```py
+'pink': (203, 192, 255),
+```
 
-**'pink': (203, 192, 255),**
+<img class="common_img" src="../_static/media/chapter_14/section_3/image28.png"  />
 
-<img src="../_static/media/chapter_14/section_3/image28.png"  />
+(9)  Press the “Esc”, enter “:wq”, and press “Enter” to complete the save and exit operation.
 
-9)  按下键盘的"**Esc**"键，并输入"**:wq**"，按下回车，即可完成保存与退出操作。
+<img class="common_img" src="../_static/media/chapter_14/section_3/image29.png"  />
 
-<img src="../_static/media/chapter_14/section_3/image29.png"  />
+(10)  Follow “[Operation Steps]()” to start the color tracking game.
 
-10) 按照（"[3.2 玩法开启及关闭\ 玩法进入](#anchor_3_2_1)"）的步骤启动颜色追踪玩法。
+(11) Place the pink object in front of the camera, and move it slowly. The ArmPi Pro robotic arm will follow its movement.
 
-11) 将粉色物品放在摄像头前，并手持该物品缓慢移动，ArmPi Pro的机械臂便会跟随粉色物品的移动而移动。
+<img class="common_img" src="../_static/media/chapter_14/section_3/image30.png"  alt="loading" />
 
-<img src="../_static/media/chapter_14/section_3/image30.png"  alt="loading" />
+(12) If you need to add other colors as recognizable colors, you can refer to “[3.4.1 Add New recognition Color]()”.
 
-12) 如果需添加其它颜色作为可识别颜色，可参考前面的步骤[3.4 功能延\ 增加新的可识别颜色](#canchor_3_4_1)
 
-### 4.5 程序简要分析
+## 8.4 Tag Recognition
 
-本小节课程文档对应程序的源代码位于Docker容器中的：
+### 8.4.1 Program Description
 
-**/home/ubuntu/armpi_pro/src/visual_processing/scripts/visual_processing_node.py（图像处理）**
+AprilTag as a vision location identifier is similar to QR code or bar code, which can detect the tag and calculate its relative position quickly.
 
-**/home/ubuntu/armpi_pro/src/color_tracking/scripts/color_tracking_node.py（追踪控制）**
+We use the trained tag. Firstly, obtain and process image. Then detect the tag and get the information. Finally, frame the recognized tag and perform the corresponding action.
+
+### 8.4.2 Operation Steps
 
 :::{Note}
-在程序修改前务必将原有出厂程序进行备份，再进行修改，禁止直接在源代码文件中进行修改，避免以错误的方式修改参数之后导致机器人异常且无法修复！！！
-:::
-
-
-- #### 4.5.1 导入参数模块
-
-| **导入模块** | **作用** |
-|----|----|
-| import sys | 导入了Python的sys模块，用于访问系统相关的功能和变量 |
-| import cv2 | 导入了OpenCV库，用于图像处理和计算机视觉相关的功能 |
-| import time | 导入了Python的time模块，用于时间相关的功能，例如延时操作 |
-| import math | 导入了Python的math模块，用于数学运算和函数 |
-| import rospy | 导入了ROS的Python库rospy，用于与ROS系统进行通信和交互 |
-| import numpy as np | 导入了NumPy库，并将其重命名为np，用于进行数组和矩阵操作 |
-| from armpi_pro import misc | 从armpi_pro包中导入了misc模块，用于处理识别得到的矩形数据 |
-| from armpi_pro import apriltag | 从armpi_pro包中导入了apriltag模块，用于Apriltag识别和处理的功能 |
-| from threading import RLock, Timer | 从Python的threading模块中导入了RLock类和Timer类，用于线程相关的操作 |
-| from std_srvs.srv import \* | 从ROS的std_srvs包中导入了所有的服务消息类型，用于定义和使用标准的服务消息 |
-| from std_msgs.msg import \* | 从ROS的std_msgs包中导入了所有的消息类型，用于定义和使用标准的消息 |
-| from sensor_msgs.msg import Image | 从ROS的sensor_msgs包中导入了Image消息类型，用于处理图像数据 |
-| from visual_processing.msg import Result | 从visual_processing包中导入了Result消息类型，用于图像处理结果的消息 |
-| from visual_processing.srv import SetParam | 从visual_processing包中导入了SetParam服务类型，设置参数的自定义服务 |
-| from ros_robot_controller.msg import RGBState, RGBsState | 从ros_robot_controller.msg模块导入 RGBState, RGBsState消息类型。用于控制或表示传感器设备上的RGB灯状态 |
-| from chassis_control.msg import \* | 从 chassis_control.msg 模块导入所有消息类型。这意味着导入该模块中定义的所有消息类型，用于底盘控制 |
-| from visual_patrol.srv import SetTarget | 从 visual_patrol.srv 模块导入 SetTarget 服务类型。用于设置视觉巡逻的目标 |
-| from hiwonder_servo_msgs.msg import MultiRawIdPosDur | hiwonder_servo_msgs.msg 模块导入 MultiRawIdPosDur 消息类型。用于控制舵机设备 |
-| from armpi_pro import pid | 从 armpi_pro 模块导入pid类。用于实现比例-积分-微分（PID）控制算法 |
-| from armpi_pro import bus_servo_control | 从 armpi_pro 模块导入 bus_servo_control 模块。包含与舵机控制相关的函数和方法 |
-| from kinematics import ik_transform | 从 kinematics 模块导入 ik_transform 函数。用于进行逆运动学变换 |
-
-- #### 4.5.2 功能逻辑
-
-根据实现效果，梳理该玩法的实现逻辑如下图所示：
-
-<img class="common_img" src="../_static/media/chapter_14/section_3/image31.png"  />
-
-通过摄像头获取图像信息，再进行图像处理，即对图像进行二值化处理，为了降低干扰，令图像更平滑，对图像进行腐蚀和膨胀处理，然后获取目标最大面积轮廓和最小外接圆，得到颜色追踪区域，接着根据逆运动学求解出机械臂的运动角度，控制舵机进行颜色追踪。
-
-- #### 4.5.3 程序逻辑及对应的代码分析
-
-从程序文件梳理得到程序逻辑流程图如下图所示。
-
-<img class="common_img" src="../_static/media/chapter_14/section_3/image32.png"  />
-
-从上图得到，程序的逻辑流程主要为颜色识别函数和舵机控制，以下的文档内容将依照上述程序逻辑流程图进行编写。
-
-1. **图像处理**
-
-- 初始化函数与变量
-
-<img src="../_static/media/chapter_14/section_3/image33.png"  />
-
-- 二值化处理
-
-采用cv2库中的inRange()函数对图像进行二值化处理。
-
-<img src="../_static/media/chapter_14/section_3/image34.png"  />
-
-第一个参数"**frame_lab**"是输入图像；
-
-第二个参数"**tuple(color_range\['min'\])**"是阈值下限；
-
-第三个参数"**tuple(color_range\['max'\])**"是阈值上限；
-
-- 腐蚀膨胀处理
-
-为了降低干扰，令图像更平滑，需要对图像进行腐蚀和膨胀处理。
-
-<img src="../_static/media/chapter_14/section_3/image35.png"  />
-
-erode()函数用于对图像进行腐蚀操作。以代码"**eroded = cv2.erode(frame_mask, cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2)))**"为例，括号内的参数含义如下：
-
-第一个参数"**frame_mask**"是输入图像；
-
-第二个参数"**cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2))**"是决定操作性质的结构元素或内核。其中，括号内的第一个参数是内核形状，第二个参数是内核尺寸。
-
-dilate()函数用于对图像进行膨胀操作。此函数括号内参数的含义与erode()函数的相同。
-
-- 获取最大面积轮廓
-
-完成上述的图像处理后，需要获取识别目标的轮廓，此处涉及cv2库中的findContours()函数。
-
-<img src="../_static/media/chapter_14/section_3/image36.png"  />
-
-erode()函数用于对图像进行腐蚀操作。以代码"**contours = cv2.findContours(dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)\[-2\]**"为例：
-
-第一个参数"**dilated**"是输入图像；
-
-第二个参数"**cv2.RETR_EXTERNAL**"是轮廓的检索模式；
-
-第三个参数" **cv2.CHAIN_APPROX_NONE)\[-2\]**"是轮廓的近似方法。
-
-在获得的轮廓中寻找面积最大的轮廓，而为了避免干扰，需要设定一个最小值，仅当面积大于该值时，目标轮廓才有效，此处最小值为"**100**"。
-
-<img src="../_static/media/chapter_14/section_3/image37.png"  />
-
-- 获取最小外接圆，并在回传画面中显示出来
-
-采用cv2库中的minEnclosingCircle()函数获取目标轮廓的最小外接圆与圆心坐标，并通过circle()函数将外接圆在回传画面中显示出来。
-
-<img src="../_static/media/chapter_14/section_3/image38.png"  />
-
-2. **追踪控制**
-
-以图像中心点的X、Y坐标为设定值，以当前识别目标的X、Y坐标为输入值，进行逆运动学计算，得到目标位置。
-
-<img src="../_static/media/chapter_14/section_3/image39.png"  />
-
-逆运动学计算以代码为例"**ik.setPitchRanges((0, round(y_dis, 4), round(z_dis, 4)), -90, -85, -95)**"为例：括号内的参数含义如下：
-
-第一个参数"**(0, round(y_dis, 4), round(z_dis, 4)**"，"**0**"是X轴上的位置，"**round(y_dis, 4)**"是Y轴上的位置，"**round(z_dis, 4)**"是Z 轴上的位置；
-
-第二个参数："**-90**"是俯仰角。
-
-第三个参数："**-85**"是俯仰角范围。
-
-第四个参数："**-95**"是俯仰角范围。
-
-舵机控制以代码"**bus_servo_control.set_servos(joints_pub, 0.02, ( (3, servo_data\['servo3'\]),(4,servo_data\['servo4'\]), (5, servo_data\['servo5'\]), (6, x_dis)))**"为例，括号内的参数含义如下：
-
-第一个参数"**joints_pub**"是发布舵机控制节点消息；
-
-第二个参数："**0.02**"是运行时间，单位为秒。
-
-第三个参数："**( (3, servo_data\['servo3'\]), (4, servo_data\['servo4'\]), (5, servo_data\['servo5'\]), (6, x_dis)**"，其中"**3**"是舵机编号，"**servo_data\['servo3'\]**"是舵机角度，"**(4, servo_data\['servo4'\]), (5, servo_data\['servo5'\]), (6, x_dis)**"同理。
-
-## 4. 标签识别
-
-:::{Note}
-可在本节文件夹下观看演示效果。
-::::
-
-### 4.1 实验原理
-
-AprilTag作为一种视觉定位标志符，类似于二维码或者条形码，可以用于快速地检测标签并计算出其相对位置，能够满足实时性的要求。
-
-我们使用训练好的标签模型，通过摄像头获取标签图像，并对它进行处理，然后对标签进行检测，获取标签信息，最后将识别到的标签框出，并控制机器人做出对应的动作。
-
-该程序的源代码位于Docker容器中的：**/home/ubuntu/armpi_pro/src/apriltag_detect/scripts/apriltag_detect_node.py**
-
-<img src="../_static/media/chapter_14/section_4/image3.png"  alt="loading" />
-
-### 4.2 玩法开启及关闭
-
-:::{Note}
-指令的输入需严格区分大小写，另外可按键盘"Tab"键进行关键词补齐。
+It should be case sensitive when entering command and the “Tab” key can be used to complete the keywords.
 :::
 
 <span id="anchor_4_2_1" class="anchor"></span>
 
-- #### 4.2.1 玩法进入
+* **Enter Game** 
 
-1)  将设备开机，并参照课程资料的"**[远程工具安装及容器进入方法\1. 远程桌面工具安装与连接]()**"内容，通过VNC远程连接工具连接。
+(1) Power on the robot and use VNC Viewer to connect to the remote desktop.
 
 <img class="common_img"  src="../_static/media/chapter_14/section_4/image4.png"  />
 
-2)  点击系统桌面左上角的图标<img src="../_static/media/chapter_14/section_4/image5.png"  />，打开Terminator终端。
+(2) Click <img src="../_static/media/chapter_14/section_4/image5.png"  /> in the upper left corner of the system desktop to open the “Terminator”.
 
-<img src="../_static/media/chapter_14/section_4/image6.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_4/image6.png"  />
 
-3)  输入指令，然后按下回车进入标签识别玩法。当成进入后，会出现打印提示，如下图所示：
+(3) Enter the following command, and press “Enter” to access the tag recognition game. After entering the game, the prompt shown in the following red box will appear.
 
 ```commandline
 rosservice call /apriltag_detect/enter "{}"
 ```
 
-<img src="../_static/media/chapter_14/section_4/image7.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_4/image7.png"  />
 
-- #### 4.2.2 回传图像开启
+* **Start image transmission** 
 
-1. **使用外部浏览器开启**
+**(1)  Start with browser**
 
-**为避免过多占用树莓派的运行内存，建议使用外部浏览器来开启图像回传画面，具体步骤如下：**
+To avoid consuming too much running memory of Raspberry Pi. It is recommended to use an external browser to open the transmitted image. 
+The specific steps are as follows:
 
-- 选择任意一个外部浏览器，这里以谷歌浏览器为例。
+① Select a browser. Take Google Chrome as example.
 
 <img class="common_img" src="../_static/media/chapter_14/section_4/image8.jpeg"  alt="loading" />
 
-- 然后在地址栏输入默认IP地址如"**192.168.149.1:8080/**"，（注意：此IP地址为直连模式下的默认IP地址，若为局域网模式，则输入："**设备IP地址+：8080/"，如"192.168.149.1:8080/**"）。如果打开失败，可以重复多次或者重启树莓派和电脑。
+② Then enter the default IP address “192.168.149.1:8080/” (Note: this IP address is the default IP address for direction connection mode. If it is LAN mode, please enter “Device IP address+：8080/” for example, “192.168.149.1:8080/”) If fail to open, you can try it several times or restart camera.
 
 :::{Note}
-如果是局域网连接模式，设备IP地址获取方法可参考"**[机器人网络配置课程\2. 修改网络连接模式]()**"
+If it is in LAN mode, the method to obtain device IP address can refer to “[Robot Network Configuration Course]()”
 :::
 
 <img class="common_img" src="../_static/media/chapter_14/section_4/image9.png"  />
 
-- 然后点击下图框出选项，即可打开回传画面。
+
+
+③ Then, click the option shown in the following figure to open the display window of the transmitted image.
 
 <img class="common_img" src="../_static/media/chapter_14/section_4/image10.png"  />
 
-<img src="../_static/media/chapter_14/section_4/image11.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_4/image11.png"  />
 
-2. **使用rqt工具开启**
+**(2) Start with rqt**
 
--  [4.2 玩法开启及关闭\ 玩法进入](#anchor_4_2_1)终端不关闭的情况下，再打开一个新的终端。
+① After completing the steps of “[Enter Game]()” and do not exit the terminal, open a new terminal.
 
--  输入指令，按下回车，稍等片刻即可打开rqt工具。
+② Enter command “rqt_image_view” and press “Enter” to open rqt.
 
-```commandline
+```
 rqt_image_view
 ```
 
-<img src="../_static/media/chapter_14/section_4/image12.png"  />
-
--  单击下图所示红框位置，对视觉巡线的话题选项（topic）进行选择，选项为"**/visual_processing/image_result**"，其余设置保持不变。
-
-<img src="../_static/media/chapter_14/section_4/image13.png"  alt="loading" />
+<img class="common_img" src="../_static/media/chapter_14/section_4/image13.png"  alt="loading" />
 
 :::{Note}
-图像开启后请务必选择话题选项，否则在后续玩法启动后，将无法正常显示其识别过程。
+ After opening image, the topic option must be selected. Otherwise, after starting game, the recognition process can not be displayed normally.
 :::
 
-3. **玩法启动**
+**4.2.3 Start Game**
 
-此时返回[4.2 玩法开启及关闭\ 玩法进入](#anchor_4_2_1)开启的终端，输入指令，同理出现下图所框提示即为启动成功。
+Now, enter the terminal according to the steps in “[Enter Game]()” and input the following command. 
 
 ```commandline
 rosservice call /apriltag_detect/set_running "data: true"
 ```
 
-<img src="../_static/media/chapter_14/section_4/image14.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_4/image14.png"  />
 
-4. **玩法停止及退出**
+**4.2.4 Stop and Exit** 
 
-1)  如需停止该玩法，输入指令：
+(1) If want to stop the game, enter the following command.
 
 ```commandline
 rosservice call /apriltag_detect/set_running "data: false"
 ```
 
-<img src="../_static/media/chapter_14/section_4/image15.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_4/image15.png"  />
 
-2)  如需退出该玩法，输入指令：
+(2) If want to exit the game, enter the command below to exit.
 
 ```commandline
 rosservice call /apriltag_detect/exit "{}"
 ```
 
-<img src="../_static/media/chapter_14/section_4/image16.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_4/image16.png"  />
 
 :::{Note}
-玩法在未退出时，会在当前树莓派通电状态下持续运行。为避免过多占用树莓派的运行内存，如需执行其它AI视玩法，请先按照上述指令关闭当前玩法，并将命令行终端关闭。
+Before exiting the game, it will keep running when Raspberry Pi is powered on. To avoid consume too much running memory of Raspberry Pi, you need to exit the game first according to the operation steps above before performing other AI vision games.
 :::
 
-3)  如需关闭摄像头回传图像，返回开启rqt工具的终端，按下"**Ctrl+C**"即可，若关闭失败，可重复多次，直至退出。
+(3) If want to exit the image transmission, press “Ctrl+C” to return and open the terminal of rqt. If fail to exit, please keep trying several times.
 
-### 4.3 功能实现
+### 8.4.3 Project Outcome
 
-玩法开启后机械臂识别到标签ID时会，在rqt工具内可以看到当标签被识别到后，会将标签目标框出，此时机械臂的车身将进行移动。
+After starting the game, the robotic arm will recognize the tag ID. Then, you can see that the tag ID will be framed in rqt tool after recognition and the robotic arm will perform the corresponding action.
 
-| **标签ID** | **执行动作** |
-|-------|--------------|
-| 1       | 车身画三角形 |
-| 2       | 车身画圆形   |
-| 3       | 漂移         |
+| **Tag ID** | **Corresponding action** |
+| :--------: | :----------------------: |
+|     1      |   Drawing a triangle.    |
+|     2      |     Drawing a circle     |
+|     3      |   Drifting performance   |
 
-<img src="../_static/media/chapter_14/section_4/image17.png"  alt="loading" />
 
-### 4.4 程序简要分析
 
-本小节课程文档对应程序的源代码位于Docker容器中的：
+### 8.4.4 Program Analysis
 
-**/home/ubuntu/armpi_pro/src/visual_processing/scripts/visual_processing_node.py（图像处理）**
+The source code for the program corresponding to this section is located in the Docker container:
 
-**/home/ubuntu/armpi_pro/src/apriltag_detect/scripts/apriltag_detect_node.py（底盘控制）**
+[/home/ubuntu/armpi_pro/src/visual_processing/scripts/visual_processing_node.py]()（image processing）
+
+[/home/ubuntu/armpi_pro/src/apriltag_detect/scripts/apriltag_detect_node.py]()（chassis control）
 
 :::{Note}
-在程序修改前务必将原有出厂程序进行备份，再进行修改，禁止直接在源代码文件中进行修改，避免以错误的方式修改参数之后导致机器人异常且无法修复！！！
+please back up the initial program before making any modifications. It is prohibited editing the source code files directly to prevent making changes in an incorrect manner that could lead to robot malfunctions, rendering them irreparable.
 :::
 
-- #### 4.4.1 导入参数模块
+* **Import Parameter Module** 
 
-| **导入模块** | **作用** |
-|----|----|
-| import sys | 导入了Python的sys模块，用于访问系统相关的功能和变量 |
-| import cv2 | 导入了OpenCV库，用于图像处理和计算机视觉相关的功能 |
-| import time | 导入了Python的time模块，用于时间相关的功能，例如延时操作 |
-| import math | 导入了Python的math模块，用于数学运算和函数 |
-| import rospy | 导入了ROS的Python库rospy，用于与ROS系统进行通信和交互 |
-| import numpy as np | 导入了NumPy库，并将其重命名为np，用于进行数组和矩阵操作 |
-| from armpi_pro import misc | 从armpi_pro包中导入了misc模块，用于处理识别得到的矩形数据 |
-| from armpi_pro import apriltag | 从armpi_pro包中导入了apriltag模块，用于Apriltag识别和处理的功能 |
-| from threading import RLock, Timer | 从Python的threading模块中导入了RLock类和Timer类，用于线程相关的操作 |
-| from std_srvs.srv import \* | 从ROS的std_srvs包中导入了所有的服务消息类型，用于定义和使用标准的服务消息 |
-| from std_msgs.msg import \* | 从ROS的std_msgs包中导入了所有的消息类型，用于定义和使用标准的消息 |
-| from sensor_msgs.msg import Image | 从ROS的sensor_msgs包中导入了Image消息类型，用于处理图像数据 |
-| from visual_processing.msg import Result | 从visual_processing包中导入了Result消息类型，用于图像处理结果的消息 |
-| from visual_processing.srv import SetParam | 从visual_processing包中导入了SetParam服务类型，设置参数的自定义服务 |
-| from ros_robot_controller.msg import RGBState, RGBsState | 从ros_robot_controller.msg模块导入 RGBState, RGBsState消息类型。用于控制或表示传感器设备上的RGB灯状态 |
-| from chassis_control.msg import \* | 从 chassis_control.msg 模块导入所有消息类型。这意味着导入该模块中定义的所有消息类型，用于底盘控制 |
-| from visual_patrol.srv import SetTarget | 从 visual_patrol.srv 模块导入 SetTarget 服务类型。用于设置视觉巡逻的目标 |
-| from hiwonder_servo_msgs.msg import MultiRawIdPosDur | hiwonder_servo_msgs.msg 模块导入 MultiRawIdPosDur 消息类型。用于控制舵机设备 |
-| from armpi_pro import pid | 从 armpi_pro 模块导入pid类。用于实现比例-积分-微分（PID）控制算法 |
-| from armpi_pro import bus_servo_control | 从 armpi_pro 模块导入 bus_servo_control 模块。包含与舵机控制相关的函数和方法 |
-| from kinematics import ik_transform | 从 kinematics 模块导入 ik_transform 函数。用于进行逆运动学变换 |
+|                 **Imported Module**                  |                         **Function**                         |
+| :--------------------------------------------------: | :----------------------------------------------------------: |
+|                      import sys                      | The sys module of Python is imported to access to system-related functionalities and variables. |
+|                      import cv2                      | The OpenCV library of Python is imported to perform image processing and computer vision-related functions. |
+|                     import time                      | The time module of Python is imported to perform time-related functionalities, such as delay operations. |
+|                     import math                      | The math module of Python is imported to perform mathematical operations and functions. |
+|                     import rospy                     | The Python library rosy is imported for  communication and interaction with ROS. |
+|                  import numpy as np                  | The NumPy library is imported and is renamed as np for performing array and matrix operations. |
+|              from armpi_pro import Misc              | The Misc module is imported from arm_pi_pro package to handle the recognized rectangular data. |
+|            from armpi_pro import apriltag            | The apriltag module is imported from arm_pi_pro package  to perform Apriltag recognition and processing. |
+|          from threading import RLock, Timer          | The “RLock” class and “Timer” class is imported from the threading module of Python for thread-related operations. |
+|              from std_srvs.srv import *              | All service message types are imported from the std_srvs in ROS for defining and using standard service messages. |
+|              from std_msgs.msg import *              | All message types are imported form the std_msgs package in ROS for defining and using standard messages. |
+|          from sensor_msgs.msg import Image           | The image message type is imported from the sensor_msgs packages for processing image data. |
+|       from visual_processing.msg import Result       | The Result message type is imported from the visual_processing package for the message of image processing results. |
+|      from visual_processing.srv import SetParam      | The SetParam service type is imported from the visual_processing packages for using customs service related to parameter settings. |
+|              from sensor.msg import Led              | The Led message type is imported form the sensor.msg module for controlling or representing the LED status on a sensor. |
+|          from chassis_control.msg import *           | All message types are imported from the chassis_control.msg module, which indicated that all message types defined in this module is imported to perform the chassis control. |
+|       from visual_patrol.srv import SetTarget        | The SetTarget service type is imported from the visual_patrol.srv module is used to set a target for line following. |
+| from hiwonder_servo_msgs.msg import MultiRawIdPosDur | The MultiRawIdPosDur message type is imported from the hiwonder_servo_msgs.msg module for controlling servos. |
+|              from armpi_pro import PID               | The PID class is imported from thearmpi_pro module to perform PID algorithm. |
+|       from armpi_pro import bus_servo_control        | The bus_servo_control module is imported from the armpi_pro module, including the functions and methods related to the servo control. |
+|         from kinematics import ik_transform          | The ik_transform function is imported from the kinematics module to perform conversion of inverse kinematics |
 
-- #### 4.4.2 功能逻辑
+**(1)  Initializing Functions and Variables**
 
-根据实现效果，梳理该玩法的实现逻辑如下图所示：
+{lineno-start=102}
 
-<img src="../_static/media/chapter_14/section_4/image18.png"  />
+```
+	# 检测apriltag函数(detect apriltag function )
+detector = apriltag.Detector(searchpath=apriltag._get_demo_searchpath())
+def apriltag_Detect(img):
+    global pub_time
+    global publish_en
+    global id_smallest
+    
+    msg = Result()
+    img_copy = img.copy()
+    img_h, img_w = img.shape[:2]
+    frame_resize = cv2.resize(img_copy, size_m, interpolation=cv2.INTER_NEAREST)
+    gray = cv2.cvtColor(frame_resize, cv2.COLOR_BGR2GRAY)
+    detections = detector.detect(gray, return_image=False)
+    
+    if len(detections) != 0:
+        for i, detection in enumerate(detections):
+            tag_id = int(detection.tag_id)        # 获取tag_id(obtain tag_id )
+            corners = np.rint(detection.corners)  # 获取四个角点(obtain four corners)
+            for i in range(4):
+                corners[i][0] = int(misc.map(corners[i][0], 0, size_m[0], 0, img_w))
+                corners[i][1] = int(misc.map(corners[i][1], 0, size_m[1], 0, img_h))
+            cv2.drawContours(img, [np.array(corners, np.int)], -1, (0, 255, 255), 2)
+            object_center_x = int(misc.map(detection.center[0], 0, size_m[0], 0, img_w))
+            object_center_y = int(misc.map(detection.center[1], 0, size_m[1], 0, img_h))  # 中心点(center point)
+            object_angle = int(math.degrees(math.atan2(corners[0][1] - corners[1][1], corners[0][0] - corners[1][0])))  # 计算旋转角(calculate rotation angle)
+            cv2.putText(img, str(tag_id), (object_center_x - 10, object_center_y + 10), cv2.FONT_HERSHEY_SIMPLEX, 1, [0, 255, 255], 2)
+            if id_smallest == 'None' or tag_id <= id_smallest:
+                id_smallest = tag_id        
+                msg.center_x = object_center_x
+                msg.center_y = object_center_y
+                msg.angle = object_angle
+                msg.data = id_smallest
+                
+        id_smallest = 'None'
+        publish_en = True
+```
 
-通过摄像头获取图像信息，当检测到不同标签时，机器人会做出不同的动作进行演示，当检测到标签ID1时，车身移动画三角形；当检测到标签ID2时，车身移动画圆形；当检测到标签ID3时，车身演示漂移。
+**(2) Obtain the Vertices Information**
 
-- #### 4.4.3 程序逻辑及对应的代码分析
+Get the four vertices of tag with `np.rint()` function.
 
-从程序文件梳理得到程序逻辑流程图如下图所示。
+{lineno-start=116}
 
-<img class="common_img" src="../_static/media/chapter_14/section_4/image19.png"  />
+```
+	    if len(detections) != 0:
+        for i, detection in enumerate(detections):
+            tag_id = int(detection.tag_id)        # 获取tag_id(obtain tag_id )
+            corners = np.rint(detection.corners)  # 获取四个角点(obtain four corners)
+            for i in range(4):
+                corners[i][0] = int(misc.map(corners[i][0], 0, size_m[0], 0, img_w))
+                corners[i][1] = int(misc.map(corners[i][1], 0, size_m[1], 0, img_h))
+```
 
-1. **处理图像**
+**(3) Detect Tag**
 
-- 初始化函数与变量
+① After obtaining the vertices information, the tag is recognized by calling `drawContours()` function in cv2 library. 
 
-<img src="../_static/media/chapter_14/section_4/image20.png"  />
+{lineno-start=123}
 
-- 获取角点信息
+```
+	            cv2.drawContours(img, [np.array(corners, np.int)], -1, (0, 255, 255), 2)
+```
 
-通过 **np.rint()** 获取标签的四个角点。
+The meaning of parameters in parentheses is as follow:
 
-<img src="../_static/media/chapter_14/section_4/image21.png"  />
+The first parameter `img` is the input image.
 
-- 检测标签
+The second parameter `[np.array(corners, np.int)]` is the contour which is list in Python.
+The third parameter `-1` is the index of the contour, where the value represents all contours in the drawn contour list.
 
-- 1)  获取标签的角点信息后，通过调用cv2库中的drawContours()函数，标识出标签。
+The fourth parameter `(0, 255, 255)` is the color of contour and its order is B, G and R.
+The fifth parameter “2” is the width of contour.
 
-<img src="../_static/media/chapter_14/section_4/image22.png"  />
+② Obtain the ID (tag_id) of the tag.
 
-函数括号内的参数含义如下：
+{lineno-start=117}
 
-第一个参数"**img**"是输入图像；
+```
+	        for i, detection in enumerate(detections):
+            tag_id = int(detection.tag_id)        # 获取tag_id(obtain tag_id )
+```
 
-第二个参数"**\[np.array(corners, np.int)\]**"是轮廓本身，在Python中为list；
+③ Print the tag ID and type in the transmitted image by calling `putText()` function in cv2 library.
 
-第三个参数"**-1**"是轮廓的索引，此处数值代表绘制轮廓list内的所有轮廓；
+{lineno-start=127}
 
-第四个参数"**(0, 255, 255)**"是轮廓颜色，其顺序为B、G、R，此处为黄色；
+```
+            cv2.putText(img, str(tag_id), (object_center_x - 10, object_center_y + 10), cv2.FONT_HERSHEY_SIMPLEX, 1, [0, 255, 255], 2)
+```
 
-第五个参数"**2**"是轮廓宽度。
+The meaning of parameters in parentheses is as follow:
 
-- 2)  获取标签的ID（tag_id）。
+The first parameter `img` is the input image.
 
-<img src="../_static/media/chapter_14/section_4/image23.png"  />
+The second parameter `str(tag_id)` is the display content.
 
-- 3)  通过调用cv2库中的putText()函数，将标签的ID与类型打印在回传画面内。
+The third parameter `(object_center_x - 10, object_center_y + 10)` is the display position.
 
-<img src="../_static/media/chapter_14/section_4/image24.png"  />
+The fourth parameter `cv2.FONT_HERSHEY_SIMPLEX` is the type of font.
 
-函数括号内的参数含义如下：
+The fifth parameter `1` is the size of font.
 
-第一个参数是"**img**"是输入图像；
+The sixth parameter `[0, 255, 255]` is the color of font and its color is B, G and R. Here is yellow.
 
-第二个参数是"**str(tag_id)**"是显示内容；
+The seventh parameter `2` is the thickness of font.
 
-第三个参数是"**(object_center_x - 10, object_center_y + 10)**"是显示位置；
+**(4)  Action Control**
 
-第四个参数是"**cv2.FONT_HERSHEY_SIMPLEX**"是字体类型；
+After obtaining ID, control ArmPi Pro to perform corresponding action by calling `set_velocity.publish()` function in hiwonder_servo_msgs.msg library.
 
-第五个参数是"**1**"是字体大小；
+{lineno-start=68}
 
-第六个参数是"**\[0, 255, 255\]**"是字体颜色，其顺序为B、G、R，此处为黄色；
+```
+# 移动控制函数(motion control functions)
+def move():
+    global move_en
+    global detect_id
 
-第七个参数是"**2**"是字体粗细。
+    while __isRunning:
+        if move_en and detect_id != 'None': # 移动使能和检测到标签(move to detect the tag)
+            rospy.sleep(0.5)
+            if detect_id == 1: # 标签id为1，机器人画三角形(if the tag id is 1, the robot draws a triangle)
+                # 发布底盘控制消息,80为线速度:0~200，45为方向角:0~360，0为偏航角速度:-1~1(Publishing chassis control message, where 80 is the linear velocity in the range of 0 to 200, 45 is the orientation angle in the range of 0 to 360, and 0 is the yaw rate in the range of -1 to 1.)
+                set_velocity.publish(100,60,0) # 画三角形第一条边(draw the first side of the triangle)
+                rospy.sleep(2.6)  # 延时2.6秒(delay for 2.6s)
+                set_velocity.publish(100,180,0) # 画三角形第二条边(draw the second side of the triangle)
+                rospy.sleep(2.6)  # 延时2.6秒(delay for 2.6s)
+                set_velocity.publish(100,300,0) # 画三角形第三条边(draw the third side of the triangle)
+                rospy.sleep(2.6)  # 延时2.6秒(delay for 2.6s)
 
-2. **控制动作**
+            elif detect_id == 2: # 标签id为2，机器人画圆形(if the tag id is 2, the robot draws a circle)
+                 for i in range(360):# 通过for循环,持续改变机器人的运动方向,这样运动轨迹就是一个圆形(Use a for loop to continuously change the robot's motion direction, and the motion trajectory is a circle.)
+                    set_velocity.publish(100,i,0)  
+                    rospy.sleep(0.02)
 
-获取标签ID后，通过调用 **hiwonder_servo_msgs.msg** 库中 **set_velocity.publish()** 函数，控制 **ArmPi Pro** 机器人执行对应动作。
+            elif detect_id == 3: # 标签id为3，机器人定圆漂移(if the tag id is 3, the robot performs circular drifting)
+                set_velocity.publish(100,180,-0.45) # 横移和原地旋转进行合成，就成了定圆漂移(Combine lateral movement with rotating in place resulting in a circular drift maneuver.)
+                rospy.sleep(10.2)
 
-<img src="../_static/media/chapter_14/section_4/image25.png" />
+            move_en = False
+            detect_id = 'None'
+            set_velocity.publish(0,90,0) # 停止移动(stop moving)
 
-电机控制以代码"**set_velocity.publish(100,60,0)**"为例，括号内的参数含义如下：
+        else:
+            rospy.sleep(0.01)
+```
 
-第一个参数"**100**"是线速度，表示的是电机的速度，单位是毫米每秒，范围是"-100~100"，数值为负数时电机是反转。
+Motor control is illustrated by the code example `set_velocity.publish(100, 60, 0),` where the meanings of the parameters within the parentheses are as follows:
 
-第二个参数"**90**"是方向角，代表的是小车移动的方向，单位是度，范围是"0~360"，其中90度是向前方，270度是向后，0度是向右，180度向左，其他方向角度以此类推。
+The first parameter `100` represents the linear velocity, indicating the motor's speed in millimeters per second. The range is "-100 to 100," and when the value is negative, the motor rotates in reverse.
 
-第三个参数"**dx**"是偏航角速度，代表的是小车的偏移速率，单位是5度每秒，在程序里范围被设置为"-0.8~0.8"，正数是顺时针转动，负数是逆时针转动。
+The second parameter `90` denotes the orientation angle, representing the direction of the vehicle's movement in degrees. The range is "0 to 360." Here, 90 degrees corresponds to forward movement, 270 degrees is backward, 0 degrees is right, and 180 degrees is left. Other angle values represent corresponding directions.
 
-## 5. 目标追踪
+The third parameter `dx` stands for the yaw angular velocity, indicating the rate of deviation for the vehicle. It is measured in 5 degrees per second. In the program, the range is set as "-0.8 to 0.8." Positive values result in clockwise rotation, while negative values lead to counterclockwise rotation.
 
-### 5.1 实验原理
+## 8.5 Target Tracking
 
-首先需要对颜色进行识别，我们使用Lab颜色空间来进行处理。先将RGB颜色空间转换为Lab，然后进行二值化处理，再经过膨胀腐蚀等操作，可获得只包含目标颜色的轮廓，再将该颜色轮廓用圆圈框起，便可实现物体颜色的识别。
+### 8.5.1 Program Description
 
-接着在识别到后对机械臂高度部分进行处理，以图像的中心点的x、y、z坐标作为设定值，以当前获取的x、y、z坐标作为输入值进行更新pid。
+Recognize the color and process it with Lab color space. Firstly, convert RGB color space to LAB and then perform binaryzation, dilation and erosion and other operations to obtain the outline of the target color. Then frame the contour of the color to complete color recognition.
 
-然后会根据图像位置的反馈进行计算，最后通过位置的变化使坐标数值进行线性变化，从而达到追踪的效果。
+Then process height of robotic arm after recognition. The coordinates (x,y,z) of center point of image takes as the set value and the currently obtained coordinates are used as input value to update pid.
+
+Then, calculate on the basis the feedback of image position. Finally, the coordinate value will change linearly through the change of the position, so as to achieve the effect of tracking.
 
 <p id="anchor_5_2"></p>
 
-### 5.2 玩法开启及关闭
+### 8.5.2 Operation Steps
 
 :::{Note}
-指令的输入需严格区分大小写，另外可按键盘"Tab"键进行关键词补齐。
+It should be case sensitive when entering command and the “Tab” key can be used to complete the keywords.
 :::
 
 <span id="anchor_5_2_1" class="anchor"></span>
 
-- #### 5.2.1 玩法进入
+* **Enter Game** 
 
-1)  将设备开机，并参照课程资料的"**[远程工具安装及容器进入方法\1. 远程桌面工具安装与连接]()**"内容，通过VNC远程连接工具连接。
+(1) Power on the robot and use VNC Viewer to connect to the remote desktop.
 
-<img src="../_static/media/chapter_14/section_5/image4.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_5/image4.png"  />
 
-2)  点击系统桌面左上角的图标<img src="../_static/media/chapter_14/section_5/image5.png"  />，打开Terminator终端。
+(2) Click<img src="../_static/media/chapter_14/section_5/image5.png"  />in the upper left corner of the system desktop to open the “Terminator”.
 
-<img src="../_static/media/chapter_14/section_5/image6.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_5/image6.png"  />
 
-3)  输入指令运行目标追踪玩法程序。
+(3) Enter the following command to execute the target tracking program. 
 
 ```commandline
 rosrun object_tracking object_tracking_node.py
 ```
 
-<img src="../_static/media/chapter_14/section_5/image7.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_5/image7.png"  />
 
-4)  **之前打开的终端不关闭**，然后打开一个新的终端，输入指令，然后按下回车进入目标追踪玩法。当成进入后，会出现打印提示，如下图所示：
+(4)  Keep the previously opened terminal and open a new one. Enter the following command in the new terminal and press “Enter” to enter the target tracking game. If successful, a prompt will appear, as shown below:
 
 ```commandline
 rosservice call /object_tracking/enter "{}"
 ```
 
-<img src="../_static/media/chapter_14/section_5/image8.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_5/image8.png"  />
 
-- #### 5.2.2 回传图像开启
+* **Start image transmission** 
 
-1. **使用外部浏览器开启**
+**(1) Start with Browser**
 
-**为避免过多占用树莓派的运行内存，建议使用外部浏览器来开启图像回传画面，具体步骤如下：**
+To avoid consuming too much running memory of Raspberry Pi. It is recommended to use an external browser to open the transmitted image. 
 
--  选择任意一个外部浏览器，这里以谷歌浏览器为例。
+① Select a browser. Take Google Chrome as example.
 
 <img class="common_img" src="../_static/media/chapter_14/section_5/image9.jpeg"  alt="loading" />
 
--  然后在地址栏输入默认IP地址如"**192.168.149.1:8080/**"，（注意：此IP地址为直连模式下的默认IP地址，若为局域网模式，则输入："**设备IP地址+：8080/"，如"192.168.149.1:8080/**"）。如果打开失败，可以重复多次或者重启树莓派和电脑。
+② Then enter the default IP address “192.168.149.1:8080/” (Note: this IP address is the default IP address for direction connection mode. If it is LAN mode, please enter “Device IP address+：8080/”. For example, “192.168.149.1:8080/”) If fail to open, you can try it several times or restart camera.
 
 :::{Note}
-如果是局域网连接模式，设备IP地址获取方法可参考"**第13章 机器人网络课程配置\第2课 修改网络连接模式**"
+If it is in LAN mode, the method to obtain device IP address can refer to “[Robot Network Configuration Course]()”.
 :::
 
 <img class="common_img" src="../_static/media/chapter_14/section_5/image10.png"  />
 
--  然后点击下图框出选项，即可打开回传画面。
+③ Then, click the option shown in the following figure to open the display window of the transmitted image.
 
 <img class="common_img" src="../_static/media/chapter_14/section_5/image11.png"  />
 
-<img src="../_static/media/chapter_14/section_5/image12.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_5/image12.png"  />
 
-2. **使用rqt工具开启**
+**(2) Start with rqt** 
 
--  [5.2 玩法开启及关闭\ 玩法进入](#anchor_5_2_1)终端不关闭的情况下，再打开一个新的终端。
+① After completing the steps of “ [Enter Game]()” and do not exit the terminal, open a new terminal.
 
--  输入指令，按下回车，稍等片刻即可打开rqt工具。
+② Enter the command and press “Enter” to open rqt.
 
 ```commandline
 rqt_image_view
 ```
 
-<img src="../_static/media/chapter_14/section_5/image13.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_5/image13.png"  />
 
--  单击下图所示红框位置，对目标追踪的话题选项（topic）进行选择，选项为"**/visual_processing/image_result**"，其余设置保持不变。
+③ Click the red box as the figure shown below, select **“/visual_processing/image_result”** for the topic of line following and remain other settings unchanged. 
 
-<img src="../_static/media/chapter_14/section_5/image14.png"  alt="loading" />
+<img class="common_img" src="../_static/media/chapter_14/section_5/image14.png"  alt="loading" />
 
 :::{Note}
-图像开启后请务必选择话题选项，否则在后续玩法启动后，将无法正常显示其识别过程。
+After opening image, the topic option must be selected. Otherwise, after starting game, the recognition process can not be displayed normally.
 :::
 
 <span id="anchor_5_2_3" class="anchor"></span>
 
-- #### 5.2.3 玩法启动
+**5.2.3 Start Game**
 
--  此时返回 [5.2 玩法开启及关闭\ 玩法进入](#anchor_5_2_1) 步骤4开启的终端，输入指令，同理出现下图所框提示即为启动成功。
+(1) Now, enter the terminal according to the steps in “[Enter Game]()” and input command “rosservice call /object_tracking/set_running "data: true"”. Then if the prompt shown in the following red box appears, which means game has been started successfully.
 
 ```commandline
 rosservice call /object_tracking/set_running "data: true"
 ```
 
-<img src="../_static/media/chapter_14/section_5/image15.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_5/image15.png"  />
 
-- 启动玩法后我们还需要设置参数即选择追踪的目标颜色，这里以追踪蓝色为例，输入指令。
+(2) After starting the game, select the target color. Take blue as example. Enter the command 
 
 ```commandline
 rosservice call /object_tracking/set_target "data: 'blue'"
 ```
 
 :::{Note}
-追踪绿色和红色可在 **data: ' '** 内填写green或red。（严格区分大小写）
+If want to change to green or red, you can fill in green or red in "data: ' ' (The entered command should be case sensitive).
 :::
 
-<img src="../_static/media/chapter_14/section_5/image16.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_5/image16.png"  />
 
-- #### 5.2.4 玩法停止及退出
+**5.2.4 Stop and Exit** 
 
-1)  如需停止该玩法，输入指令。在停止该玩法后可参考 [2.3 玩法启动](#_2.3 玩法启动)，更换其他颜色进行追踪。
+(1) If want to stop the game, enter command “rosservice call /object_tracking/set_running "data: false"”. After stopping, you can refer to the content of “[Start Game]()” to change other tracking colors.
 
 ```commandline
 rosservice call /object_tracking/set_running "data: false"
 ```
 
-<img src="../_static/media/chapter_14/section_5/image17.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_5/image17.png"  />
 
-2)  如需退出该玩法，输入指令即可退出。
+(2) If want to exit the game, enter the following command to exit.
 
-**rosservice call /object_tracking/exit "{}"**
+```
+rosservice call /object_tracking/exit "{}"
+```
 
-<img src="../_static/media/chapter_14/section_5/image18.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_5/image18.png"  />
 
-**<span class="mark">注意：玩法在未退出时，会在当前树莓派通电状态下持续运行。为避免过多占用树莓派的运行内存，如需执行其它AI视玩法，请先按照上述指令关闭当前玩法。</span>**
+:::{Note}
 
-3)  如需关闭摄像头回传图像，返回开启rqt工具的终端，按下"Ctrl+C"即可，若关闭失败，可重复多次，直至退出。
+Before exiting the game, it will keep running when Raspberry Pi is powered on. To avoid consume too much running memory of Raspberry Pi, you need to exit the game first according to the operation steps above before performing other AI vision games.
 
-### 5.3 功能实现
+:::
 
-玩法开启后我们将蓝色方块移至摄像头范围内，在rqt工具内可以看到当识别到后，会将目标颜色框出。此时手持色块进行缓慢移动，机械臂会转向色块的方向，然后小车会朝色块方向行驶。
+(3) If want to close the image transmission, press “Ctrl+C” to return and open the terminal of rqt. If fail to exit, please keep trying several times.
 
-<img src="../_static/media/chapter_14/section_5/image19.png"  alt="loading" />
+### 8.5.3 Project Outcome
 
-### 5.4 功能延伸 
+After starting game, place the blue block within the detected range of camera. The target color will be framed in rqt tool after recognition. At this time, move the block slowly. Then the robotic arm will rotate to the direction of the block and the car will move to the block.
+
+
+### 8.5.4 Program Analysis
+
+The source code of the program is located in the Docker container:
+
+[/home/ubuntu/armpi_pro/src/visual_processing/scripts/visual_processing_node.py]()（image processing）
+
+[/home/ubuntu/armpi_pro/src/object_tracking/scripts/object_tracking_node.py]()（motion control）
+
+:::{Note}
+ please back up the initial program before making any modifications. It is prohibited editing the source code files directly to prevent making changes in an incorrect manner that could lead to robot malfunctions, rendering them irreparable.
+:::
+
+**5.4.1  Import Parameter Module**
+
+| **Imported Module**                                  | **Function**                                                 |
+| ---------------------------------------------------- | ------------------------------------------------------------ |
+| import sys                                           | The sys module of Python is imported to access to system-related functionalities and variables. |
+| import cv2                                           | The OpenCV library of Python is imported to perform image processing and computer vision-related functions. |
+| import time                                          | The time module of Python is imported to perform time-related functionalities, such as delay operations. |
+| import math                                          | The math module of Python is imported to perform mathematical operations and functions. |
+| import rospy                                         | The Python library rosy is imported for  communication and interaction with ROS. |
+| import numpy as np                                   | The NumPy library is imported and is renamed as np for performing array and matrix operations. |
+| from armpi_pro import Misc                           | The Misc module is imported from arm_pi_pro package to handle the recognized rectangular data. |
+| from armpi_pro import apriltag                       | The apriltag module is imported from arm_pi_pro package  to perform Apriltag recognition and processing. |
+| from threading import RLock, Timer                   | The “RLock” class and “Timer” class is imported from the threading module of Python for thread-related operations. |
+| from std_srvs.srv import *                           | All service message types are imported from the std_srvs in ROS for defining and using standard service messages. |
+| from std_msgs.msg import *                           | All message types are imported form the std_msgs package in ROS for defining and using standard messages. |
+| from sensor_msgs.msg import Image                    | The image message type is imported from the sensor_msgs packages for processing image data. |
+| from visual_processing.msg import Result             | The Result message type is imported from the visual_processing package for the message of image processing results. |
+| from visual_processing.srv import SetParam           | The SetParam service type is imported from the visual_processing packages for using customs service related to parameter settings. |
+| from sensor.msg import Led                           | The Led message type is imported form the sensor.msg module for controlling or representing the LED status on a sensor. |
+| from chassis_control.msg import *                    | All message types are imported from the chassis_control.msg module, which indicated that all message types defined in this module is imported to perform the chassis control. |
+| from visual_patrol.srv import SetTarget              | The SetTarget service type is imported from the visual_patrol.srv module is used to set a target for line following. |
+| from hiwonder_servo_msgs.msg import MultiRawIdPosDur | The MultiRawIdPosDur message type is imported from the hiwonder_servo_msgs.msg module for controlling servos. |
+| from armpi_pro import PID                            | The PID class is imported from thearmpi_pro module to perform PID algorithm. |
+| from armpi_pro import bus_servo_control              | The bus_servo_control module is imported from the armpi_pro module, including the functions and methods related to the servo control. |
+| from kinematics import ik_transform                  | The ik_transform function is imported from the kinematics module to perform conversion of inverse kinematics. |
+
+**5.4.2 Image Processing**
+
+{lineno-start=229}
+
+```
+	# 单颜色识别函数(single color recognition function)
+def color_detect(img, color):
+    global pub_time
+    global publish_en
+    global color_range_list
+    
+    if color == 'None':
+        return img
+    
+    msg = Result()
+    area_max = 0
+    area_max_contour = 0
+    img_copy = img.copy()
+    img_h, img_w = img.shape[:2]
+    frame_resize = cv2.resize(img_copy, size_m, interpolation=cv2.INTER_NEAREST)
+    frame_lab = cv2.cvtColor(frame_resize, cv2.COLOR_BGR2LAB)  # 将图像转换到LAB空间(convert the image to LAB space)
+
+    if color in color_range_list:
+        color_range = color_range_list[color]
+        frame_mask = cv2.inRange(frame_lab, tuple(color_range['min']), tuple(color_range['max']))  # 对原图像和掩模进行位运算(perform bitwise operation on the original image and the mask)
+        eroded = cv2.erode(frame_mask, cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2)))          # 腐蚀(erode)
+        dilated = cv2.dilate(eroded, cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2)))            # 膨胀(dilate)
+        contours = cv2.findContours(dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)[-2]         # 找出轮廓(find contours)
+        area_max_contour, area_max = getAreaMaxContour(contours)                                   # 找出最大轮廓(find the largest contour)
+
+        if area_max > 100:  # 有找到最大面积(found the maximum area)
+            (centerx, centery), radius = cv2.minEnclosingCircle(area_max_contour)  # 获取最小外接圆(obtain the minimum circumscribed circle)
+            msg.center_x = int(misc.map(centerx, 0, size_m[0], 0, img_w))
+            msg.center_y = int(misc.map(centery, 0, size_m[1], 0, img_h))
+            msg.data = int(misc.map(radius, 0, size_m[0], 0, img_w))
+            cv2.circle(img, (msg.center_x, msg.center_y), msg.data+5, range_rgb[color], 2)
+            publish_en = True
+        
+        if publish_en:
+            if (time.time()-pub_time) >= 0.06:
+                result_pub.publish(msg)  # 发布结果(publish results)
+                pub_time = time.time()
+```
+
+**5.5.3 Binarization** 
+
+Using the `inRange ()` function from the cv2 library to perform binarization operation on image
+
+{lineno-start=248}
+
+```
+	        frame_mask = cv2.inRange(frame_lab, tuple(color_range['min']), tuple(color_range['max']))  # 对原图像和掩模进行位运算(perform bitwise operation on the original image and the mask)
+```
+
+The first parameter `frame_lab` is the input image.
+
+The second parameter `tuple(color_range['min'])` is the lower limit of threshold.
+
+The third parameter `tuple(color_range['max'])` is the upper lower of threshold.
+
+**5.4.4 Dilation and erosion** 
+
+Using the `inRange ()` function from the cv2 library to perform binarization operation on image.
+
+{lineno-start=249}
+
+```
+	        eroded = cv2.erode(frame_mask, cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2)))          # 腐蚀(erode)
+        dilated = cv2.dilate(eroded, cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2)))            # 膨胀(dilate)
+```
+
+The first parameter `frame_lab` is the input image.
+The second parameter `tuple(color_range['min'])`is the lower limit of threshold.
+The third parameter `tuple(color_range['max'])` is the upper lower of threshold.
+
+**5.4.5 Obtain the contour with the largest area**
+
+After processing the above image, it is necessary to obtain the contour of the target. The findContours() function from the cv2 library is involved in this process.
+
+{lineno-start=251}
+
+```
+	        contours = cv2.findContours(dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)[-2]         # 找出轮廓(find contours)
+```
+
+The `erode()` function is applied to erode. Here uses an example of the code `contours = cv2.findContours(dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)[-2]`.
+The first parameter `dilated` is the input image.
+The second parameter `cv2.RETR_EXTERNAL` is the contour retrieval mode.
+The third parameter `cv2.CHAIN_APPROX_NONE)[-2]` is the approximate method of contour.
+Find the maximum contour from the obtained contours. To avoid interference, set a minimum value. Only when the area is greater than this minimum value, the target contour will take effect. The minimum value here is “50”. 
+
+{lineno-start=252}
+
+```
+	        area_max_contour, area_max = getAreaMaxContour(contours)                                   # 找出最大轮廓(find the largest contour)
+
+        if area_max > 100:  # 有找到最大面积(found the maximum area)
+```
+
+**5.4.6 Obtain the minimum enclosing circle and display on the live feed image**
+
+The `minEnclosingCircle()` function from the cv2 library is utilized to obtain the minimum enclosing circle and the coordinates of its center for the target contour. The obtained circle is then displayed in the feedback image using the `circle()` function.
+
+{lineno-start=254}
+
+```
+        if area_max > 100:  # 有找到最大面积(found the maximum area)
+            (centerx, centery), radius = cv2.minEnclosingCircle(area_max_contour)  # 获取最小外接圆(obtain the minimum circumscribed circle)
+            msg.center_x = int(misc.map(centerx, 0, size_m[0], 0, img_w))
+            msg.center_y = int(misc.map(centery, 0, size_m[1], 0, img_h))
+            msg.data = int(misc.map(radius, 0, size_m[0], 0, img_w))
+            cv2.circle(img, (msg.center_x, msg.center_y), msg.data+5, range_rgb[color], 2)
+            publish_en = True
+```
+
+**5.4.7 Motion Control**
+
+By invoking the `bus_servo_control.set_servos()` function to control the servos on robotic arm to allow the robotic arm to move with the target within the recognition range.
+
+{lineno-start=125}
+
+```
+        if __isRunning:
+            if center_x > 0 and center_y > 0:
+                # 机械臂X轴追踪(robotic arm X-axis tracking)
+                if abs(center_x - img_w/2.0) < 15:
+                    center_x = img_w/2.0
+                arm_x_pid.SetPoint = img_w/2.0  # 设定(set)
+                arm_x_pid.update(center_x)      # 当前(current)
+                arm_x += arm_x_pid.output       # 输出(output)
+                arm_x = 200 if arm_x < 200 else arm_x
+                arm_x = 800 if arm_x > 800 else arm_x
+                
+                # 机械臂Y轴追踪(robotic arm Y-axis tracking)
+                if abs(center_y - img_h/2.0) < 15:
+                    center_y = img_h/2.0
+                arm_y_pid.SetPoint = img_h/2.0  # 设定(set)
+                arm_y_pid.update(center_y)      # 当前(current)
+                arm_y += arm_y_pid.output       # 输出(output)
+                arm_y = 50 if arm_y < 50 else arm_y
+                arm_y = 300 if arm_y > 300 else arm_y
+                
+                # 机械臂移动(robotic arm movement)
+                bus_servo_control.set_servos(joints_pub, 0.02, ((3, arm_y), (6, arm_x)))
+                
+                # 麦轮底盘X轴追踪(mecanum chassis X-axis tracking)
+                if abs(arm_x - Arm_X) < 5:
+                    arm_x = Arm_X
+                x_pid.SetPoint = Arm_X    # 设定(set)
+                x_pid.update(arm_x)       # 当前(current)
+                dx = x_pid.output         # 输出(output)
+                dx = -200 if dx < -200 else dx
+                dx = 200 if dx > 200 else dx
+```
+
+Take the code `bus_servo_control.set_servos(joints_pub, 20, ((3, arm_y), (6, arm_x)))` as example and the meaning of parameters in parentheses are as follow:
+
+The first parameter `joints_pub` is to publish the message of the servo control node.
+
+The second parameter `20` is the running time.
+
+The third parameter is `( (3, arm_y), (6, arm_x)`. `3` is the servo number, “arm_y']” is the servo angle.
+
+Lastly, by invoking the `set_velocity.publis()` function, the motors on ArmPi Pro is controlled to drive the mecanum wheels to achieve the performance of tracking.
+
+{lineno-start=148}
+
+```
+                # 麦轮底盘X轴追踪(mecanum chassis X-axis tracking)
+                if abs(arm_x - Arm_X) < 5:
+                    arm_x = Arm_X
+                x_pid.SetPoint = Arm_X    # 设定(set)
+                x_pid.update(arm_x)       # 当前(current)
+                dx = x_pid.output         # 输出(output)
+                dx = -200 if dx < -200 else dx
+                dx = 200 if dx > 200 else dx
+                
+                # 麦轮底盘Y轴追踪(mecanum chassis Y-axis tracking)
+                if abs(arm_y - Arm_Y) < 5:
+                    arm_y = Arm_Y
+                y_pid.SetPoint = Arm_Y   # 设定(set)
+                y_pid.update(arm_y)      # 当前(current)
+                dy = -y_pid.output       # 输出(output)
+                dy = -180 if dy < -180 else dy
+                dy = 180 if dy > 180 else dy
+                
+                # 麦轮底盘移动(mecanum chassis movement)
+                set_translation.publish(dx,dy)
+                move = True
+```
+
+Taking the code `bus_servo_control.set_servos(joints_pub, 20, ((3, arm_y), (6, arm_x)))` as an example, the parameters in the parentheses are explained as follows:
+
+First parameter: `joints_pub` is used to publish messages to the servo control node.
+
+Second parameter: 0.02 specifies the execution time in seconds.
+
+Third parameter: `((3, arm_y), (6, arm_x))`. Here, 3 represents the servo ID, and arm_y is the servo angle. Similarly, (6, arm_x) follows the same format.
+
+Finally, the robot's Mecanum wheels can be controlled to achieve tracking functionality by calling the `set_velocity.publish()` function, which adjusts the motor movement of the ArmPi Pro robot.
+
+
+### 8.5.5 Function Extension
 
 <span id="anchor_5_4_1" class="anchor"></span>
 
-- #### 5.4.1 增加新的可识别颜色
+* **Add New Recognition Color** 
 
-颜色追踪玩法程序内置了三种颜色：红、绿、蓝。除了这三种内置的颜色，我们还可以添加其它可识别颜色，例如**我们将粉色作为新的可识别颜色，程序步骤如下：**
+Target tracking has three built-in color red, green and blue. In addition to the built-in colors, you can add other recognition colors. For example, add pink as a new recognizable color. The operation steps are as follow:
 
-1)  打开新的终端，输入指令，打开颜色阈值调试工具。若在弹出的界面中没有出现回传画面，说明摄像头未连接成功，需检查一下摄像头连接线是否连接好。
+(1)  Open the terminal, enter the following command and press “Enter” to open the tool for color threshold adjustment. If no transmitted image appears in the pop-up interface, it means the camera fails to connect and needs to be checked whether the wire is connected.
 
 ```commandline
 python3 /home/ubuntu/software/lab_config/main.py
 ```
 
-<img src="../_static/media/chapter_14/section_5/image20.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_5/image20.png"  />
 
-<img src="../_static/media/chapter_14/section_5/image21.png"  alt="loading" />
+<img class="common_img" src="../_static/media/chapter_14/section_5/image21.png"  alt="loading" />
 
-2)  连接成功后，我们可以看到界面右侧是实时回传画面，左侧是需要被采集的颜色。在界面右下角的选项栏中选择"**Add**"增加新的颜色。
+(2) After the camera is connected completely, you can see that the right side is real-time transmitted image and the right side is the color to be collected. Then click “Add” in the lower right color to name the new color.
 
-<img src="../_static/media/chapter_14/section_5/image22.png"  alt="loading" />
+<img class="common_img" src="../_static/media/chapter_14/section_5/image22.png"  alt="loading" />
 
-3)  我们以粉色为例，填写增加的颜色的名字，点击"**OK**"即增加成功；此时右下角的颜色选项栏中会将颜色更新为"**pink**"。
+(3) Fill in the name of added color and click “Ok”. The color will be updated to “pink” in the color options bar in the lower right corner.
 
 <img class="common_img" src="../_static/media/chapter_14/section_5/image23.png"  alt="loading" />
 
-<img src="../_static/media/chapter_14/section_5/image24.png"  alt="loading" />
+<img class="common_img" src="../_static/media/chapter_14/section_5/image24.png"  alt="loading" />
 
-4)  将摄像头对准粉色物品，然后拖动下方的六个滑杆，使得左侧画面中粉色物品的区域全部变为白色，其它区域为黑色。接着点击"**save**"按钮保存数据。
+(4) Point the camera at the pink object. Then drag the following six slider bars until the pink area becomes white and other areas become black and click “Save” to save data.
 
-<img src="../_static/media/chapter_14/section_5/image25.png"  alt="loading" />
+<img class="common_img" src="../_static/media/chapter_14/section_5/image25.png"  alt="loading" />
 
-5)  打开新的终端，输入进到玩法程序所在目录的指令，按下回车。
+(5) Refer to step 2 to open a new terminal, and enter the following command to navigate to the directory where the program is located. Then, press “Enter”.
 
 ```commandline
 cd /home/ubuntu/armpi_pro/src/object_tracking/scripts/
 ```
 
-<img src="../_static/media/chapter_14/section_5/image26.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_5/image26.png"  />
 
-6)  输入指令，打开程序。
+(6) Enter the following command to open the program.
 
 ```commandline
 vim object_tracking_node.py
 ```
 
-<img src="../_static/media/chapter_14/section_5/image27.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_5/image27.png"  />
 
-7)  找到要修改的代码部分，按下键盘的"**i**"键，当出现左下角框出内容时，即进入编辑模式。
+(7) Locate the code to be modified, press the “i” key on the keyboard, and enter the editing mode when the content shown in the following red box in the lower-left corner appears.
 
-<img src="../_static/media/chapter_14/section_5/image28.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_5/image28.png"  />
 
-8)  在源代码中输入粉色的RGB值"**'pink': (203, 192, 255),**"。
+(8) Enter the pink’s RGB value “'pink': (203, 192, 255),” into the source code.
 
-<img src="../_static/media/chapter_14/section_5/image29.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_5/image29.png"  />
 
-9)  按下键盘的"**Esc**"键，并输入"**:wq**"，按下回车，即可完成保存与退出操作。
+(9) Press the “Esc”, enter “:wq”, and press “Enter” to complete the save and exit operation.
 
-<img src="../_static/media/chapter_14/section_5/image30.png"  />
+(10) Follow “[8.5.2 Operation Steps]()” to start the color tracking.
 
-10) 按照（"[5.2 玩法开启及关闭](#anchor_5_2)"）的步骤启动颜色追踪玩法。
+(11) Put pink object in front of the camera then slowly move the object. Arm Pi Pro will move with it.
 
-11) 将粉色物品放在摄像头前，并手持该物品缓慢移动，ArmPi Pro的机械臂便会跟随粉色物品的移动而移动。
+<img class="common_img" src="../_static/media/chapter_14/section_5/image31.png"  alt="loading" />
 
-<img src="../_static/media/chapter_14/section_5/image31.png"  alt="loading" />
+(12)  If want to add other colors as new recognizable color, you can refer to the operation steps of “[8.5.5 Function Extension -> Add New Recognition Color]()”.
 
-12) 如果需添加其它颜色作为可识别颜色，可参考前面的步骤[5.4 功能延伸\ 增加新的可识别颜色](#anchor_5_4_1) 。
 
-### 5.5 程序简要分析
+## 8.6 Face Recognition
 
-本小节课程文档对应程序的源代码位于Docker容器中的：
+### 8.6.1 Program Description
 
-**/home/ubuntu/armpi_pro/src/visual_processing/scripts/visual_processing_node.py（图像处理）**
+Firstly, the pan-tilt servo is set to rotate to search the human face. Then use the trained face to detect the face by the scaling screen, and convert the  coordinates of the recognized face to the coordinates before scaling. Judge whether it is the largest face, and frame the recognized face.
 
-**/home/ubuntu/armpi_pro/src/object_tracking/scripts/object_tracking_node.py（移动控制）**
+Finally, control the servo angle to let robot perform the feedback after recognition.
 
-<img src="../_static/media/chapter_14/section_5/image2.png"  />
+### 8.6.2 Operation Steps
 
 :::{Note}
-在程序修改前务必将原有出厂程序进行备份，再进行修改，禁止直接在源代码文件中进行修改，避免以错误的方式修改参数之后导致机器人异常且无法修复！！！
-:::
-
-- #### 5.5.1 导入参数模块
-
-| **导入模块** | **作用** |
-|----|----|
-| import sys | 导入了Python的sys模块，用于访问系统相关的功能和变量 |
-| import cv2 | 导入了OpenCV库，用于图像处理和计算机视觉相关的功能 |
-| import time | 导入了Python的time模块，用于时间相关的功能，例如延时操作 |
-| import math | 导入了Python的math模块，用于数学运算和函数 |
-| import rospy | 导入了ROS的Python库rospy，用于与ROS系统进行通信和交互 |
-| import numpy as np | 导入了NumPy库，并将其重命名为np，用于进行数组和矩阵操作 |
-| from armpi_pro import misc | 从armpi_pro包中导入了misc模块，用于处理识别得到的矩形数据 |
-| from armpi_pro import apriltag | 从armpi_pro包中导入了apriltag模块，用于Apriltag识别和处理的功能 |
-| from threading import RLock, Timer | 从Python的threading模块中导入了RLock类和Timer类，用于线程相关的操作 |
-| from std_srvs.srv import \* | 从ROS的std_srvs包中导入了所有的服务消息类型，用于定义和使用标准的服务消息 |
-| from std_msgs.msg import \* | 从ROS的std_msgs包中导入了所有的消息类型，用于定义和使用标准的消息 |
-| from sensor_msgs.msg import Image | 从ROS的sensor_msgs包中导入了Image消息类型，用于处理图像数据 |
-| from visual_processing.msg import Result | 从visual_processing包中导入了Result消息类型，用于图像处理结果的消息 |
-| from visual_processing.srv import SetParam | 从visual_processing包中导入了SetParam服务类型，设置参数的自定义服务 |
-| from ros_robot_controller.msg import RGBState, RGBsState | 从ros_robot_controller.msg模块导入 RGBState, RGBsState消息类型。用于控制或表示传感器设备上的RGB灯状态 |
-| from chassis_control.msg import \* | 从 chassis_control.msg 模块导入所有消息类型。这意味着导入该模块中定义的所有消息类型，用于底盘控制 |
-| from visual_patrol.srv import SetTarget | 从 visual_patrol.srv 模块导入 SetTarget 服务类型。用于设置视觉巡逻的目标 |
-| from hiwonder_servo_msgs.msg import MultiRawIdPosDur | hiwonder_servo_msgs.msg 模块导入 MultiRawIdPosDur 消息类型。用于控制舵机设备 |
-| from armpi_pro import pid | 从 armpi_pro 模块导入pid类。用于实现比例-积分-微分（PID）控制算法 |
-| from armpi_pro import bus_servo_control | 从 armpi_pro 模块导入 bus_servo_control 模块。包含与舵机控制相关的函数和方法 |
-| from kinematics import ik_transform | 从 kinematics 模块导入 ik_transform 函数。用于进行逆运动学变换 |
-
-- #### 5.5.2 功能逻辑
-
-根据实现效果，梳理该玩法的实现逻辑如下图所示：
-
-<img class="common_img" src="../_static/media/chapter_14/section_5/image32.png"  />
-
-通过摄像头获取图像信息，再进行图像处理，即对图像进行二值化处理，为了降低干扰，令图像更平滑，对图像进行腐蚀和膨胀处理，然后获取目标最大面积轮廓和最小外接圆，得到色块追踪区域，接着根据PID算法让机械臂转向色块位置，并且小车朝色块方向行驶。
-
-- #### 5.5.3 程序逻辑及对应的代码分析
-
-从程序文件梳理得到程序逻辑流程图如下图所示。
-
-<img class="common_img" src="../_static/media/chapter_14/section_5/image33.png"  />
-
-从上图得到，程序的逻辑流程主要为颜色识别函数和移动控制，以下的文档内容将依照上述程序逻辑流程图进行编写。
-
-1. **图像处理**
-
-<img src="../_static/media/chapter_14/section_5/image34.png"  />
-
-- **二值化处理**
-
-采用cv2库中的inRange()函数对图像进行二值化处理。
-
-<img src="../_static/media/chapter_14/section_5/image35.png"  />
-
-第一个参数"**frame_lab**"是输入图像；
-
-第二个参数"**tuple(color_range\['min'\])**"是阈值下限；
-
-第三个参数"**tuple(color_range\['max'\])**"是阈值上限；
-
-- **腐蚀膨胀处理**
-
-为了降低干扰，令图像更平滑，需要对图像进行腐蚀和膨胀处理。
-
-<img src="../_static/media/chapter_14/section_5/image36.png"  />
-
-erode()函数用于对图像进行腐蚀操作。以代码"**eroded = cv2.erode(frame_mask, cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2)))**"为例，括号内的参数含义如下：
-
-第一个参数"**frame_mask**"是输入图像；
-
-第二个参数"**cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2))**"是决定操作性质的结构元素或内核。其中，括号内的第一个参数是内核形状，第二个参数是内核尺寸。
-
-dilate()函数用于对图像进行膨胀操作。此函数括号内参数的含义与erode()函数的相同。
-
-- **获取最大面积轮廓**
-
-完成上述的图像处理后，需要获取识别目标的轮廓，此处涉及cv2库中的findContours()函数。
-
-<img src="../_static/media/chapter_14/section_5/image37.png"  />
-
-erode()函数用于对图像进行腐蚀操作。以代码"**contours = cv2.findContours(dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)\[-2\]**"为例：
-
-第一个参数"**dilated**"是输入图像；
-
-第二个参数"**cv2.RETR_EXTERNAL**"是轮廓的检索模式；
-
-第三个参数"**cv2.CHAIN_APPROX_NONE)\[-2\]**"是轮廓的近似方法。
-
-在获得的轮廓中寻找面积最大的轮廓，而为了避免干扰，需要设定一个最小值，仅当面积大于该值时，目标轮廓才有效，此处最小值为"**100**"。
-
-<img src="../_static/media/chapter_14/section_5/image38.png"  />
-
-- **获取最小外接圆，并在回传画面中显示出来**
-
-采用cv2库中的minEnclosingCircle()函数获取目标轮廓的最小外接圆与圆心坐标，并通过circle()函数将外接圆在回传画面中显示出来。
-
-<img src="../_static/media/chapter_14/section_5/image39.png"  />
-
-2. **移动控制**
-
-通过调用bus_servo_control.set_servos()函数控制机械臂的舵机，使机械臂可以随着视觉范围目标的移动而移动。
-
-<img src="../_static/media/chapter_14/section_5/image40.png"  />
-
-以代码"**bus_servo_control.set_servos(joints_pub, 20, ((3, arm_y), (6, arm_x)))**"为例，括号内的参数含义如下：
-
-第一个参数："**joints_pub**"是发布舵机控制节点消息；
-
-第二个参数："**0.02**"是运行时间，单位为秒。
-
-第三个参数："**((3, arm_y), (6, arm_x)）**"，其中"**3**"是舵机编号，"**arm_y**"是舵机角度，(6, arm_x)）同理。
-
-最后，再通过调用set_velocity.publis()函数来控制ArmPi Pro机器人的电机，使麦轮移动，达到追踪的效果。
-
-<img src="../_static/media/chapter_14/section_5/image41.png"  />
-
-电机控制以代码"**set_translation.publish(dx,dy)**"为例，括号内的参数含义如下：
-
-第一个参数："**dx**"是X轴移动距离，这里我们将"**dx**"的范围设置为（-200~200）；
-
-第二个参数："**dy**"是Y轴移动距离，这里我们将"**dy**"的范围设置为（-180~180）。
-
-## 6. 人脸识别
-
-:::{Note}
-可在本节文件夹下观看演示效果。
-:::
-
-### 6.1 实验原理
-
-人工智能中最为一个广泛的应用当属图像识别，而图像识别中的人脸识别是最火热的应
-
-用，常常应用于门锁和手机人脸解锁等场景。
-
-下面看下本节课整体实现的流程：
-
-我们先设定云台舵机进行左右转动来获取人脸，然后使用训练好的人脸模型，通过缩放画面检测人脸，接着将识别到的人脸坐标转换为未缩放前的坐标，进而判断是否为最大的人脸，并将识别到的人脸框出。
-
-最后通过控制舵机角度转动让机器人来执行识别后的反馈。
-
-该程序的源代码位于Docker容器中的： **/home/ubuntu/armpi_pro/src/face_detect/scripts/face_detect_node.py**
-
-<img src="../_static/media/chapter_14/section_6/image3.png"  alt="loading" />
-
-### 6.2 实验步骤
-
-:::{Note}
-指令的输入需严格区分大小写，另外可按键盘"**Tab**"键进行关键词补齐。
+It should be case sensitive when entering command and the **“Tab”** key can be used to complete the keywords.
 :::
 
 <p id="anchor_6_2_1"></p>
 
-- #### 6.2.1 玩法进入
+* **Enter Game** 
 
-1)  将设备开机，并参照课程资料的"**第8章 远程工具安装及容器进入方法\第1课 远程桌面工具安装与连接**"内容，通过VNC远程连接工具连接。
+(1) Power on the robot and use VNC Viewer to connect to the remote desktop.
 
-<img src="../_static/media/chapter_14/section_6/image4.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_6/image4.png"  />
 
-2)  点击系统桌面左上角的图标<img src="../_static/media/chapter_14/section_6/image5.png"  />，打开Terminator终端。
+(2)  click<img src="../_static/media/chapter_14/section_6/image5.png"  />in the upper left corner of the system desktop to open the “Terminator”.
 
-<img src="../_static/media/chapter_14/section_6/image6.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_6/image6.png"  />
 
-3)  输入指令，然后按下回车进入人脸识别玩法。当成功进入后，会出现打印提示，如下图所示：
+(3) Enter the following command, and press “Enter” to access the face recognition game. After entering the game, the prompt shown in the following red box will appear.
 
 ```commandline
 rosservice call /face_detect/enter "{}"
 ```
 
-<img src="../_static/media/chapter_14/section_6/image7.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_6/image7.png"  />
 
-- #### 6.2.2 回传图像开启
+* **Start image transmission** 
 
-1. **使用外部浏览器开启**
+**(1)  Start with browser**
 
-**为避免过多占用树莓派的运行内存，建议使用外部浏览器来开启图像回传画面，具体步骤如下：**
+To avoid consuming too much running memory of Raspberry Pi. It is recommended to use an external browser to open the transmitted image. 
+The specific steps are as follows:
 
-- 选择任意一个外部浏览器，这里以谷歌浏览器为例。
+① Select a browser. Take Google Chrome as example.
 
 <img class="common_img" src="../_static/media/chapter_14/section_6/image8.jpeg"  alt="loading" />
 
-- 然后在地址栏输入默认IP地址如"**192.168.149.1:8080/**"，（注意：此IP地址为直连模式下的默认IP地址，若为局域网模式，则输入："**设备IP地址+：8080/"，如"192.168.149.1:8080/**"）。如果打开失败，可以重复多次或者重启树莓派和电脑。
+② Then enter the default IP address “192.168.149.1:8080/” (Note: this IP address is the default IP address for direction connection mode. If it is LAN mode, please enter “Device IP address+：8080/” such as “192.168.149.1:8080/”) If fail to open, you can try it several times or restart camera.
 
 :::{Note}
-如果是局域网连接模式，设备IP地址获取方法可参考"机器人网络课程配置\2. 修改网络连接模式**"
+ If it is in LAN mode, the method to obtain device IP address can refer to “[Robot Network Configuration Course]()”.
 :::
 
 <img class="common_img" src="../_static/media/chapter_14/section_6/image9.png"  />
 
-- 然后点击下图框出选项，即可打开回传画面。
+③ Then, click the option shown in the following figure to open the display window of the transmitted image.
 
 <img class="common_img" src="../_static/media/chapter_14/section_6/image10.png"  />
 
-<img src="../_static/media/chapter_14/section_6/image11.png"  />
+**(2) Start with rqt**
 
-2. **使用rqt工具开启**
+① After completing the steps of “[Enter Game]()” and do not exit the terminal, open a new terminal.
 
-1)  [6.2 实验步骤\ 玩法进入](#anchor_6_2_1)终端不关闭的情况下，再打开一个新的终端。
-
-2)  输入指令，按下回车，稍等片刻即可打开rqt工具。
+② Enter command “rqt_image_view” and press “Enter” to open rqt.
 
 ```commandline
 rqt_image_view
 ```
 
-<img src="../_static/media/chapter_14/section_6/image12.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_6/image12.png"  />
 
-3)  单击下图所示红框位置，对人脸识别的话题选项（topic）进行选择，选项为"**/visual_processing/image_result**"，其余设置保持不变。
+③ Click the red box as the figure shown below, select “/visual_processing/image_result” for the topic of line following and remain other settings unchanged. 
 
-<img src="../_static/media/chapter_14/section_6/image13.png"  alt="loading" />
+<img class="common_img" src="../_static/media/chapter_14/section_6/image13.png"  alt="loading" />
 
 :::{Note}
-图像开启后请务必选择话题选项，否则在后续玩法启动后，将无法正常显示其识别过程。
+ After opening image, the topic option must be selected. Otherwise, after starting game, the recognition process can not be displayed normally.
 :::
 
-- #### 6.2.3 玩法启动
+* **Start Game** 
 
-此时返回[6.2 实验步骤\ 玩法进入](#anchor_6_2_1)开启的终端，输入指令按下回车，同理出现下图所框提示即为启动成功。
+(1) Now, enter the terminal according to the steps in “[Enter Game]()” and input the following command. 
 
 ```commandline
 rosservice call /face_detect/set_running "data: true"
 ```
 
-<img src="../_static/media/chapter_14/section_6/image14.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_6/image14.png"  />
 
-- #### 6.2.4 玩法停止及退出
+* **Stop and Exit** 
 
-1)  如需停止该玩法，输入指令：
+(1) If want to stop the game, enter the command.
 
 ```commandline
 rosservice call /face_detect/set_running "data: false"
 ```
 
-<img src="../_static/media/chapter_14/section_6/image15.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_6/image15.png"  />
 
-2)  如需退出该玩法，输入指令， 按下回车即可退出。
+(2) If want to exit the game, enter command “rosservice call /face_detect/exit "{}"” to exit.
 
 ```commandline
 rosservice call /face_detect/exit "{}"
 ```
 
-<img src="../_static/media/chapter_14/section_6/image16.png"  />
-
-<span class="mark">注意：玩法在未退出时，会在当前树莓派通电状态下持续运行。为避免过多占用树莓派的运行内存，如需执行其它AI视玩法，请先按照上述指令关闭当前玩法，并将命令行终端关闭。</span>
-
-3)  如需关闭摄像头回传图像，返回开启rqt工具的终端，按下"**Ctrl+C**"即可，若关闭失败，可重复多次，直至退出。
-
-### 6.3 功能实现
-
-玩法开启后机械臂将左右来回转动寻找人脸，在rqt工具内可以看到当脸部被识别到后，会将人脸目标框出，此时机械臂的爪子将进行左右转动后再张开闭合。
-
-<img class="common_img" src="../_static/media/chapter_14/section_6/image17.png"  />
-
-### 6.4 程序简要分析
-
-本小节课程文档对应程序的源代码位于Docker容器中的：
-
-**/home/ubuntu/armpi_pro/src/visual_processing/scripts/visual_processing_node.py（图像处理）**
-
-**/home/ubuntu/armpi_pro/src/face_detect/scripts/face_detect_node.py（动作反馈）**
+<img class="common_img" src="../_static/media/chapter_14/section_6/image16.png"  />
 
 :::{Note}
-在程序修改前务必将原有出厂程序进行备份，再进行修改，禁止直接在源代码文件中进行修改，避免以错误的方式修改参数之后导致机器人异常且无法修复！！！
+
+Before exiting the game, it will keep running when Raspberry Pi is powered on. To avoid consume too much running memory of Raspberry Pi, you need to exit the game first according to the operation steps above before performing other AI vision games.
+
 :::
 
-- #### 6.4.1 导入参数模块
+(3) If want to exit the image transmission, press “Ctrl+C” to return and open the terminal of rqt. If fail to exit, please keep trying several times.
 
-| **导入模块** | **作用** |
-|----|----|
-| import sys | 导入了Python的sys模块，用于访问系统相关的功能和变量 |
-| import cv2 | 导入了OpenCV库，用于图像处理和计算机视觉相关的功能 |
-| import time | 导入了Python的time模块，用于时间相关的功能，例如延时操作 |
-| import math | 导入了Python的math模块，用于数学运算和函数 |
-| import rospy | 导入了ROS的Python库rospy，用于与ROS系统进行通信和交互 |
-| import numpy as np | 导入了NumPy库，并将其重命名为np，用于进行数组和矩阵操作 |
-| from armpi_pro import misc | 从arm_pi_pro包中导入了misc模块，用于处理识别得到的矩形数据 |
-| from armpi_pro import apriltag | 从arm_pi_pro包中导入了apriltag模块，用于Apriltag识别和处理的功能 |
-| from threading import RLock, Timer | 从Python的threading模块中导入了RLock类和Timer类，用于线程相关的操作 |
-| from std_srvs.srv import \* | 从ROS的std_srvs包中导入了所有的服务消息类型，用于定义和使用标准的服务消息 |
-| from std_msgs.msg import \* | 从ROS的std_msgs包中导入了所有的消息类型，用于定义和使用标准的消息 |
-| from sensor_msgs.msg import Image | 从ROS的sensor_msgs包中导入了Image消息类型，用于处理图像数据 |
-| from visual_processing.msg import Result | 从visual_processing包中导入了Result消息类型，用于图像处理结果的消息 |
-| from visual_processing.srv import SetParam | 从visual_processing包中导入了SetParam服务类型，设置参数的自定义服务 |
-| from ros_robot_controller.msg import RGBState, RGBsState | 从ros_robot_controller.msg 模块导入RGBState, RGBsState消息类型。用于控制或表示传感器设备上的RGB状态 |
-| from chassis_control.msg import \* | 从 chassis_control.msg 模块导入所有消息类型。这意味着导入该模块中定义的所有消息类型，用于底盘控制 |
-| from visual_patrol.srv import SetTarget | 从 visual_patrol.srv 模块导入 SetTarget 服务类型。用于设置视觉巡逻的目标 |
-| from hiwonder_servo_msgs.msg import MultiRawIdPosDur | hiwonder_servo_msgs.msg 模块导入 MultiRawIdPosDur 消息类型。用于控制舵机设备 |
-| from armpi_pro import pid | 从 armpi_pro 模块导入pid类。用于实现比例-积分-微分（PID）控制算法 |
-| from armpi_pro import bus_servo_control | 从 armpi_pro 模块导入 bus_servo_control 模块。包含与舵机控制相关的函数和方法 |
-| from kinematics import ik_transform | 从 kinematics 模块导入 ik_transform 函数。用于进行逆运动学变换 |
+### 8.6.3 Project Outcome
 
-- #### 6.4.2 功能逻辑
+After starting the game, the robotic arm will search for human face from side to side. Then, the human face will be framed in rqt tool after recognition and the gripper of robotic arm will rotate left and right before opening and closing.
 
-根据实现效果，梳理该玩法的实现逻辑如下图所示：
+### 8.6.4 Program Analysis
 
-<img class="common_img" src="../_static/media/chapter_14/section_6/image18.png"  />
+The source code for the program corresponding to this section is located in the Docker container:
 
-通过摄像头获取图像信息，控制机械臂左右寻找人脸，寻找到人脸之后，对获取到的人脸数据进行处理，将回传画面中的人脸框出来，并且机械臂的爪子进行左右转动后再张开闭合。
+[/home/ubuntu/armpi_pro/src/visual_processing/scripts/visual_processing_node.py]()（image processing）
 
-- #### 6.4.3 程序逻辑及对应的代码分析
-
-从程序文件梳理得到程序逻辑流程图如下图所示。
-
-<img class="common_img" src="../_static/media/chapter_14/section_6/image19.png"  />
-
-从上图得到，程序的逻辑流程主要为人脸识别函数和动作反馈，以下的文档内容将依照上述程序逻辑流程图进行编写。
-
-1. **图像处理**
-
-- 初始化函数与变量
-
-<img src="../_static/media/chapter_14/section_6/image20.png"  />
-
-- 图像预处理
-
-采用cv2库中的cv2.dnn.blobFromImage()函数对图像进行预处理。
-
-<img src="../_static/media/chapter_14/section_6/image21.png"  />
-
-第一个参数"**img_copy**"是输入图像；
-
-第二个参数"**1**"是完成减均值后的图像缩放比例；
-
-第三个参数"**(140, 140)**"是输出图像的空间尺寸，此处数值表示宽w=150，高h=150；
-
-第四个参数"**\[104, 117, 123\]**"是各通道减去值，OpenCV的图像通道顺序为B、G、R。此处数值表示B通道的值减去104，G通道的值减去117，R通道的值减123；
-
-第五个参数"**False**"用于决定是否交换R、B通道，默认为"False"，即不交换R、B通道。当减均值的顺序假设为R、G、B，则需交换R、B通道，即填入"True"；
-
-第六个参数"**False**"用于决定是否裁剪图像，默认为"False"，即不裁剪图像，直接对其大小进行调整，且保留纵横比。当值为"True"，先将图像按比例进行缩放，然后从其中心处按照参数三的设定尺寸进行裁剪。
-
-- 坐标转换
-
-在预处理过程中，图像经过缩放处理，得到的人脸坐标与实际画面是不匹配的。因此，在完成图像预处理后，需要对坐标进行转换。
-
-<img src="../_static/media/chapter_14/section_6/image22.png"  />
-
-- 信息反馈
-
-通过调用cv2库中的rectangle()函数，用矩形方框标识出回传画面内的人脸。
-
-<img src="../_static/media/chapter_14/section_6/image23.png"  />
-
-函数括号内的参数含义如下：
-
-第一个参数"**img**"是输入图像；
-
-第二个参数"**(x1, y1)**"是矩形的起始坐标；
-
-第三个参数"**(x2, y2)**"是矩形的结束坐标；
-
-第四个参数"**(0, 255, 0)**"是矩形边线颜色，其顺序为B、G、R，此处为绿色；
-
-第五个参数"**2**"是矩形边线宽度。值为"-1"时，代表用参数四指定颜色填充矩形；
-
-2. **动作反馈**
-
-当检测到人脸，通过调用hiwonder_servo_msgs.msg库中bus_servo_control.set_servos()函数控制ArmPi Pro机器人执行对应动作。
-
-<img src="../_static/media/chapter_14/section_6/image24.png"  />
-
-<img src="../_static/media/chapter_14/section_6/image25.png"  />
-
-舵机控制以代码"**bus_servo_control.set_servos(joints_pub, 300, ((2, 300),))**"为例，括号内的参数含义如下：
-
-第一个参数"**(joints_pub)**"是发布舵机控制节点消息。
-
-第二个参数："**300**"是运行时间。
-
-第三个参数："**((2, 300),)**"，其中"**2**"是舵机编号，"**300**"是舵机角度。
-
-## 7. 视觉巡线
+[/home/ubuntu/armpi_pro/src/face_detect/scripts/face_detect_node.py]()（action feedback）
 
 :::{Note}
-可在本节文件夹下观看演示效果。
+ please back up the initial program before making any modifications. It is prohibited editing the source code files directly to prevent making changes in an incorrect manner that could lead to robot malfunctions, rendering them irreparable.
 :::
 
-### 7.1 实验原理 
+* **Import Parameter Module** 
 
-首先需要对颜色进行识别，我们使用Lab颜色空间来进行处理。先将RGB颜色空间转换为Lab，然后进行二值化处理，再经过膨胀腐蚀等操作，可获得只包含目标颜色的轮廓，将线条的轮廓用方框框起来，同时用方框画出线条的中心点。
+| **Imported Module**                                  | **Function**                                                 |
+| ---------------------------------------------------- | ------------------------------------------------------------ |
+| import sys                                           | The sys module of Python is imported to access to system-related functionalities and variables. |
+| import cv2                                           | The OpenCV library of Python is imported to perform image processing and computer vision-related functions. |
+| import time                                          | The time module of Python is imported to perform time-related functionalities, such as delay operations. |
+| import math                                          | The math module of Python is imported to perform mathematical operations and functions. |
+| import rospy                                         | The Python library rosy is imported for  communication and interaction with ROS. |
+| import numpy as np                                   | The NumPy library is imported and is renamed as np for performing array and matrix operations. |
+| from armpi_pro import Misc                           | The Misc module is imported from arm_pi_pro package to handle the recognized rectangular data. |
+| from armpi_pro import apriltag                       | The apriltag module is imported from arm_pi_pro package  to perform Apriltag recognition and processing. |
+| from threading import RLock, Timer                   | The “RLock” class and “Timer” class is imported from the threading module of Python for thread-related operations. |
+| from std_srvs.srv import *                           | All service message types are imported from the std_srvs in ROS for defining and using standard service messages. |
+| from std_msgs.msg import *                           | All message types are imported form the std_msgs package in ROS for defining and using standard messages. |
+| from sensor_msgs.msg import Image                    | The image message type is imported from the sensor_msgs packages for processing image data. |
+| from visual_processing.msg import Result             | The Result message type is imported from the visual_processing package for the message of image processing results. |
+| from visual_processing.srv import SetParam           | The SetParam service type is imported from the visual_processing packages for using customs service related to parameter settings. |
+| from sensor.msg import Led                           | The Led message type is imported form the sensor.msg module for controlling or representing the LED status on a sensor. |
+| from chassis_control.msg import *                    | All message types are imported from the chassis_control.msg module, which indicated that all message types defined in this module is imported to perform the chassis control. |
+| from visual_patrol.srv import SetTarget              | The SetTarget service type is imported from the visual_patrol.srv module is used to set a target for line following. |
+| from hiwonder_servo_msgs.msg import MultiRawIdPosDur | The MultiRawIdPosDur message type is imported from the hiwonder_servo_msgs.msg module for controlling servos. |
+| from armpi_pro import PID                            | The PID class is imported from thearmpi_pro module to perform PID algorithm. |
+| from armpi_pro import bus_servo_control              | The bus_servo_control module is imported from the armpi_pro module, including the functions and methods related to the servo control. |
+| from kinematics import ik_transform                  | The ik_transform function is imported from the kinematics module to perform conversion of inverse kinematics. |
 
-最后当识别到红色线条后，ArmPi Pro机器人将沿着线条行驶，从而达到智能巡线的效果。
+* **Initializing functions and variables** 
 
-该程序的源代码位于Docker容器中的：**/home/ubuntu/armpi_pro/src/visual_patrol/scripts/visual_patrol_node.py**
+{lineno-start=64}
 
-<img src="../_static/media/chapter_14/section_7/image3.png"  />
+```
+	# 人脸识别函数(face recognition function)
+def face_detect(img):
+    global pub_time
+    global publish_en
+    
+    msg = Result()
+    img_copy = img.copy()
+    img_h, img_w = img.shape[:2]
+    blob = cv2.dnn.blobFromImage(img_copy, 1, (140, 140), [104, 117, 123], False, False)
+    net.setInput(blob)
+    detections = net.forward() #计算识别(calculate recognition)
+    for i in range(detections.shape[2]):
+        confidence = detections[0, 0, i, 2]
+        if confidence > conf_threshold:
+	            #识别到人脸的各个坐标转换会回未缩放前的坐标（each coordinate of the recognized face will be converted to the coordinate before scaling）
+            x1 = int(detections[0, 0, i, 3] * img_w)
+            y1 = int(detections[0, 0, i, 4] * img_h)
+            x2 = int(detections[0, 0, i, 5] * img_w)
+            y2 = int(detections[0, 0, i, 6] * img_h)             
+            cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2) #将识别到的人脸框出(frame the recognized face)
+            
+            msg.center_x = int((x1 + x2)/2)
+            msg.center_y = int((y1 + y2)/2)
+            msg.data = round(confidence, 2)
+            publish_en = True
+        
+        if publish_en:
+            if (time.time()-pub_time) >= 0.06:
+                result_pub.publish(msg)  # 发布结果(publish results)
+                pub_time = time.time()
+```
+
+* **Image pre-processing** 
+
+Using the `cv2.dnn.blobFromImage()` function from cv2 library to perform pre-processing on image.
+
+{lineno-start=72}
+
+```
+	    blob = cv2.dnn.blobFromImage(img_copy, 1, (140, 140), [104, 117, 123], False, False)
+```
+
+① The first parameter `img_copy` represents the input image. 
+
+② The second parameter `1` is the scale factor for the image after mean subtraction is performed. 
+
+③ The third parameter `(140, 140)` represents the spatial dimensions of the output image, with the values denoting a width (w) of 150 and a height (h) of 150.
+
+④ The fourth parameter `[104, 117, 123]` signifies the values subtracted from each channel. 
+
+⑤ In OpenCV, the channel order is B, G, R. Here, the values imply subtracting 104 from the B channel, 117 from the G channel, and 123 from the R channel. The fifth parameter "False" determines whether to swap the R and B channels. By default, it is set to "False," meaning no swapping of R and B channels. If the mean subtraction order is assumed to be R, G, B, then R and B channels need to be swapped, which would require setting this parameter to "True." 
+
+⑥ The sixth parameter "False" decides whether to crop the image. By default, it is set to "False," implying no image cropping. The image's size is adjusted directly, while preserving the aspect ratio. If set to "True," the image is first scaled proportionally, and then cropped from its center according to the dimensions specified in parameter three.
+
+* **Coordinates conversion** 
+
+During the preprocessing process, the image undergoes scaling, resulting in mismatched coordinates for the detected faces and the actual scene. Therefore, after completing image preprocessing, it is necessary to perform coordinate transformation.
+
+{lineno-start=78}
+
+```
+	            #识别到人脸的各个坐标转换会回未缩放前的坐标（each coordinate of the recognized face will be converted to the coordinate before scaling）
+            x1 = int(detections[0, 0, i, 3] * img_w)
+            y1 = int(detections[0, 0, i, 4] * img_h)
+            x2 = int(detections[0, 0, i, 5] * img_w)
+            y2 = int(detections[0, 0, i, 6] * img_h)  
+```
+
+* **Information feedback** 
+
+By using the `rectangle()` function from the cv2 library, the faces within the returned image are highlighted with rectangular bounding boxes.
+
+{lineno-start=83}
+
+```
+            cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2) #将识别到的人脸框出(frame the recognized face)
+```
+
+The parameters within the function parentheses are as follows: 
+
+① The first parameter `img` represents the input image. 
+
+② The second parameter `(x1, y1)` denotes the starting coordinates of the rectangle. 
+
+③ The third parameter `(x2, y2)` indicates the ending coordinates of the rectangle. 
+
+④ The fourth parameter `(0, 255, 0)` represents the color of the rectangle's outline, using the BGR order; in this case, it's green. 
+
+⑤ The fifth parameter `2` is the width of the rectangle's outline. 
+A value of  `-1`  means that the rectangle will be filled with the color specified in parameter four.
+
+* **Action Feedback** 
+
+When a face is detected, the corresponding action of the ArmPi Pro robot can be executed by calling the `bus_servo_control.set_servos()` function from the hiwonder_servo_msgs.msg library.
+
+{lineno-start=82}
+
+```
+    while __isRunning:
+        if start_greet: #人脸在画面中间(The face is in the center of the image)
+            start_greet = False                
+            action_finish = False
+            
+            # 控制机械臂打招呼(Control the robotic arm to wave hello)
+            bus_servo_control.set_servos(joints_pub, 0.3, ((2, 300),)) # 机械臂腕部向左转(rotate the wrist of the robotic arm to the left)
+            rospy.sleep(0.3)
+
+            bus_servo_control.set_servos(joints_pub, 0.6, ((2, 700),)) # 机械臂腕部向右转(rotate the wrist of the robotic arm to the right)
+            rospy.sleep(0.6)
+            
+            bus_servo_control.set_servos(joints_pub, 0.6, ((2, 300),)) # 机械臂腕部向左转(rotate the wrist of the robotic arm to the left)
+            rospy.sleep(0.6)
+            
+            bus_servo_control.set_servos(joints_pub, 0.3, ((2, 500),)) # 机械臂腕部回中(return the wrist of the robotic arm to the initial position)
+            rospy.sleep(0.3)
+            
+            bus_servo_control.set_servos(joints_pub, 0.4, ((1, 200),)) # 机械爪张开(open the robotic gripper)
+            rospy.sleep(0.4)
+
+            bus_servo_control.set_servos(joints_pub, 0.4, ((1, 500),)) # 机械爪闭合(close the robotic gripper)
+            rospy.sleep(0.4)
+            
+            bus_servo_control.set_servos(joints_pub, 0.4, ((1, 200),)) # 机械爪张开(open the robotic gripper)
+            rospy.sleep(0.4)
+```
+
+{lineno-start=115}
+
+```
+        else:
+            if have_move:
+                # 机械臂打招呼后复位(the robotic arm returns to the initial position after waving hello)
+                have_move = False
+                bus_servo_control.set_servos(joints_pub, 0.2, ((1, 500), (2, 500)))
+                rospy.sleep(0.2)
+                
+            # 没有识别到人脸，机械臂左右转动(If the face is not detected, the robotic arm will rotate left and right.)
+            if servo6_pulse > 875 or servo6_pulse < 125:
+                d_pulse = -d_pulse
+            bus_servo_control.set_servos(joints_pub, 0.05, ((6, servo6_pulse),))           
+            servo6_pulse += d_pulse       
+           
+            rospy.sleep(0.05)    
+```
+
+Taking the code `bus_servo_control.set_servos(joints_pub, 300, ((2, 300),))` as an example, the parameters in the parentheses are explained as follows:
+
+First parameter: `(joints_pub)` is used to publish messages to the servo control node.
+
+Second parameter: `300` represents the execution time in milliseconds.
+
+Third parameter: `((2, 300),),` where 2 is the servo ID and 300 is the servo angle.
+
+## 8.7 Line Following
+
+### 8.7.1 Program Description 
+
+Recognize the color and process it with Lab color space. Firstly, convert RGB color space to LAB and then perform binaryzation, dilation and erosion and other operations to obtain the outline of the target color. Then frame the line and its center point.
+Finally, after identifying red line, ArmPi Pro will follow the line.
 
 <p id="anchor_7_2"></p>
 
-### 7.2 玩法开启及关闭
+### 8.7.2 Operation Steps
 
 :::{Note}
-指令的输入需严格区分大小写，另外可按键盘"Tab"键进行关键词补齐。
+It should be case sensitive when entering command and the “Tab” key can be used to complete the keywords.
 :::
 
 <span id="anchor_7_2_1" class="anchor"></span>
 
-- #### 7.2.1 玩法进入
+* **Enter Game** 
 
-1)  将设备开机，并参照课程资料的"**[远程工具安装及容器进入方法\1. 远程桌面工具安装与连接]()**"内容，通过VNC远程连接工具连接。
+(1) Power on the robot and use VNC Viewer to connect to the remote desktop.
 
-<img src="../_static/media/chapter_14/section_7/image4.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_7/image4.png"  />
 
 <span id="anchor_7_2_1_1" class="anchor"></span>
 
-2)  点击系统桌面左上角的图标<img src="../_static/media/chapter_14/section_7/image5.png"  />，打开Terminator终端。
+(2) Click <img src="../_static/media/chapter_14/section_7/image5.png"  /> in the upper left corner of the system desktop to open the “Terminator”.
 
-<img src="../_static/media/chapter_14/section_7/image6.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_7/image6.png"  />
 
-3)  输入指令，然后按下回车进入视觉巡线玩法。当成进入后，会出现打印提示，如下图所示：
+(3) Enter the following command, and press “Enter” to access the line following game. After entering the game, the prompt shown in the following red box will appear.
 
 ```commandline
 rosservice call /visual_patrol/enter "{}"
 ```
 
-<img src="../_static/media/chapter_14/section_7/image7.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_7/image7.png"  />
 
-- #### 7.2.2 回传图像开启
+* **Start image transmission** 
 
-1. **使用外部浏览器开启**
+**(1) Start with browser**
 
-**为避免过多占用树莓派的运行内存，建议使用外部浏览器来开启图像回传画面，具体步骤如下：**
+To avoid consuming too much running memory of Raspberry Pi. It is recommended to use an external browser to start image transmission. 
 
-- 选择任意一个外部浏览器，这里以谷歌浏览器为例。
+The specific steps are as follows:
+
+① Select a browser. Take Google Chrome as example.
 
 <img class="common_img" src="../_static/media/chapter_14/section_7/image8.jpeg"  alt="loading" />
 
-- 然后在地址栏输入默认IP地址如"**192.168.149.1:8080/**"，（注意：此IP地址为直连模式下的默认IP地址，若为局域网模式，则输入："**设备IP地址+：8080/"，如"192.168.149.1:8080/**"）。如果打开失败，可以重复多次或者重启树莓派和电脑。
-
-:::{Note}
-如果是局域网连接模式，设备IP地址获取方法可参考"**[机器人网络课程配置\2. 修改网络连接模式]()**"
-:::
-
 <img class="common_img" src="../_static/media/chapter_14/section_7/image9.png"  />
 
--  然后点击下图框出选项，即可打开回传画面。
+② Then enter the default IP address “192.168.149.1:8080/” (Note: this IP address is the default IP address for direction connection mode. If it is LAN mode, please enter “Device IP address+：8080/”, for example, “192.168.149.1:8080/” ) If fail to open, you can try it several times or restart the Raspberry Pi and the computer.
 
 <img class="common_img" src="../_static/media/chapter_14/section_7/image10.png"  />
 
-<img src="../_static/media/chapter_14/section_7/image11.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_7/image11.png"  />
 
-2. **使用rqt工具开启**
+* **Start with rqt** 
 
--  [7.2 玩法开启及关闭\ 玩法进入](#anchor_7_2_1)终端不关闭的情况下，再打开一个新的终端。
+(1) After completing the steps of  “[Enter Game]()”  and do not exit the terminal, open a new terminal.
 
--  输入指令，按下回车，稍等片刻即可打开rqt工具。
+(2) Enter the following command and press “Enter” to open rqt.
 
 ```commandline
 rqt_image_view
 ```
 
-<img src="../_static/media/chapter_14/section_7/image12.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_7/image12.png"  />
 
--  单击下图所示红框位置，对视觉巡线的话题选项（topic）进行选择，选项为"**/visual_processing/image_result**"，其余设置保持不变。
+(3) Click the red box as the figure shown below, select “/visual_processing/image_result” for the topic of line following and remain other settings unchanged. 
 
-<img src="../_static/media/chapter_14/section_7/image13.png"  alt="loading" />
+<img class="common_img" src="../_static/media/chapter_14/section_7/image13.png"  alt="loading" />
 
 :::{Note}
-图像开启后请务必选择话题选项，否则在后续玩法启动后，将无法正常显示其识别过程。
+After opening image, the topic option must be selected. Otherwise, after starting game, the recognition process can not be displayed normally.
 :::
 
 <span id="anchor_7_2_3" class="anchor"></span>
 
-- #### 7.2.3 玩法启动
+* **Start Game** 
 
-1)  此时返回[7.2 玩法开启及关闭\ 玩法进入](#anchor_7_2_1)开启的终端，输入指令并安按下回车，同理出现下图所框提示即为启动成功。
+(1) Now, enter the terminal according to the steps in “[Enter Game]()” and input the following command. Then if the prompt shown in the following red box appears, which means game has been started successfully.
 
 ```commandline
 rosservice call /visual_patrol/set_running "data: true"
 ```
 
-<img src="../_static/media/chapter_14/section_7/image14.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_7/image14.png"  />
 
-2)  启动玩法后我们还需要设置参数即选择巡线的颜色，这里以追踪红色为例，输入指令：
+(2) After starting the game, select the line color. Take following red line as example. Enter the command below.
 
 ```commandline
 rosservice call /visual_patrol/set_target "data: 'red'"
 ```
 
 :::{Note}
-巡线绿色和蓝色可在"data: 'red '"内red替换为 green 或 blue。(严格区分大小写)
+If want to change the target line from red to green or blue. You can replace red in “data: 'red '” with green or blue. (The entered command should be case sensitive.)
 :::
 
-<img src="../_static/media/chapter_14/section_7/image15.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_7/image15.png"  />
 
-- #### 7.2.4 玩法停止及退出
+* **Stop and Exit** 
 
-1)  如需停止该玩法，输入指令，按下回车即可。在停止该玩法后可参考 [7.2 玩法开启及关闭\ 玩法启动](#anchor_7_2_3)，更换其他颜色进行巡线。
+(1) If want to stop the game, enter the following command. After stopping , you can refer to the content of “[Start Game]()” to change line color and start following again. 
 
 ```commandline
 rosservice call /visual_patrol/set_running "data: false"
 ```
 
-<img src="../_static/media/chapter_14/section_7/image16.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_7/image16.png"  />
 
-2)  如需退出该玩法，输入指令并按下回车，即可退出。
+(2) If want to exit the game, enter the following command to exit.
 
 ```commandline
 rosservice call /visual_patrol/exit "{}"
 ```
 
-<img src="../_static/media/chapter_14/section_7/image17.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_7/image17.png"  />
 
 :::{Note}
-玩法在未退出时，会在当前树莓派通电状态下持续运行。为避免过多占用树莓派的运行内存，如需执行其它AI视觉玩法，请先按照上述指令关闭当前玩法。
+Before exiting the game, it will keep running when Raspberry Pi is powered on. To avoid consume too much running memory of Raspberry Pi, you need to exit the game first according to the operation steps above before performing other AI vision games.
 :::
 
-3)  如需关闭摄像头回传图像，返回开启rqt工具的终端，按下"**Ctrl+C**"即可，若关闭失败，可重复多次，直至退出。
+(3) If want to exit the image transmission, press “Ctrl+C” to return and open the terminal of rqt. If fail to exit, please keep trying several times.
 
-### 7.3 功能实现
+### 8.7.3 Project Outcome
 
-将红色的电工胶带铺设在所用场地，并将ArmPi Pro机器人置于红色线条上。启动玩法后，机器人将巡红色线条进行移动。
+Stick the tape on a flat surface and put ArmPi Pro on the red line. After starting game, robot will follow the red line.
 
-<img class="common_img" src="../_static/media/chapter_14/section_7/image18.png"  />
 
-### 7.4 功能延伸
+### 8.7.4 Program Analysis
+
+The source code for the program corresponding to this section is located in the Docker container:
+
+[/home/ubuntu/armpi_pro/src/visual_processing/scripts/visual_processing_node.py]()（image processing）
+
+[/home/ubuntu/armpi_pro/src/visual_patrol/scripts/visual_patrol_node.py]()（line following）
+
+:::{Note}
+please back up the initial program before making any modifications. It is prohibited editing the source code files directly to prevent making changes in an incorrect manner that could lead to robot malfunctions, rendering them irreparable.
+:::
+
+* **Import Parameter Module** 
+
+| **Imported Module**                                  | **Function**                                                 |
+| ---------------------------------------------------- | ------------------------------------------------------------ |
+| import sys                                           | The sys module of Python is imported to access to system-related functionalities and variables. |
+| import cv2                                           | The OpenCV library of Python is imported to perform image processing and computer vision-related functions. |
+| import time                                          | The time module of Python is imported to perform time-related functionalities, such as delay operations. |
+| import math                                          | The math module of Python is imported to perform mathematical operations and functions. |
+| import rospy                                         | The Python library rosy is imported for  communication and interaction with ROS. |
+| import numpy as np                                   | The NumPy library is imported and is renamed as np for performing array and matrix operations. |
+| from armpi_pro import Misc                           | The Misc module is imported from arm_pi_pro package to handle the recognized rectangular data. |
+| from armpi_pro import apriltag                       | The apriltag module is imported from arm_pi_pro package  to perform Apriltag recognition and processing. |
+| from threading import RLock, Timer                   | The “RLock” class and “Timer” class is imported from the threading module of Python for thread-related operations. |
+| from std_srvs.srv import *                           | All service message types are imported from the std_srvs in ROS for defining and using standard service messages. |
+| from std_msgs.msg import *                           | All message types are imported form the std_msgs package in ROS for defining and using standard messages. |
+| from sensor_msgs.msg import Image                    | The image message type is imported from the sensor_msgs packages for processing image data. |
+| from visual_processing.msg import Result             | The Result message type is imported from the visual_processing package for the message of image processing results. |
+| from visual_processing.srv import SetParam           | The SetParam service type is imported from the visual_processing packages for using customs service related to parameter settings. |
+| from sensor.msg import Led                           | The Led message type is imported form the sensor.msg module for controlling or representing the LED status on a sensor. |
+| from chassis_control.msg import *                    | All message types are imported from the chassis_control.msg module, which indicated that all message types defined in this module is imported to perform the chassis control. |
+| from visual_patrol.srv import SetTarget              | The SetTarget service type is imported from the visual_patrol.srv module is used to set a target for line following. |
+| from hiwonder_servo_msgs.msg import MultiRawIdPosDur | The MultiRawIdPosDur message type is imported from the hiwonder_servo_msgs.msg module for controlling servos. |
+| from armpi_pro import PID                            | The PID class is imported from thearmpi_pro module to perform PID algorithm. |
+| from armpi_pro import bus_servo_control              | The bus_servo_control module is imported from the armpi_pro module, including the functions and methods related to the servo control. |
+| from kinematics import ik_transform                  | The ik_transform function is imported from the kinematics module to perform conversion of inverse kinematics. |
+
+* **Initializing functions and variables** 
+
+{lineno-start=159}
+
+```
+	# 线条识别函数(line recognition function)
+def line_detect(img, color):
+    global pub_time
+    global publish_en
+    global color_range_list
+    
+    if color == 'None':
+        return img
+    
+    n = 0
+    line_width = 0
+    msg = Result()
+    area_max = 0
+    weight_sum = 0
+    centroid_x_sum = 0
+    area_max_contour = 0
+    img_copy = img.copy()
+    img_h, img_w = img.shape[:2]
+    frame_resize = cv2.resize(img_copy, size_s, interpolation=cv2.INTER_NEAREST)
+    #frame_gb = cv2.GaussianBlur(frame_resize, (3, 3), 3) 
+    #将图像分割成上中下三个部分，这样处理速度会更快，更精确(divide the image into three parts (upper, middle, and lower) can make the processing faster and more accurate)
+    for r in roi:
+        roi_h = roi_h_list[n]
+        n += 1       
+        blobs = frame_resize[r[0]:r[1], r[2]:r[3]]
+        frame_lab = cv2.cvtColor(blobs, cv2.COLOR_BGR2LAB)  # 将图像转换到LAB空间(convert the image to LAB space)
+        if color in color_range_list:
+            color_range = color_range_list[color]
+            frame_mask = cv2.inRange(frame_lab, tuple(color_range['min']), tuple(color_range['max']))  # 对原图像和掩模进行位运算(perform bitwise operation on the original image and the mask)
+            eroded = cv2.erode(frame_mask, cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2)))  # 腐蚀(erode)
+            dilated = cv2.dilate(eroded, cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2)))  # 膨胀(dilate)
+            contours = cv2.findContours(dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)[-2]  # 找出轮廓(find contours)
+            area_max_contour, area_max = getAreaMaxContour(contours)  # 找出最大轮廓(find the largest contour)
+        if area_max > 50:  # 有找到最大面积(found the maximum area)
+            rect = cv2.minAreaRect(area_max_contour)  #最小外接矩形(minimum bounding rectangle)
+            box = np.int0(cv2.boxPoints(rect))        #最小外接矩形的四个顶点(four vertices of the minimum bounding rectangle)
+            for i in range(4):
+```
+
+* **Binarization** 
+
+Using the `inRange()` function from the cv2 library to perform binarization on image. 
+
+{lineno-start=187}
+
+```
+	            frame_mask = cv2.inRange(frame_lab, tuple(color_range['min']), tuple(color_range['max']))  # 对原图像和掩模进行位运算(perform bitwise operation on the original image and the mask)
+```
+
+The first parameter `frame_lab` is the input image;
+
+The second parameter `tuple(color_range['min'])` is the lower limit of threshold;
+
+The third parameter `tuple(color_range['max'])` is the upper limit of 
+threshold.
+
+* **Dilation and Erosion** 
+
+To reduce interference and create smoother images, erosion and dilation processes are applied.
+
+{lineno-start=188}
+
+```
+	            eroded = cv2.erode(frame_mask, cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2)))  # 腐蚀(erode)
+            dilated = cv2.dilate(eroded, cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2)))  # 膨胀(dilate)
+```
+
+`erode()` function is applied to erode image. Here uses an example of the code `eroded = cv2.erode(frame_mask, cv2.getStructuringElement (cv2.MORPH_RECT, (3, 3)))`. The meaning of parameters in parentheses are as follow:
+
+The first parameter `frame_mask` is the input image.
+
+The second parameter `cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))` is the structural elements and kernel that determines the nature of operation. 
+
+The first parameter in parentheses is the shape of kernel and the second parameter is the size of kernel.
+
+`dilate()` function is applied to dilate image. The meaning of parameters in parentheses is the same as the parameters of “erode()” function.
+
+* **Obtain the contour of the maximum area** 
+
+After processing the above image, obtain the contour of the recognition target.  The “findContours()” function in cv2 library is involved in this process.
+
+{lineno-start=190}
+
+```
+	            contours = cv2.findContours(dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)[-2]  # 找出轮廓(find contours)
+```
+
+The `erode()` function is applied to erode. Take code `contours = cv2.findContours(dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)[-2]`as example.
+
+The first parameter `dilated` is the input image.
+
+The second parameter `cv2.RETR_EXTERNAL` is the contour retrieval mode.
+
+The third parameter `cv2.CHAIN_APPROX_NONE)[-2]` is the approximate method of contour.
+
+Find the maximum contour from the obtained contours. To avoid interference, set a minimum value. Only when the area is greater than this minimum value, the target contour will take effect. The minimum value here is `50`. 
+
+{lineno-start=191}
+
+```
+	            area_max_contour, area_max = getAreaMaxContour(contours)  # 找出最大轮廓(find the largest contour)
+        if area_max > 50:  # 有找到最大面积(found the maximum area)
+```
+
+* **Obtain position information** 
+
+The `minAreaRect()` function in cv2 library is used to obtain the minimum external rectangle of the target contour, and the coordinates of its four vertices are obtained through the `boxPoints()` function. Then, the coordinates of the center point of the rectangle can be calculated from the coordinates of the vertexes of the rectangle.
+
+{lineno-start=193}
+
+```
+	            rect = cv2.minAreaRect(area_max_contour)  #最小外接矩形(minimum bounding rectangle)
+            box = np.int0(cv2.boxPoints(rect))        #最小外接矩形的四个顶点(four vertices of the minimum bounding rectangle)
+            for i in range(4):
+                box[i, 1] = box[i, 1] + (n - 1)*roi_h + roi[0][0]
+                box[i][0] = int(misc.map(box[i][0], 0, size_s[0], 0, img_w))
+                box[i][1] = int(misc.map(box[i][1], 0, size_s[1], 0, img_h))
+            cv2.drawContours(img, [box], -1, (0, 255, 255), 2)  #画出四个点组成的矩形(draw a rectangle with four points)
+            #获取矩形的对角点(obtain the diagonal points of the rectangle)
+            pt1_x, pt1_y = box[0, 0], box[0, 1]
+            pt2_x, pt2_y = box[1, 0], box[1, 1]
+            pt3_x, pt3_y = box[2, 0], box[2, 1]
+            center_x = int((pt1_x + pt3_x) / 2) #中心点(center point)
+            center_y = int((pt1_y + pt3_y) / 2)
+            line_width = int(abs(pt1_x - pt2_x))
+            cv2.circle(img, (center_x, center_y), 5, (0,0,0), -1) #画出中心点(draw the center point)
+```
+
+* **Line Following Control** 
+
+After performing the image processing, control the motors on ArmPi Pro through invoking the `set_velocity.publis()` function.
+
+{lineno-start=104}
+
+```
+            # PID算法巡线(line following with PID algorithm)
+            if abs(center_x - img_w/2) < 20: # 目标横坐标与画面中心坐标的差值小于20像素点，机器人不做处理(If the difference between the target placement coordinate and the center coordinate of the image is less than 20 pixels, the robot will not take any action.)
+                center_x = img_w/2
+            x_pid.SetPoint = img_w/2      # 设定(set)
+            x_pid.update(center_x)        # 当前(current)
+            dx = round(x_pid.output, 2)   # 输出(output)
+            dx = 0.8 if dx > 0.8 else dx
+            dx = -0.8 if dx < -0.8 else dx
+            set_velocity.publish(100, 90, dx)
+            move = True
+```
+
+`set_velocity.publish()` function is used for motor control. Here use an example of the code `set_velocity.publish(100, 90, dx)`:
+
+The first parameter `100` represents the linear velocity, indicating the speed of the motor in millimeters per second. The range is “-100 to 100”. When the value is negative, the motor rotates in the opposite direction.
+
+The second parameter `90` represents the heading angle, indicating the direction of movement for the vehicle in degrees. The range is “0 to 360”. Where 90 degrees corresponds to forward, 270 degrees to backward, 0 degrees to right, and 180 degrees to left. 
+
+The third parameter `dx` represents the yaw angular velocity, indicating the rate of yaw change for the vehicle. It is measured in 5 degrees per second and is constrained in the program to the range of “-0.8 to 0.8”. A positive value corresponds to clockwise rotation, 
+
+### 8.7.5 Function Extension
 
 <span id="anchor_7_4_1" class="anchor"></span>
 
-- #### 7.4.1增加新的巡线颜色
+* **Add New Recognition Color** 
 
-视觉巡线玩法程序内置了红色和白色。除了内置的颜色，我们还可以添加其它可巡线的颜色，例如**我们将紫色作为新的可识别颜色，程序步骤如下**：
+In addition to the built-in colors (red and white), we can add other colors for line following. For example, add purple as a new recognition color. The operation step are as follow:
 
-1)  参照[步骤2](#anchor_7_2_1_1)，打开新的终端，输入指令，打开颜色阈值调试工具。若在弹出的界面中没有出现回传画面，说明摄像头未连接成功，需检查一下摄像头连接线是否连接好。
+(1) Open the terminal, enter the following command and press “Enter” to open the tool for color threshold adjustment. If no transmitted image appears in the pop-up interface, it means the camera fails to connect and needs to be checked whether the cable is connected.
 
 ```commandline
 python3 /home/ubuntu/software/lab_config/main.py
 ```
 
-<img src="../_static/media/chapter_14/section_7/image19.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_7/image19.png"  />
 
-<img src="../_static/media/chapter_14/section_7/image20.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_7/image20.png"  />
 
-2)  连接成功后，在界面右下角的颜色选项栏中选择"**Add**"，添加新的颜色名称。
+(2) After the camera is connected completely, click “Add” in the lower right color to name the new color.
 
-<img src="../_static/media/chapter_14/section_7/image21.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_7/image21.png"  />
 
-3)  此时界面右侧是实时回传画面，左侧是需要被采集的颜色。将摄像头对准紫色胶带，然后拖动下方的六个滑杆，使得左侧画面中紫色物品的区域全部变为白色，其它区域为黑色，阈值以自己调整结果为准。接着点击"**save**"按钮保存数据。
+(3) The right side is real-time transmitted image and the right side is the color to be collected. Point the camera at the purple tape and then drag the following six slider bars until the purple area becomes white and other areas become black. The threshold can be adjusted according the actual situation. Then click “Save” to save data.
 
-<img src="../_static/media/chapter_14/section_7/image22.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_7/image22.png"  />
 
-4)  参照[步骤2](#anchor_7_2_1_1)，打开新的终端，输入进到玩法程序所在目录的指令，按下回车。
+(4) Refer to step 2 to open a new terminal. Enter the following command to navigate to the directory where the game program is located, then press “Enter”. 
 
 ```commandline
 cd /home/ubuntu/armpi_pro/src/visual_patrol/scripts/
 ```
 
-<img src="../_static/media/chapter_14/section_7/image23.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_7/image23.png"  />
 
-5)  输入打开程序文件的指令并按下回车。
+(5) Enter the command below to open the program file, then press “Enter”.
 
 ```commandline
 vim visual_patrol_node.py
 ```
 
-<img src="../_static/media/chapter_14/section_7/image24.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_7/image24.png"  />
 
-6)  找到要修改的代码部分，按下键盘的"**i**"键，当出现左下角框出内容时，即进入编辑模式。
+(6) Locate the code to be modified, press the “i” key on the keyboard, and enter the editing mode when the content shown in the following red box in the lower-left corner appears.
 
-<img src="../_static/media/chapter_14/section_7/image25.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_7/image25.png"  />
 
-7)  在源代码中输入紫色的RGB值。
+(7) Enter the purple’s RGB value into the source code.
 
-**'purple': (203, 192, 255),**
+{lineno-start=51}
 
-<img src="../_static/media/chapter_14/section_7/image26.png"  />
+```py
+'purple': (203, 192, 255),
+```
 
-8)  按下键盘的"**Esc**"键，并输入"**:wq**"，按下回车，即可完成保存与退出操作。
+(8) Press the “Esc”, enter “:wq”, and press “Enter” to complete the save and exit operation.
 
-<img src="../_static/media/chapter_14/section_7/image27.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_7/image27.png"  />
 
-9)  按照（" [7.2 玩法开启及关闭](#anchor_7_2)"）的步骤启动视觉巡线玩法。
+(9) Follow “[8.7.2 Operation Steps]()” to start the visual line following game.
 
-10) 将ArmPi Pro放在紫色线条前，ArmPi Pro的机身便会跟随紫色线条的行驶。如果需添加其它颜色作为可识别颜色，可参考前面的步骤[7.4 功能延伸\ 增加新的巡线颜色](#anchor_7_4_1)。
+(10) Place the ArmPi Pro in front of the purple line, and it will follow the movement of the purple line. If you need to add other colors as recognizable color, please refer to step “[8.7.5 Function Extension -> Add New Recognition Color]()”.
 
-### 7.5 程序简要分析
-
-本小节课程文档对应程序的源代码位于Docker容器中的：
-
-**/home/ubuntu/armpi_pro/src/visual_processing/scripts/visual_processing_node.py（图像处理）**
-
-**/home/ubuntu/armpi_pro/src/visual_patrol/scripts/visual_patrol_node.py（巡线控制）**
+## 8.8 Intelligent Picking
 
 :::{Note}
-在程序修改前务必将原有出厂程序进行备份，再进行修改，禁止直接在源代码文件中进行修改，避免以错误的方式修改参数之后导致机器人异常且无法修复！！！
+It is recommended to place the color block in the center of the camera's field of view for the game implementation. Avoid positioning it too far away or too close to the camera, as this may cause the robotic arm failing to pick it up.
 :::
 
-- #### 7.5.1 导入参数模块
+### 8.8.1 Working Principle
 
-| **导入模块** | **作用** |
-|----|----|
-| import sys | 导入了Python的sys模块，用于访问系统相关的功能和变量 |
-| import cv2 | 导入了OpenCV库，用于图像处理和计算机视觉相关的功能 |
-| import time | 导入了Python的time模块，用于时间相关的功能，例如延时操作 |
-| import math | 导入了Python的math模块，用于数学运算和函数 |
-| import rospy | 导入了ROS的Python库rospy，用于与ROS系统进行通信和交互 |
-| import numpy as np | 导入了NumPy库，并将其重命名为np，用于进行数组和矩阵操作 |
-| from armpi_pro import misc | 从arm_pi_pro包中导入了misc模块，用于处理识别得到的矩形数据 |
-| from armpi_pro import apriltag | 从arm_pi_pro包中导入了apriltag模块，用于Apriltag识别和处理的功能 |
-| from threading import RLock, Timer | 从Python的threading模块中导入了RLock类和Timer类，用于线程相关的操作 |
-| from std_srvs.srv import \* | 从ROS的std_srvs包中导入了所有的服务消息类型，用于定义和使用标准的服务消息 |
-| from std_msgs.msg import \* | 从ROS的std_msgs包中导入了所有的消息类型，用于定义和使用标准的消息 |
-| from sensor_msgs.msg import Image | 从ROS的sensor_msgs包中导入了Image消息类型，用于处理图像数据 |
-| from visual_processing.msg import Result | 从visual_processing包中导入了Result消息类型，用于图像处理结果的消息 |
-| from visual_processing.srv import SetParam | 从visual_processing包中导入了SetParam服务类型，设置参数的自定义服务 |
-| from ros_robot_controller.msg import RGBState, RGBsState | 从ros_robot_controller.msg模块导入 RGBState, RGBsState消息类型。用于控制或表示传感器设备上的RGB灯状态 |
-| from chassis_control.msg import \* | 从 chassis_control.msg 模块导入所有消息类型。这意味着导入该模块中定义的所有消息类型，用于底盘控制 |
-| from visual_patrol.srv import SetTarget | 从 visual_patrol.srv 模块导入 SetTarget 服务类型。用于设置视觉巡逻的目标 |
-| from hiwonder_servo_msgs.msg import MultiRawIdPosDur | hiwonder_servo_msgs.msg 模块导入 MultiRawIdPosDur 消息类型。用于控制舵机设备 |
-| from armpi_pro import pid | 从 armpi_pro 模块导入pid类。用于实现比例-积分-微分（PID）控制算法 |
-| from armpi_pro import bus_servo_control | 从 armpi_pro 模块导入 bus_servo_control 模块。包含与舵机控制相关的函数和方法 |
-| from kinematics import ik_transform | 从 kinematics 模块导入 ik_transform 函数。用于进行逆运动学变换 |
+Firstly, recognize the color and convert the object color through Lab color. Then, frame the target object with circle after processing the object image.
 
-- #### 7.5.2 功能逻辑
+After recognizing, robotic arm will pick according to the position of block and place it to the specified position.  
 
-根据实现效果，梳理该玩法的实现逻辑如下图所示：
-
-<img class="common_img" src="../_static/media/chapter_14/section_7/image28.png"  />
-
-通过摄像头获取图像信息，再进行图像处理，即对图像进行二值化处理，为了降低干扰，令图像更平滑，对图像进行腐蚀和膨胀处理，然后获取目标最大面积轮廓和最小外接矩形，推算出目标的中心坐标，最后根据中心坐标利用PID算法控制机器人底盘进行巡线移动。
-
-- #### 7.5.3 程序逻辑及对应的代码分析
-
-从程序文件梳理得到程序逻辑流程图如下图所示。
-
-<img class="common_img" src="../_static/media/chapter_14/section_7/image29.png"  />
-
-从上图得到，程序的逻辑流程主要为线条识别函数和巡线控制，以下的文档内容将依照上述程序逻辑流程图进行编写。
-
-1. **图像处理**
-
-- 初始化函数与变量
-
-<img src="../_static/media/chapter_14/section_7/image30.png"  />
-
-- 二值化处理
-
-采用cv2库中的inRange()函数对图像进行二值化处理。
-
-<img src="../_static/media/chapter_14/section_7/image31.png"  />
-
-第一个参数"**frame_lab**"是输入图像；
-
-第二个参数"**tuple(color_range\['min'\])**"是阈值下限；
-
-第三个参数"**tuple(color_range\['max'\])**"是阈值上限；
-
-- 腐蚀膨胀处理
-
-为了降低干扰，令图像更平滑，需要对图像进行腐蚀和膨胀处理。
-
-<img src="../_static/media/chapter_14/section_7/image32.png"  />
-
-erode()函数用于对图像进行腐蚀操作。以代码"**eroded = cv2.erode(frame_mask, cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2)))**"为例，括号内的参数含义如下：
-
-第一个参数"**frame_mask**"是输入图像；
-
-第二个参数"**cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2))**"是决定操作性质的结构元素或内核。其中，括号内的第一个参数是内核形状，第二个参数是内核尺寸。
-
-dilate()函数用于对图像进行膨胀操作。此函数括号内参数的含义与erode()函数的相同。
-
-- 获取最大面积轮廓
-
-完成上述的图像处理后，需要获取识别目标的轮廓，此处涉及cv2库中的findContours()函数。
-
-<img src="../_static/media/chapter_14/section_7/image33.png"  />
-
-erode()函数用于对图像进行腐蚀操作。以代码"**contours = cv2.findContours(dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)\[-2\]**"为例：
-
-第一个参数"**dilated**"是输入图像；
-
-第二个参数"**cv2.RETR_EXTERNAL**"是轮廓的检索模式；
-
-第三个参数" **cv2.CHAIN_APPROX_NONE)\[-2\]**"是轮廓的近似方法。
-
-在获得的轮廓中寻找面积最大的轮廓，而为了避免干扰，需要设定一个最小值，仅当面积大于该值时，目标轮廓才有效，此处最小值为"**50**"。
-
-<img src="../_static/media/chapter_14/section_7/image34.png"  />
-
-- 获取位置信息
-
-采用cv2库中的minAreaRect()函数获取目标轮廓的最小外接矩形，并通过boxPoints()函数得到其四个顶点的坐标。随后，可以由矩形的顶点坐标推算出其中心点坐标。
-
-<img src="../_static/media/chapter_14/section_7/image35.png"  />
-
-2. **巡线控制**
-
-完成图像处理后，通过调用**set_velocity.publish()** 函数控制ArmPi Pro机器人的电机移动。
-
-<img src="../_static/media/chapter_14/section_7/image36.png"  />
-
-**set_velocity.publish()** 用于电机控制，以代码"**set_velocity.publish(100, 90, dx)**"为例，括号内的参数含义如下：
-
-第一个参数"**100**"是线速度，表示的是电机的速度，单位是毫米每秒，范围是"**-100~100**"，数值为负数时电机是反转。
-
-第二个参数"**90**"是方向角，代表的是小车移动的方向，单位是度，范围是"**0~360**"，其中90度是向前方，270度是向后，0度是向右，180度向左，其他方向角度以此类推。
-
-第三个参数"**dx**"是偏航角速度，代表的是小车的偏移速率，单位是5度每秒，在程序里范围被设置为"**-0.8~0.8**"，正数是顺时针转动，负数是逆时针转动。
-
-## 8. 智能抓取
+### 8.8.2 Operation Steps
 
 :::{Note}
-为保证玩法的实现，建议将色块放置在摄像头视野的中心位置，不能放置过远或靠后，否则机械臂将夹取失败。
-:::
-
-### 8.1 实验原理
-
-首先，需要对颜色进行识别，此处使用Lab颜色空间进行处理，将图像颜色空间由RGB转换为Lab，随后对图像进行二值化、腐蚀、膨胀等操作，获得只包含目标颜色的轮廓，并用圆圈将其标识出来。
-
-完成颜色识别后，根据图像位置的反馈进行计算，控制ArmPi Pro机器人的机械臂夹取目标并放置到指定位置。
-
-### 8.2 玩法开启及关闭
-
-:::{Note}
-指令的输入需严格区分大小写，另外可按键盘"Tab"键进行关键词补齐。
+It should be case sensitive when entering command and the “Tab” key can be used to complete the keywords.
 :::
 
 <span id="anchor_8_2_2" class="anchor"></span>
 
-- #### 8.2.2 玩法进入
+* **Enter Game** 
 
-1)  将设备开机，并参照课程资料的"**[远程工具安装及容器进入方法\1. 远程桌面工具安装与连接]()**"内容，通过VNC远程连接工具连接。
+(1) Power on the robot and use VNC Viewer to connect to the remote desktop.
 
-<img src="../_static/media/chapter_14/section_8/image4.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_8/image4.png"  />
 
-2)  点击系统桌面左上角的图标<img src="../_static/media/chapter_14/section_8/image5.png"  />，打开Terminator终端。
+(1) click<img src="../_static/media/chapter_14/section_8/image5.png"  /> in the upper left corner of the system desktop to open the “Terminator”.
 
-<img src="../_static/media/chapter_14/section_8/image6.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_8/image6.png"  />
 
-3)  输入指令按下回车，运行智能抓取玩法程序。
+(3) Enter the following command, and press “Enter” to access the intelligent picking game. 
 
 ```commandline
 rosrun intelligent_grasp intelligent_grasp_node.py
 ```
 
-<img src="../_static/media/chapter_14/section_8/image7.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_8/image7.png"  />
 
-4)  之前打开的终端不关闭，然后打开一个新的终端，输入指令，然后按下回车进入智能抓取玩法。当成功进入后，会出现打印提示，如下图所示：
+(4) Keep the previously opened terminal and open a new one. Enter the following command in the new terminal and press “Enter” to enter the intelligent picking game. If successful, a prompt will appear, as shown below:
 
 ```commandline
 rosservice call /intelligent_grasp/enter "{}"
 ```
-<img src="../_static/media/chapter_14/section_8/image8.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_8/image8.png"  />
 
-- #### 8.2.2 回传图像开启
+* **Start image transmission** 
 
-1. **使用外部浏览器开启**
+To avoid consuming too much running memory of Raspberry Pi. It is recommended to use an external browser to open the transmitted image. 
+The specific steps are as follows:
 
-**为避免过多占用树莓派的运行内存，建议使用外部浏览器来开启图像回传画面，具体步骤如下：**
-
--  选择任意一个外部浏览器，这里以谷歌浏览器为例。
+(1) Select a browser. Take Google Chrome as example.
 
 <img class="common_img" src="../_static/media/chapter_14/section_8/image9.jpeg"  alt="loading" />
 
--  然后在地址栏输入默认IP地址如"**192.168.149.1:8080/**"，（注意：此IP地址为直连模式下的默认IP地址，若为局域网模式，则输入："**设备IP地址+：8080/"，如"192.168.149.1:8080/**"）。如果打开失败，可以重复多次或者重启树莓派和电脑。
+(2) Then enter the default IP address “192.168.149.1:8080/” (Note: this IP address is the default IP address for direction connection mode. If it is LAN mode, please enter “Device IP address+：8080/” for example, “192.168.149.1:8080/”) If fail to open, you can try it several times or restart camera.
 
 :::{Note}
-如果是局域网连接模式，设备IP地址获取方法可参考"**第13章 机器人网络课程配置\第2课 修改网络连接模式**"
+If it is in LAN mode, the method to obtain device IP address can refer to “[Robot Network Configuration Course]()”
 :::
 
 <img class="common_img" src="../_static/media/chapter_14/section_8/image10.png"  />
 
--  然后点击下图框出选项，即可打开回传画面。
+(3) Then, click the option shown in the following figure to open the display window of the transmitted image.
 
 <img class="common_img" src="../_static/media/chapter_14/section_8/image11.png"  />
 
-<img src="../_static/media/chapter_14/section_8/image12.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_8/image12.png"  />
 
-2. 使用rqt工具开启
+**8.2.3 Start with rqt** 
 
-1)  [8.2 玩法开启及关闭\ 玩法进入](#anchor_8_2_2)终端不关闭的情况下，再打开一个新的终端。
+(1) After completing the steps of “[8.2.1 Enter Game]()” and do not exit the terminal, open a new terminal.
 
-2)  输入指令，按下回车，稍等片刻即可打开rqt工具。
+(2) Enter the following command and press “Enter” to open rqt.
 
 ```commandline
 rqt_image_view
 ```
 
-<img src="../_static/media/chapter_14/section_8/image13.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_8/image13.png"  />
 
-3)  单击下图所示红框位置，对智能抓取的话题选项（topic）进行选择，选项为"**/visual_processing/image_result**"，其余设置保持不变。
+(3) Click the red box as the figure shown below, select “/visual_processing/image_result” for the topic of line following and remain other settings unchanged. 
 
-<img src="../_static/media/chapter_14/section_8/image14.png"  alt="loading" />
+<img class="common_img" src="../_static/media/chapter_14/section_8/image14.png"  alt="loading" />
 
 :::{Note}
-图像开启后请务必选择话题选项，否则在后续玩法启动后，将无法正常显示其识别过程。
+ After opening image, the topic option must be selected. Otherwise, after starting game, the recognition process can not be displayed normally.
 :::
 
-- #### 8.2.3 玩法启动
+**8.2.3 Start Game**
 
-此时返回[8.2 玩法开启及关闭\ 玩法进入](#anchor_8_2_2)步骤4开启的终端，输入指令，同理出现下图所框提示即为启动成功。
+Now, enter the terminal according to the steps in “[8.2.1 Enter Game]()” and input the following command. Then if the prompt shown in the following red box appears, which means game has been started successfully.
 
 ```commandline
 rosservice call /intelligent_grasp/set_running "data: true"
 ```
 
-<img src="../_static/media/chapter_14/section_8/image15.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_8/image15.png"  />
 
-- #### 8.2.4 玩法停止及退出
+**8.2.4 Stop and Exit**
 
-1)  如需停止该玩法，输入指令。
+(1) If want to stop the game, enter the following command to exit.
 
 ```commandline
 rosservice call /intelligent_grasp/set_running "data: false"
 ```
 
-<img src="../_static/media/chapter_14/section_8/image16.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_8/image16.png"  />
 
-2)  如需退出该玩法，输入指令即可退出。
+(2) If want to exit the game, enter the command below to exit.
 
 ```commandline
 rosservice call /intelligent_grasp/exit "{}"
 ```
 
-<img src="../_static/media/chapter_14/section_8/image17.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_8/image17.png"  />
 
 :::{Note}
-玩法在未退出时，会在当前树莓派通电状态下持续运行。为避免过多占用树莓派的运行内存，如需执行其它AI视玩法，请先按照上述指令关闭当前玩法，并将命令行终端关闭。
+Before exiting the game, it will keep running when Raspberry Pi is powered on. To avoid consume too much running memory of Raspberry Pi, you need to exit the game first according to the operation steps above before performing other AI vision games.
 :::
 
-3)  如需关闭摄像头回传图像，返回开启rqt工具的终端，按下"Ctrl+C"即可，若关闭失败，可重复多次，直至退出。
+(3) If want to close the image transmission, press “Ctrl+C” to return and open the terminal of rqt. If fail to exit, please keep trying several times.
 
-### 8.3 功能实现
+### 8.8.3 Project Outcome
+
+After starting the game, the robotic arm will rotate to search the block. We can see that that target block is framed in rqt tool after recognition. Then the robotic arm will slowly move to the block, grip and place it to the specified position.
+
+### 8.8.4 Program Analysis
+
+The source code of the program is located in the Docker container:
+
+[/home/ubuntu/armpi_pro/src/visual_processing/scripts/visual_processing_node.py]()（image analysis）
+
+[/home/ubuntu/armpi_pro/src/intelligent_grasp/scripts/intelligent_grasp_node.py]()（picking control）
+
+The source code of program is located in: [/home/ubuntu/armpi_pro/src/intelligent_grasp/scripts/intelligent_grasp_node.py]()
 
 :::{Note}
-为保证玩法的实现，建议将色块放置在摄像头视野的中心位置，不能放置过远或靠后，否则机械臂将夹取失败。
+
+please back up the initial program before making any modifications. It is prohibited editing the source code files directly to prevent making changes in an incorrect manner that could lead to robot malfunctions, rendering them irreparable.
 :::
 
-玩法开启后机械臂将左右来回转动寻找色块，在rqt工具内可以看到当色块被识别到后，会将色块目标框出，此时机械臂缓慢的移动到色块所在位置后将它夹取，并放置到指定位置。
+**8.4.1 Import Parameter Module**
+
+| **Imported Module**                                  | **Function**                                                 |
+| ---------------------------------------------------- | ------------------------------------------------------------ |
+| import sys                                           | The sys module of Python is imported to access to system-related functionalities and variables. |
+| import cv2                                           | The OpenCV library of Python is imported to perform image processing and computer vision-related functions. |
+| import time                                          | The time module of Python is imported to perform time-related functionalities, such as delay operations. |
+| import math                                          | The math module of Python is imported to perform mathematical operations and functions. |
+| import rospy                                         | The Python library rosy is imported for  communication and interaction with ROS. |
+| import numpy as np                                   | The NumPy library is imported and is renamed as np for performing array and matrix operations. |
+| from armpi_pro import Misc                           | The Misc module is imported from arm_pi_pro package to handle the recognized rectangular data. |
+| from armpi_pro import apriltag                       | The apriltag module is imported from arm_pi_pro package  to perform Apriltag recognition and processing. |
+| from threading import RLock, Timer                   | The “RLock” class and “Timer” class is imported from the threading module of Python for thread-related operations. |
+| from std_srvs.srv import *                           | All service message types are imported from the std_srvs in ROS for defining and using standard service messages. |
+| from std_msgs.msg import *                           | All message types are imported form the std_msgs package in ROS for defining and using standard messages. |
+| from sensor_msgs.msg import Image                    | The image message type is imported from the sensor_msgs packages for processing image data. |
+| from visual_processing.msg import Result             | The Result message type is imported from the visual_processing package for the message of image processing results. |
+| from visual_processing.srv import SetParam           | The SetParam service type is imported from the visual_processing packages for using customs service related to parameter settings. |
+| from sensor.msg import Led                           | The Led message type is imported form the sensor.msg module for controlling or representing the LED status on a sensor. |
+| from chassis_control.msg import *                    | All message types are imported from the chassis_control.msg module, which indicated that all message types defined in this module is imported to perform the chassis control. |
+| from visual_patrol.srv import SetTarget              | The SetTarget service type is imported from the visual_patrol.srv module is used to set a target for line following. |
+| from hiwonder_servo_msgs.msg import MultiRawIdPosDur | The MultiRawIdPosDur message type is imported from the hiwonder_servo_msgs.msg module for controlling servos. |
+| from armpi_pro import PID                            | The PID class is imported from thearmpi_pro module to perform PID algorithm. |
+| from armpi_pro import bus_servo_control              | The bus_servo_control module is imported from the armpi_pro module, including the functions and methods related to the servo control. |
+| from kinematics import ik_transform                  | The ik_transform function is imported from the kinematics module to perform conversion of inverse kinematics. |
+
+**8.4.2 Initializing functions and variables**
+
+{lineno-start=273}
+
+```
+	# 多颜色识别函数(multiple colors recognition function)
+def colors_detect(img, color_list):
+    global pub_time
+    global publish_en
+    global color_range_list
+    
+    if color_list == 'RGB' or color_list == 'rgb':
+        color_list = ('red','green','blue')
+    else:
+        return img
+    
+    msg = Result()
+    msg.data = 0
+    color_num = 0
+    max_area = 0
+    color_area_max = None
+    areaMaxContour_max = 0
+    
+    img_copy = img.copy()
+    img_h, img_w = img.shape[:2]
+    frame_resize = cv2.resize(img_copy, size_m, interpolation=cv2.INTER_NEAREST)
+    frame_lab = cv2.cvtColor(frame_resize, cv2.COLOR_BGR2LAB)  # 将图像转换到LAB空间(convert the image to LAB space)
+    
+    for color in color_list:
+        if color in color_range_list:
+            color_range = color_range_list[color]
+            frame_mask = cv2.inRange(frame_lab, tuple(color_range['min']), tuple(color_range['max']))  # 对原图像和掩模进行位运算(perform bitwise operation on the original image and the mask)
+            eroded = cv2.erode(frame_mask, cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2)))          # 腐蚀(erode)
+            dilated = cv2.dilate(eroded, cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2)))            # 膨胀(dilate)
+            contours = cv2.findContours(dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)[-2]         # 找出轮廓(find contours)
+            areaMaxContour, area_max = getAreaMaxContour(contours)                                   # 找出最大轮廓(find the largest contour)
+            if areaMaxContour is not None:
+                if area_max > max_area:#找最大面积(find the largest area)
+                    max_area = area_max
+                    color_area_max = color
+```
+
+**8.4.3 Binarization** 
+
+Use the `inRange ()` function from the cv2 library to binarize the image
+
+{lineno-start=299}
+
+```
+	            frame_mask = cv2.inRange(frame_lab, tuple(color_range['min']), tuple(color_range['max']))  # 对原图像和掩模进行位运算(perform bitwise operation on the original image and the mask)
+```
+
+The first parameter `frame_lab` is the input image.
+
+The second parameter `tuple(color_range['min'])` is the lower limit of threshold.
+
+The third parameter `tuple(color_range['max'])` is the upper lower of threshold.
+
+**8.4.4 Dilation and erosion** 
+
+To reduce interference and make a smooth image, it is necessary to perform dilation and erosion operations on the image.
+
+{lineno-start=300}
+
+```
+	            eroded = cv2.erode(frame_mask, cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2)))          # 腐蚀(erode)
+            dilated = cv2.dilate(eroded, cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2)))            # 膨胀(dilate)
+```
+
+`erode()` function is applied to erode image. Here uses an example of the code `eroded = cv2.erode(frame_mask, cv2.getStructuringElement (cv2.MORPH_RECT, (2, 2)))` as example. The meaning of parameters in parentheses are as follow:
+
+The first parameter `frame_mask` is the input image.
+
+The second parameter `cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2))` is the structural elements and kernel that determines the nature of operation. The first parameter in parentheses is the shape of kernel and the second parameter is the size of kernel.
+
+`dilate()` function is applied to dilate image. The meaning of parameters in parentheses is the same as the parameters of “erode()” function.
 
-<img src="../_static/media/chapter_14/section_8/image18.png"  alt="loading" />
+**8.4.5 Obtain the contour with the maximum area**
 
-### 8.4 程序简要分析
+After processing the above image, obtain the contour of the recognition target. The `findContours()` function from the cv2 library is involved in this process.
 
-本小节课程文档对应程序的源代码位于Docker容器中的：
+{lineno-start=251}
 
-**/home/ubuntu/armpi_pro/src/visual_processing/scripts/visual_processing_node.py（图像分析）**
+```
+	            contours = cv2.findContours(dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)[-2]         # 找出轮廓(find contours)
+```
 
-**/home/ubuntu/armpi_pro/src/intelligent_grasp/scripts/intelligent_grasp_node.py（抓取控制）**
+The `erode()` function is applied to erode. Here uses an example of code `contours = cv2.findContours(dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_ APPROX_NONE)[-2]`.
 
-该程序的源代码位于Docker容器中的：**/home/ubuntu/armpi_pro/src/intelligent_grasp/scripts/intelligent_grasp_node.py**
+The first parameter `dilated` is the input image.
 
-<img src="../_static/media/chapter_14/section_8/image3.png"  alt="loading" />
+The second parameter `cv2.RETR_EXTERNAL` is the contour retrieval mode.
 
-:::{Note}在程序修改前务必将原有出厂程序进行备份，再进行修改，禁止直接在源代码文件中进行修改，避免以错误的方式修改参数之后导致机器人异常且无法修复！！！
-:::
+The third parameter`cv2.CHAIN_APPROX_NONE)[-2]` is the approximation method for contours.
 
-- #### 8.4.1 导入参数模块
+Find the maximum contour from the obtained contours. To avoid interference, set a minimum value. Only when the area is greater than this minimum value, the target contour will take effect.
 
-| **导入模块** | **作用** |
-|----|----|
-| import sys | 导入了Python的sys模块，用于访问系统相关的功能和变量 |
-| import cv2 | 导入了OpenCV库，用于图像处理和计算机视觉相关的功能 |
-| import time | 导入了Python的time模块，用于时间相关的功能，例如延时操作 |
-| import math | 导入了Python的math模块，用于数学运算和函数 |
-| import rospy | 导入了ROS的Python库rospy，用于与ROS系统进行通信和交互 |
-| import numpy as np | 导入了NumPy库，并将其重命名为np，用于进行数组和矩阵操作 |
-| from armpi_pro import misc | 从armpi_pro包中导入了misc模块，用于处理识别得到的矩形数据 |
-| from armpi_pro import apriltag | 从armpi_pro包中导入了apriltag模块，用于Apriltag识别和处理的功能 |
-| from threading import RLock, Timer | 从Python的threading模块中导入了RLock类和Timer类，用于线程相关的操作 |
-| from std_srvs.srv import \* | 从ROS的std_srvs包中导入了所有的服务消息类型，用于定义和使用标准的服务消息 |
-| from std_msgs.msg import \* | 从ROS的std_msgs包中导入了所有的消息类型，用于定义和使用标准的消息 |
-| from sensor_msgs.msg import Image | 从ROS的sensor_msgs包中导入了Image消息类型，用于处理图像数据 |
-| from visual_processing.msg import Result | 从visual_processing包中导入了Result消息类型，用于图像处理结果的消息 |
-| from visual_processing.srv import SetParam | 从visual_processing包中导入了SetParam服务类型，设置参数的自定义服务 |
-| from ros_robot_controller.msg import RGBState, RGBsState | 从ros_robot_controller.msg模块导入 RGBState, RGBsState消息类型。用于控制或表示传感器设备上的RGB灯状态 |
-| from chassis_control.msg import \* | 从 chassis_control.msg 模块导入所有消息类型。这意味着导入该模块中定义的所有消息类型，用于底盘控制 |
-| from visual_patrol.srv import SetTarget | 从 visual_patrol.srv 模块导入 SetTarget 服务类型。用于设置视觉巡逻的目标 |
-| from hiwonder_servo_msgs.msg import MultiRawIdPosDur | hiwonder_servo_msgs.msg 模块导入 MultiRawIdPosDur 消息类型。用于控制舵机设备 |
-| from armpi_pro import pid | 从 armpi_pro 模块导入pid类。用于实现比例-积分-微分（PID）控制算法 |
-| from armpi_pro import bus_servo_control | 从 armpi_pro 模块导入 bus_servo_control 模块。包含与舵机控制相关的函数和方法 |
-| from kinematics import ik_transform | 从 kinematics 模块导入 ik_transform 函数。用于进行逆运动学变换 |
+{lineno-start=303}
 
-- #### 8.4.2 功能逻辑
+``` 
+            areaMaxContour, area_max = getAreaMaxContour(contours)                                   # 找出最大轮廓(find the largest contour)
+            if areaMaxContour is not None:
+```
 
-根据实现效果，梳理该玩法的实现逻辑如下图所示：
+**8.4.6 Obtain position information**
 
-<img class="common_img" src="../_static/media/chapter_14/section_8/image19.png"  />
+The `minAreaRect()` function from the cv2 library is used to obtain the minimum enclosing circle and its center coordinates for the target contour. The `circle()`function is employed to display the circumcircle in the feedback image.
 
-通过摄像头获取图像信息，机械臂左右来回转动寻找色块，当识别到色块后，会对识别到的图像进行处理，获得色块的位置信息，接着控制机械臂去夹取色块，再将色块放置到指定位置。
+{lineno-start=310}
 
-- #### 8.4.3 程序逻辑及对应的代码分析
+```
+	    if max_area > 100:  # 有找到最大面积(found the maximum area)
+        (centerx, centery), radius = cv2.minEnclosingCircle(areaMaxContour_max)  # 获取最小外接圆(obtain the minimum circumscribed circle)
+        msg.center_x = int(misc.map(centerx, 0, size_m[0], 0, img_w))
+        msg.center_y = int(misc.map(centery, 0, size_m[1], 0, img_h))
+        radius = int(misc.map(radius, 0, size_m[0], 0, img_w))
+```
 
-从程序文件梳理得到程序逻辑流程图如下图所示。
+**8.4.7 Determine the color block with the largest area.**
 
-<img class="common_img" src="../_static/media/chapter_14/section_8/image20.png"  />
+{lineno-start=318}
 
-从上图得到，程序的逻辑流程主要为多颜色识别函数和舵机控制，以下的文档内容将依照上述程序逻辑流程图进行编写。
+```
+	        if color_area_max == 'red':  #红色最大(red is the largest)
+            msg.data = 1
+        elif color_area_max == 'green':  #绿色最大(green is the largest)
+            msg.data = 2
+        elif color_area_max == 'blue':  #蓝色最大(blue is the largest)
+            msg.data = 3
+```
 
-1. **处理图像**
+**8.4.8 Gripping Control**
 
-- 初始化函数与变量
+The position of the target on x, y and z axes are obtained after processing image. Then get the target position calculated by inverse kinematics and grip it.
 
-<img src="../_static/media/chapter_14/section_8/image21.png"  />
+{lineno-start=118}
 
-- 二值化处理
+```
+# 机器人移动函数(robot movement function)
+def move():
+    global arm_move
+    global detect_color
+    
+    coord_list = { 'red':(-0.2, 0.15, -0.06),
+                   'green':(-0.2, 0.05, -0.06),
+                   'blue':(-0.2, -0.05, -0.06)}
+    
+    while __isRunning:
+        if arm_move and detect_color != 'None': # 等待可以夹取(wait for the grasping)
+            target_color = detect_color  # 暂存目标颜色(save target color temporarily)
+            set_rgb(range_rgb[target_color][2], range_rgb[target_color][1], range_rgb[target_color][0])    # 设置rgb灯颜色(set the color of RGB light)
+            rospy.sleep(0.1)
+            set_buzzer(1900, 0.1, 0.9, 1) # 蜂鸣器响一下(buzzer makes a sound)
+            bus_servo_control.set_servos(joints_pub, 500, ((1, 120),)) #张开机械爪(open the robotic gripper)
+            rospy.sleep(0.5)
+            target = ik.setPitchRanges((0, round(y_dis + offset_y, 4), -0.08), -180, -180, 0) #机械臂向下伸(the robotic arm extends downward)
+            if target:
+                servo_data = target[1]
+                bus_servo_control.set_servos(joints_pub, 1, ((3, servo_data['servo3']), (4, servo_data['servo4']),
+                                                                (5, servo_data['servo5']), (6, x_dis)))
+            rospy.sleep(1.5)
+            bus_servo_control.set_servos(joints_pub, 0.5, ((1, 450),)) # 闭合机械爪(close the robotic gripper)
+            rospy.sleep(0.8)
+```
 
-采用cv2库中的inRange()函数对图像进行二值化处理。
+The inverse kinematics takes `ik.setPitchRanges((0, round(y_dis + offset_y, 4), -0.08), -180, -180, 0)` as an example and the meaning of parameters in parentheses are as follow:
 
-<img src="../_static/media/chapter_14/section_8/image22.png"  />
+The first parameter is`(0, round(y_dis + offset_y, 4)`. “0” is the position of the target on x-axis. `round(y_dis, 4)` is the position of the target on y-axis. `round(z_dis, 4)” is the position of the target on z-axis.
 
-第一个参数"**frame_lab**"是输入图像；
+The second parameter `-180` is the pitch angle.
 
-第二个参数"**tuple(color_range\['min'\])**"是阈值下限；
+The third parameter “-180” is the range of the pitch angle.
 
-第三个参数"**tuple(color_range\['max'\])**"是阈值上限；
+The fourth parameter `0` is the range of pitch angle.The servo control uses an example of code `bus_servo_control.set_servos(joints_pub, 20, ( (3, servo_data['servo3']), (4, servo_data['servo4']), (5, servo_data['servo5']), (6, x_dis)))` and the meaning of parameters in parentheses is as follow:
 
-- 腐蚀膨胀处理
+The first parameter `joints_pub` is to publish the message of servo control node.
+The second parameter “20” is the running time.
 
-为了降低干扰，令图像更平滑，需要对图像进行腐蚀和膨胀处理。
+The third parameter is `( (3, servo_data['servo3']), (4, servo_data['servo4']), (5, servo_data['servo5']), (6, x_dis)`. Among them, `3` is the servo number. `servo_data['servo3']` and the rest of parameters are the servo angle.
 
-<img src="../_static/media/chapter_14/section_8/image23.png"  />
+### 8.8.5 Function Extension
 
-erode()函数用于对图像进行腐蚀操作。以代码"**eroded = cv2.erode(frame_mask, cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2)))**"为例，括号内的参数含义如下：
+During the process of the game, if the robotic gripper fails to pick up the target, please ensure that the robotic arm deviation has been properly adjusted first. After confirming the adjustment, if the problem persists, you can modify the relevant parameters based on the following content.
+As shown in the figure below, when the robotic arm recognizes the target, it will move to the top of the target. You can modify the parameter “y_dis+offset_y” to adjust the position. It is recommended to modify the parameter by ±0.01 each time. When the value is increased, the robotic arm will move 0.01m in the positive direction of the y-axis, and when the value is decreased, it will move 0.01m in the negative direction.
 
-第一个参数"**frame_mask**"是输入图像；
+<img class="common_img" src="../_static/media/chapter_14/section_8/image29.png"  />
 
-第二个参数"**cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2))**"是决定操作性质的结构元素或内核。其中，括号内的第一个参数是内核形状，第二个参数是内核尺寸。
-
-dilate()函数用于对图像进行膨胀操作。此函数括号内参数的含义与erode()函数的相同。
-
-- 获取最大面积轮廓
-
-完成上述的图像处理后，需要获取识别目标的轮廓，此处涉及cv2库中的findContours()函数。
-
-<img src="../_static/media/chapter_14/section_8/image24.png"  />
-
-erode()函数用于对图像进行腐蚀操作。以代码"**contours = cv2.findContours(dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)\[-2\]**"为例：
-
-第一个参数"**dilated**"是输入图像；
-
-第二个参数"**cv2.RETR_EXTERNAL**"是轮廓的检索模式；
-
-第三个参数"**cv2.CHAIN_APPROX_NONE)\[-2\]**"是轮廓的近似方法。
-
-在获得的轮廓中寻找面积最大的轮廓，而为了避免干扰，需要设定一个最小值，仅当面积大于该值时，目标轮廓才有效。
-
-<img src="../_static/media/chapter_14/section_8/image25.png"  />
-
-- 获取位置信息
-
-采用cv2库中的minEnclosingCircle()函数获取目标轮廓的最小外接圆与圆心坐标，并通过circle()函数将外接圆在回传画面中显示出来。
-
-<img src="../_static/media/chapter_14/section_8/image26.png"  />
-
-- 判断颜色最大的色块
-
-<img src="../_static/media/chapter_14/section_8/image27.png"  />
-
-2. **抓取控制**
-
-图像处理之后，得到目标在XYZ轴的位置，通过逆运动学计算，得到目标位置，夹取目标。
-
-<img src="../_static/media/chapter_14/section_8/image28.png"  />
-
-逆运动学计算以代码"**ik.setPitchRanges((0, round(y_dis + offset_y, 4), -0.08), -180, -180, 0)**"为例，括号内的参数含义如下：
-
-第一个参数："**(0, round(y_dis + offset_y, 4)**"，"**0**"是X轴上的位置，"**round(y_dis, 4)**"是Y轴上的位置，"**round(z_dis, 4)**"是Z 轴上的位置；
-
-第二个参数："**-180**"是俯仰角；
-
-第三个参数："**-180**"是俯仰角范围；
-
-第四个参数："**0**"是俯仰角范围。
-
-舵机控制以代码"**bus_servo_control.set_servos(joints_pub, 20, ( (3, servo_data\['servo3'\]), (4, servo_data\['servo4'\]), (5, servo_data\['servo5'\]), (6, x_dis)))**"为例，括号内的参数含义如下：
-
-第一个参数"**joints_pub**"是发布舵机控制节点消息；
-
-第二个参数："**0.02**"是运行时间，单位为秒；
-
-第三个参数："**((3, servo_data\['servo3'\]), (4, servo_data\['servo4'\]), (5, servo_data\['servo5'\]), (6, x_dis))**"，其中"**3**"是舵机编号，"**servo_data\['servo3'\]**"是舵机角度，"**(4servo_data\['servo4'\])， (5, servo_data\['servo5'\]), (6, x_dis)**"同理。
-
-### 8.5 功能拓展
-
-用户在使用体验玩法过程中，如果发现机械爪无法正常对夹取目标时，需要先确认机械臂偏差是否正确调节好。确认调节好之后，如果还是存在有无法正常夹取的情况，则可以根据下面内容对相关参数进行修改。
-
-如下图所示，当机械臂识别到目标之后会移动到目标上方，在这里我们可以在"**y_dis+offset_y**"这个参数的基础上进行修改，建议每次修改范围是±0.01，数值增加时机械臂会往y轴正方向移动0.01m，数值减少时机械臂会往负方向移动0.01m。
-
-<img src="../_static/media/chapter_14/section_8/image29.png"  />
-
-## 9. 自主搬运
+## 8.9 Intelligent Transport
 
 :::{Note}
-为保证玩法的实现，建议将色块放置在摄像头视野的中心位置，不能放置过远或靠后，否则机械臂将夹取失败。
+It is recommended to place the color block in the center of the camera's field of view for the game implementation. Avoid positioning it too far away or too close to the camera, as this may cause the robotic arm failing to pick it up.
 :::
 
-手持色块放置在摄像头可识别范围内，当ArmPi Pro识别到木块颜色后，将它夹取，然后开始巡线行驶，并将不同颜色的木块放置到对应的位置。
+### 8.9.1 Getting Ready
 
-### 9.1 道具准备
+Use yellow electrical tape to lay out the line-following map as the figure shown below:
 
-使用黄色电工胶带铺设巡线地图，如下图所示：
+It is recommended that the distance between two placement lines should be greater than 15cm. The radius of the turning arc should not be too small, otherwise it may affect the line-following performance.
 
-**建议两条横线之间的距离不小于15cm；拐弯的圆弧半径不能太小；否则会影响巡线效果。**
+<img class="common_img" src="../_static/media/chapter_14/section_9/image3.png"  alt="loading" />
 
-<img src="../_static/media/chapter_14/section_9/image3.png"  alt="loading" />
+### 8.9.2 Working Principle
 
-### 9.2 实现原理
-
-下面我们看下本节课整体实现的流程：
-
-ArmPi Pro机械臂上的摄像头先对木块颜色进行识别然后再夹取，接着读取识别到的颜色所对应的位置。然后对线条颜色进行检测，识别到黄线后，小车进行巡线行驶。
-
-行驶的过程中小车不断检测横线，当识别到<span class="mark">色块对应</span>的横线数目时，小车会行驶到对应颜色分拣的位置。这时，机械臂再放下色块，继续巡线行驶，进行下一轮的识别。
+Recognize the block color first and grip it. Then read the corresponding position of the recognized color and detect the line color. After recognizing yellow line, the car will follow the line.
+In the process of moving, the car will keep detecting the yellow line. When recognizing the numbers of line corresponding the colored block, the car will move to the corresponding position of color sorting. At this time, the robotic arm will put down the block and enter the next round of recognition.
 
 <p id="anchor_9_3"></p>
 
-### 9.3 玩法开启及关闭
+### 8.9.3 Operation Steps
 
 :::{Note}
-指令的输入需严格区分大小写，另外可按键盘"Tab"键进行关键词补齐。
+It should be case sensitive when entering command and the “Tab” key can be used to complete the keywords.
 :::
 
 <span id="anchor_9_3_1" class="anchor"></span>
 
-- #### 9.3.1  玩法进入
+* **Enter Game** 
 
-1)  将设备开机，并参照课程资料的"**[远程工具安装及容器进入方法\1. 远程桌面工具安装与连接]()**"内容，通过VNC远程连接工具连接。
+(1) Power on the robot and use VNC Viewer to connect to the remote desktop.
 
-<img src="../_static/media/chapter_14/section_9/image5.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_9/image5.png"  />
 
-2)  点击系统桌面左上角的图标<img src="../_static/media/chapter_14/section_9/image6.png"  />，打开Terminator终端。
+(2) Click<img src="../_static/media/chapter_14/section_9/image6.png"  />in the upper left corner of the system desktop to open the “Terminator”.
 
-<img src="../_static/media/chapter_14/section_9/image7.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_9/image7.png"  />
 
-3)  输入指令启动自主搬运玩法程序。
+(3) Enter the following command to start the intelligent transport game.
 
 ```commandline
 rosrun intelligent_transport intelligent_transport_node.py
 ```
 
-<img src="../_static/media/chapter_14/section_9/image8.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_9/image8.png"  />
 
-4)  输入指令，然后按下回车进入自主搬运玩法。当成功进入后，会出现打印提示，如下图所示：
+(4) Enter the command below and press “Enter” to enter the intelligent transport game. If successful, a prompt will appear, as shown below:
 
 ```commandline
 rosservice call /intelligent_transport/enter "{}"
 ```
 
-<img src="../_static/media/chapter_14/section_9/image9.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_9/image9.png"  />
 
 <span id="anchor_9_3_2" class="anchor"></span>
 
-- #### 9.3.2 回传图像开启
+* **Start image transmission** 
 
-1. **使用外部浏览器开启**
+**(1) Start with browser**
 
-**为避免过多占用树莓派的运行内存，建议使用外部浏览器来开启图像回传画面，具体步骤如下：**
+To avoid consuming too much running memory of Raspberry Pi. It is recommended to use an external browser to start image transmission. 
 
-- 选择任意一个外部浏览器，这里以谷歌浏览器为例。
+The specific steps are as follows:
+
+①  Select a browser. Take Google Chrome as example.
 
 <img class="common_img" src="../_static/media/chapter_14/section_9/image10.jpeg"  alt="loading" />
 
--  然后在地址栏输入默认IP地址如"**192.168.149.1:8080/**"，（注意：此IP地址为直连模式下的默认IP地址，若为局域网模式，则输入："**设备IP地址+：8080/"，如"192.168.149.1:8080/**"）。如果打开失败，可以重复多次或者重启树莓派和电脑。
+② Then enter the default IP address “192.168.149.1:8080/” (Note: this IP address is the default IP address for direction connection mode). If it is LAN mode, please enter “Device IP address+：8080/” such as “192.168.149.1:8080/”) If fail to open, you can try it several times or restart camera.
 
 :::{Note}
-如果是局域网连接模式，设备IP地址获取方法可参考"**[机器人网络课程配置\2. 修改网络连接模式]()**"
+ If it is in LAN mode, the method to obtain device IP address can refer to “[Robot Network Configuration Course]()”.
 :::
 
 <img class="common_img" src="../_static/media/chapter_14/section_9/image11.png"  />
 
-- 然后点击下图框出选项，即可打开回传画面。
+③ Then, click the option shown in the following figure to open the display window of the transmitted image.
 
 <img class="common_img" src="../_static/media/chapter_14/section_9/image12.png"  />
 
-<img src="../_static/media/chapter_14/section_9/image13.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_9/image13.png"  />
 
-2. **使用rqt工具开启**
+**(2) Start with rqt**
 
-1)  [9.3 玩法开启及关闭\ 玩法进入](#anchor_9_3_1)终端不关闭的情况下，再打开一个新的终端。
+After completing the steps of “[9.3.1 Enter Game]()” and do not exit the terminal, open a new terminal.
 
-2)  输入指令，按下回车，稍等片刻即可打开rqt工具。
+① Enter the following command and press “Enter” to open rqt.
 
 ```commandline
 rqt_image_view
 ```
 
-<img src="../_static/media/chapter_14/section_9/image14.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_9/image14.png"  />
 
-3)  单击下图所示红框位置，对自主搬运的话题选项（topic）进行选择，选项为"**/visual_processing/image_result**"，其余设置保持不变。
+② Click the red box as the figure shown below, select “/visual_processing/image_result” for the topic of line following and remain other settings unchanged, as the figure shown below:
 
 <img  src="../_static/media/chapter_14/section_9/image15.png"  alt="loading" />
 
 :::{Note}
-图像开启后请务必选择话题选项，否则在后续玩法启动后，将无法正常显示其识别过程。
+After opening image, the topic option must be selected. Otherwise, after starting game, the recognition process can not be displayed normally.
 :::
 
-- #### 9.3.3 玩法启动
+* **Start Game** 
 
-此时返回 [9.3 玩法开启及关闭\ 玩法进入](#anchor_9_3_1)开启的终端，输入指令，同理出现下图所框提示即为启动成功。
+Now, enter the terminal according to the steps in “[Enter Game]()” and input the following command. Then if the prompt shown in the following red box appears, which means game has been started successfully.
 
 ```commandline
 rosservice call /intelligent_transport/set_running "data: true"
 ```
 
-<img src="../_static/media/chapter_14/section_9/image16.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_9/image16.png"  />
 
-- #### 9.3.4 玩法停止及退出
+**9.3.4 Stop and Exit** 
 
-1)  如需停止该玩法，输入指令。
+(1) If want to stop the game, enter the following command.
 
 ```commandline
 rosservice call /intelligent_transport/set_running "data: false"
 ```
 
-<img src="../_static/media/chapter_14/section_9/image17.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_9/image17.png"  />
 
-2)  如需退出该玩法，输入指令即可退出。
+(2) If want to exit the game, enter the command below to exit.
 
 ```commandline
 rosservice call /intelligent_transport/exit "{}"
 ```
 
-<img src="../_static/media/chapter_14/section_9/image18.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_9/image18.png"  />
 
 :::{Note}
-玩法在未退出时，会在当前树莓派通电状态下持续运行。为避免过多占用树莓派的运行内存，如需执行其它AI视玩法，请先按照上述指令关闭当前玩法，并将命令行终端关闭。
+Before exiting the game, it will keep running when Raspberry Pi is powered on. To avoid consume too much running memory of Raspberry Pi, you need to exit the game first according to the operation steps above before performing other AI vision games.
 :::
 
-3)  如需关闭摄像头回传图像，返回开启rqt工具的终端，按下"**Ctrl+C**"即可。
+(3) If want to close the image transmission, press “Ctrl+C” to return and open the terminal of rqt. If fail to exit, please keep trying several times.
 
-### 9.4 功能实现
+### 8.9.4 Project Outcome
 
 :::{Note}
-为保证玩法的实现，建议将色块放置在摄像头视野的中心位置，不能放置过远或靠后，否则机械臂将夹取失败。
+It is recommended to place the color block in the center of the camera's field of view for the game implementation. Avoid positioning it too far away or too close to the camera, as this may cause the robotic arm failing to pick it up.
 :::
 
-玩法开启后，手持色块放置在摄像头可识别范围内，当ArmPi Pro识别到木块颜色后，即将它进行夹取，然后开始巡线行驶，并将不同颜色的木块放置到对应的位置。
+After starting the game, hold the block within the detected range of camera. When the block is recognized by ArmPi Pro, it will grip it and keep following line. Then place the block with different colors to the corresponding position.
+If you need to modify the time between placing the color block and waiting for the next pick-up, please refer to the “[8.9.6 Function Extension]()” for further learning.
 
-如果需要修改放置色块后到重新等待夹取的时间，请前往下文 **9.5 功能拓展** 学习。
+### 8.9.5 Program Analysis
 
-### 9.5 功能拓展
+The source code of the program is located in the Docker container:
 
-1)  点击系统桌面左上角的图标<img src="../_static/media/chapter_14/section_9/image6.png"  />，打开Terminator终端。
+[/home/ubuntu/armpi_pro/src/visual_processing/scripts/visual_processing_node.py]()（image processing）
 
-<img src="../_static/media/chapter_14/section_9/image7.png"  />
+[/home/ubuntu/armpi_pro/src/intelligent_transport/scripts/intelligent_transport_node.py]()（function realization）
 
-2)  在命令行终端输入指令，并按下回传，前往玩法目录。
+The source code of program is located in:[/home/ubuntu/armpi_pro/src/intelligent_transport/scripts/intelligent_transport_node.py]().
+
+:::{Note}
+ please back up the initial program before making any modifications. It is prohibited editing the source code files directly to prevent making changes in an incorrect manner that could lead to robot malfunctions, rendering them irreparable.
+:::
+
+* **Import Parameter Module**
+
+| **Imported Module**                                  | **Function**                                                 |
+| ---------------------------------------------------- | ------------------------------------------------------------ |
+| import sys                                           | The sys module of Python is imported to access to system-related functionalities and variables. |
+| import cv2                                           | The OpenCV library of Python is imported to perform image processing and computer vision-related functions. |
+| import time                                          | The time module of Python is imported to perform time-related functionalities, such as delay operations. |
+| import math                                          | The math module of Python is imported to perform mathematical operations and functions. |
+| import rospy                                         | The Python library rosy is imported for  communication and interaction with ROS. |
+| import numpy as np                                   | The NumPy library is imported and is renamed as np for performing array and matrix operations. |
+| from armpi_pro import Misc                           | The Misc module is imported from arm_pi_pro package to handle the recognized rectangular data. |
+| from armpi_pro import apriltag                       | The apriltag module is imported from arm_pi_pro package  to perform Apriltag recognition and processing. |
+| from threading import RLock, Timer                   | The “RLock” class and “Timer” class is imported from the threading module of Python for thread-related operations. |
+| from std_srvs.srv import *                           | All service message types are imported from the std_srvs in ROS for defining and using standard service messages. |
+| from std_msgs.msg import *                           | All message types are imported form the std_msgs package in ROS for defining and using standard messages. |
+| from sensor_msgs.msg import Image                    | The image message type is imported from the sensor_msgs packages for processing image data. |
+| from visual_processing.msg import Result             | The Result message type is imported from the visual_processing package for the message of image processing results. |
+| from visual_processing.srv import SetParam           | The SetParam service type is imported from the visual_processing packages for using customs service related to parameter settings. |
+| from sensor.msg import Led                           | The Led message type is imported form the sensor.msg module for controlling or representing the LED status on a sensor. |
+| from chassis_control.msg import *                    | All message types are imported from the chassis_control.msg module, which indicated that all message types defined in this module is imported to perform the chassis control. |
+| from visual_patrol.srv import SetTarget              | The SetTarget service type is imported from the visual_patrol.srv module is used to set a target for line following. |
+| from hiwonder_servo_msgs.msg import MultiRawIdPosDur | The MultiRawIdPosDur message type is imported from the hiwonder_servo_msgs.msg module for controlling servos. |
+| from armpi_pro import PID                            | The PID class is imported from thearmpi_pro module to perform PID algorithm. |
+| from armpi_pro import bus_servo_control              | The bus_servo_control module is imported from the armpi_pro module, including the functions and methods related to the servo control. |
+| from kinematics import ik_transform                  | The ik_transform function is imported from the kinematics module to perform conversion of inverse kinematics. |
+
+* **Initializing Functions and Variables** 
+
+{lineno-start=273}
+
+```
+	# 多颜色识别函数(multiple colors recognition function)
+def colors_detect(img, color_list):
+    global pub_time
+    global publish_en
+    global color_range_list
+    
+    if color_list == 'RGB' or color_list == 'rgb':
+        color_list = ('red','green','blue')
+    else:
+        return img
+    
+    msg = Result()
+    msg.data = 0
+    color_num = 0
+    max_area = 0
+    color_area_max = None
+    areaMaxContour_max = 0
+    
+    img_copy = img.copy()
+    img_h, img_w = img.shape[:2]
+    frame_resize = cv2.resize(img_copy, size_m, interpolation=cv2.INTER_NEAREST)
+    frame_lab = cv2.cvtColor(frame_resize, cv2.COLOR_BGR2LAB)  # 将图像转换到LAB空间(convert the image to LAB space)
+    
+    for color in color_list:
+        if color in color_range_list:
+            color_range = color_range_list[color]
+            frame_mask = cv2.inRange(frame_lab, tuple(color_range['min']), tuple(color_range['max']))  # 对原图像和掩模进行位运算(perform bitwise operation on the original image and the mask)
+            eroded = cv2.erode(frame_mask, cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2)))          # 腐蚀(erode)
+            dilated = cv2.dilate(eroded, cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2)))            # 膨胀(dilate)
+            contours = cv2.findContours(dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)[-2]         # 找出轮廓(find contours)
+            areaMaxContour, area_max = getAreaMaxContour(contours)                                   # 找出最大轮廓(find the largest contour)
+            if areaMaxContour is not None:
+                if area_max > max_area:#找最大面积(find the largest area)
+                    max_area = area_max
+                    color_area_max = color
+```
+
+* **Binarization** 
+
+Use the `inRange ()` function from the cv2 library to perform binarization operation on image.
+
+{lineno-start=299}
+
+```
+	            frame_mask = cv2.inRange(frame_lab, tuple(color_range['min']), tuple(color_range['max']))  # 对原图像和掩模进行位运算(perform bitwise operation on the original image and the mask)
+```
+
+The first parameter `frame_lab` is the input image.
+
+The second parameter `tuple(color_range['min'])` is the lower limit of threshold.
+
+The third parameter `tuple(color_range['max'])` is the upper lower of threshold.
+
+* **Dilation and Erosion** 
+
+To reduce interference and make a smoother image, it is necessary to perform dilation and erosion operations on image.
+
+{lineno-start=300}
+
+```
+	            eroded = cv2.erode(frame_mask, cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2)))          # 腐蚀(erode)
+            dilated = cv2.dilate(eroded, cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2)))            # 膨胀(dilate)
+```
+
+The `erode()` function is applied to erode. Uses an example of the code `eroded = cv2.erode(frame_mask, cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2)))`. The meanings of parameters in parentheses are as follow:
+
+The first parameter `frame_mask` is the input image.
+
+The second parameter `cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2))` is the structural elements and kernel that determines the nature of operation. The first parameter in parentheses is the shape of kernel and the second parameter is the size of kernel.
+`dilate()` function is applied to dilate image. The meaning of parameters in parentheses is the same as the parameters of `erode()` function.
+
+* **Obtain the contour with the largest area** 
+
+After processing the above image, it is necessary to obtain the contour of the target. The `findContours()` function from the cv2 library is involved in this process.
+
+{lineno-start=302}
+
+```
+	            contours = cv2.findContours(dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)[-2]         # 找出轮廓(find contours)
+```
+
+{lineno-start=303}
+
+```
+	            areaMaxContour, area_max = getAreaMaxContour(contours)                                   # 找出最大轮廓(find the largest contour)
+            if areaMaxContour is not None:
+```
+
+* **Obtain the minimum enclosing circle and display on the live feed image** 
+
+The `minEnclosingCircle()` function from the cv2 library is utilized to obtain the minimum enclosing circle and the coordinates of its center for the target contour. The obtained circle is then displayed in the feedback image using the `circle()` function.
+
+{lineno-start=310}
+
+```
+	    if max_area > 100:  # 有找到最大面积(found the maximum area)
+        (centerx, centery), radius = cv2.minEnclosingCircle(areaMaxContour_max)  # 获取最小外接圆(obtain the minimum circumscribed circle)
+        msg.center_x = int(misc.map(centerx, 0, size_m[0], 0, img_w))
+        msg.center_y = int(misc.map(centery, 0, size_m[1], 0, img_h))
+        radius = int(misc.map(radius, 0, size_m[0], 0, img_w))
+        
+        cv2.circle(img, (msg.center_x, msg.center_y), radius+5, range_rgb[color_area_max], 2)
+```
+
+* **Determine the color block with the largest area** 
+
+{lineno-start=318}
+
+```
+	        if color_area_max == 'red':  #红色最大(red is the largest)
+            msg.data = 1
+        elif color_area_max == 'green':  #绿色最大(green is the largest)
+            msg.data = 2
+        elif color_area_max == 'blue':  #蓝色最大(blue is the largest)
+            msg.data = 3
+```
+
+* **Grip the block** 
+
+The position of the target on x, y and z axes is obtained after processing image. Then the target position is calculated using inverse kinematics. Lastly, robot will perform the gripping action.
+
+{lineno-start=331}
+
+```
+                    # 机械臂追踪移动到色块上方(the robotic arm tracks and moves above the color block)
+                    target = ik.setPitchRanges((0, round(y_dis, 4), 0.03), -180, -180, 0)
+                    if target:
+                        servo_data = target[1]
+                        bus_servo_control.set_servos(joints_pub, 0.02,((3, servo_data['servo3']),         
+                             (4, servo_data['servo4']),(5, servo_data['servo5']), (6, x_dis)))
+                    
+                    if dx < 2 and dy < 0.003 and not stable: # 等待机械臂稳定停在色块上方(wait for the robotic arm to steadily stop above the color block)
+                        num += 1
+                        if num == 10:
+                            stable = True  # 设置可以夹取(Set to grip)
+                            num = 0
+                    else:
+                        num = 0
+                    
+                    if stable: #控制机械臂进行夹取(control the robotic arm to grip)
+                        offset_y = misc.map(target[2], -180, -150, -0.03, 0.03)
+                        set_rgb(range_rgb[detect_color][2], range_rgb[detect_color][1], range_rgb[detect_color][0])       # 设置rgb灯颜色(set the color of the RGB light)
+                        target_color = detect_color # 暂存目标颜色(save the target color temporarily)
+                        set_buzzer(1900, 0.1, 0.9, 1) #蜂鸣器响一下(the buzzer makes a sound)
+                        
+                        bus_servo_control.set_servos(joints_pub, 0.5, ((1, 120),)) #张开机械爪(open the robotic gripper)
+                        rospy.sleep(0.5)
+                        target = ik.setPitchRanges((0, round(y_dis + offset_y, 5), -0.07), -180, -180, 0) #机械臂向下伸(the robotic arm extends downward)
+```
+
+The inverse kinematics takes `((0, round(y_dis, 4), 0.03), -180, -180, 0)` as example and the meanings of parameters in parentheses are as follows:
+
+The first parameter is `(0, round(y_dis, 4)`. “0” is the position of the target on x-axis. `round(y_dis, 4)` is the position of the target on y-axis. `0.03` is the position of the target on z-axis.
+
+The second parameter `-180` is the angle of x-axis.
+
+The third parameter `-180` is the range of the pitch angle.
+
+The fourth parameter `0` is the range of pitch angle.
+
+The servo control takes the code `bus_servo_control.set_servos(joints_pub, 20, ( (3, servo_data['servo3']), (4, servo_data['servo4']), (5, servo_data['servo5']), (6, x_dis)))` as example and the meaning of parameters in parentheses is as follow:
+
+The first parameter `joints_pub` is to publish the message of servo control node.
+
+The second parameter `20` is the running time.
+
+The third parameter is `( (3, servo_data['servo3']), (4, servo_data['servo4']), (5, servo_data['servo5']), (6, x_dis)`. Among them, `3` is the servo number. `servo_data['servo3']` and the rest of parameters are the servo angle.
+
+* **Line Following** 
+
+After gripping the block, the car will follow the line. Firstly, judge if there is the line within the detected range. The code is shown in the following figure:  
+
+{lineno-start=218}
+
+```
+            elif line_width > 0: #识别到线条(detected line)
+```
+
+Then the current x-coordinate of line subtracts the value of ideal center point. Get the yaw rate by PID mapping to adjust the speed of motor.
+
+{lineno-start=219}
+
+```
+                # PID算法巡线(Line following with PID algorithm)
+                if abs(line_center_x - img_w/2) < 30:
+                    line_center_x = img_w/2
+                line_x_pid.SetPoint = img_w/2      # 设定(set)
+                line_x_pid.update(line_center_x)   # 当前(current)
+                dx = round(line_x_pid.output, 2)   # 输出(output)
+                dx = 0.8 if dx > 0.8 else dx
+                dx = -0.8 if dx < -0.8 else dx
+                
+                set_velocity.publish(100, 90, dx) # 控制底盘(control the chassis)
+                chassis_move = True
+```
+
+Take the code `set_velocity.publish(100, 90, dx)` as example: 
+
+The first parameter `100` is the linear velocity.
+
+The second parameter `90` is the angular velocity.
+
+The third parameter `dx` is the yaw rate. The larger the yaw rate, the faster the rotation speed of car.
+
+* **Recognize the placement line** 
+
+(1) Determine the number of lines
+
+In the process of identifying the color of block, we set the corresponding numbers of recognized lines for placement position of different blocks, as the figure shown below: 
+
+{lineno-start=206}
+
+```
+    position = {'red':1, 'green':2, 'blue':3, 'None':-1} # 色块对应位置横线数(number of placement lines corresponding to the color block position)
+```
+
+If the recognized color is red, the robot will run the the code for transporting the block to the first placement line when it identifies single line.
+
+If the recognized color is green, the robot will transport the block to the second placement line when only two lines are recognized. 
+
+In the process of following line, the car will keep detecting the placement line. If the following condition is satisfied, which means the line is recognized.
+
+{lineno-start=232}
+
+```
+                    if line_width > 100 and block_clamp:  # 在夹取着色块时检测横线(detect placement line while gripping the color block)
+```
+
+Then determine the position of placement line.
+
+{lineno-start=238}
+
+```
+                        if transversae_num == position[target_color]: # 判断当前横线数量是否等于目标颜色对应的数量(check if the current number of placement lines equals the number of lines corresponding to the target color)
+```
+
+The width of the line is obtained by the following function.
+
+{lineno-start=158}
+
+```
+        # 更新线条或者色块位置参数(update line or color block position parameters)
+        if detect_step == 'line':
+            line_center_x = center_x
+            line_center_y = center_y
+            line_width = data
+```
+
+* **Stop recognizing** 
+
+After all the lines are recognized completely, the recognition function will be stopped to prevent the interference from repeat recognition of the same placement line. 
+
+{lineno-start=233}
+
+```
+                        if (time.time()-transversae_time) > 1:
+                            transversae_num += 1
+                            print(transversae_num)
+                            transversae_time = time.time()
+```
+
+* **Place the block** 
+
+When the numbers of recognized placement lines is equivalent to the numbers of placement lines corresponding to the placement position of the target block, the car will stop in the corresponding position and the robotic arm will be controlled to place the block to the corresponding position.
+
+{lineno-start=247}
+
+```
+                elif place_en:
+                    if time.time() >= place_delay: # 延时停下来，把色块放到横线旁边(Delay and stop, place the color block next to the placement line)
+                        rospy.sleep(0.1)
+                        set_velocity.publish(0, 0, 0)
+                        target = ik.setPitchRanges((-0.24, 0.00, -0.04), -180, -180, 0) #机械臂移动到色块放置位置(move the robotic arm to the color block placement position)
+                        if target:
+                            servo_data = target[1]
+                            bus_servo_control.set_servos(joints_pub, 1.2, ((6, servo_data['servo6']),)) 
+                            rospy.sleep(1)
+                            bus_servo_control.set_servos(joints_pub, 1.5, ((3, servo_data['servo3']), (4, servo_data['servo4']), (5, servo_data['servo5'])))
+                        rospy.sleep(1.8)
+
+                        bus_servo_control.set_servos(joints_pub, 0.5, ((1, 150),))  # 张开机械爪(open the robotic gripper)
+                        rospy.sleep(0.8)
+```
+
+In the code shown in the figure above, the inverse kinematics is used to set the movement of robotic arm. Take code `target = ik.setPitchRanges((-0.24, 0.00, -0.04), -180, -180, 0)` as example:
+
+The first parameter `(-0.24, 0.00, -0.04)` is the coordinate value (x,y,and z axes)  of the end of robotic arm.
+
+The second parameter `-180` is the pitch angle value of the end of robotic arm.
+
+The third and fourth parameter `-180` and  `0`  is the range of the pitch angle.
+
+Due the limitation of the detected range of camera, when the car has not moved to the corresponding position and the lines is no longer in the detected range. Therefore, it is necessary to add a delay, so that the car can keep moving when the line is not recognized.
+
+{lineno-start=239}
+
+```
+                            place_en = True  # 放置使能(placement enable)
+                            if transversae_num == 1:
+                                place_delay = time.time() + 1.1 # 设置延时停下来时间(set delay stopping time)
+                            elif transversae_num == 2:
+                                place_delay = time.time() + 1.1
+                            elif transversae_num == 3:
+                                place_delay = time.time() + 1.2
+```
+
+Then the car continues following the line and return to the initial position, and starts the next round of recognizing and sorting.
+
+{lineno-start=268}
+
+```
+                        move_time = time.time() + (11.5 - transversae_num) # 设置放置色块后要巡线的时间，让机器人回到初始位置(set the time for line following after placing the color block, and make the robot return to the initial position)
+                            
+                        # 变量重置(reset variables)
+                        place_en = False
+                        block_clamp = False
+                        target_color = 'None'
+                        set_rgb('black')
+                        transversae_num = 0
+                
+                if not block_clamp and time.time() >= move_time: # 放置色块后机器人巡线回到初始位置(the robot follows the line returning to the initial position after placing the color block)
+                    rospy.sleep(0.1)
+                    set_velocity.publish(0, 0, 0)
+                    detect_step = 'color'
+```
+
+### 8.9.6 Function Extension
+
+(1) Click<img src="../_static/media/chapter_14/section_9/image6.png"  />in the upper left corner of the system desktop to open the “Terminator”.
+
+<img class="common_img" src="../_static/media/chapter_14/section_9/image7.png"  />
+
+(2) Enter the following command in the command line terminal, and press “Enter” to navigate to the game directory.
 
 ```commandline
 cd armpi_pro/src/intelligent_transport/scripts/
 ```
 
-<img src="../_static/media/chapter_14/section_9/image19.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_9/image19.png"  />
 
-3)  在命令行终端输入指令，并按下回传，打开程序文件。
+(3) Enter the command in the command line terminal, and press “Enter” to open the program file.
 
 ```commandline
 vim intelligent_transport_node.py
 ```
 
-<img src="../_static/media/chapter_14/section_9/image20.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_9/image20.png"  />
 
-4)  按下"**i**"进入编辑模式。
+(4) Press “i” to enter the editing mode.
 
-<img src="../_static/media/chapter_14/section_9/image21.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_9/image21.png"  />
 
-5)  修改此处代码，框中的数字就是放置色块后到重新等待夹取的时间，按自己铺设地图的实际情况进行修改。
+(5) To modify the code, the number in the red box shown in following diagram represents the time to wait for the next pick-up after placing the color block. Please modify it according to the actual situation of your map. 
 
-<img src="../_static/media/chapter_14/section_9/image22.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_9/image22.png"  />
 
-6)  修改完成按下ESC，然后输入":wq"保存退出。
+(6) After modifying, press the “Esc”, and enter “:wq” to save and exit operation.
 
-<img src="../_static/media/chapter_14/section_9/image23.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_9/image23.png"  />
 
-7)  修改完成后，按照[9.3 玩法开启及关闭](#anchor_9_3)开启玩法。
+(7) After that, please follow [9.3 Operation Steps]() to start the game.
 
-### 9.6 程序简要分析
-
-本小节课程文档对应程序的源代码位于Docker容器中的：
-
-**/home/ubuntu/armpi_pro/src/visual_processing/scripts/visual_processing_node.py（图像处理）**
-
-**/home/ubuntu/armpi_pro/src/intelligent_transport/scripts/intelligent_transport_node.py（功能实现）**
-
-<img src="../_static/media/chapter_14/section_9/image4.png"  alt="loading" />
+## 8.10 Smart Stacking
 
 :::{Note}
-在程序修改前务必将原有出厂程序进行备份，再进行修改，禁止直接在源代码文件中进行修改，避免以错误的方式修改参数之后导致机器人异常且无法修复！！！
+It is recommended to place the color block in the center of the camera's field of view for the game implementation. Avoid positioning it too far away or too close to the camera, as this may cause the robotic arm failing to pick it up.
 :::
 
-- #### 9.6.1 导入参数模块
+### 8.10.1 Program Description
 
-| **导入模块** | **作用** |
-|----|----|
-| import sys | 导入了Python的sys模块，用于访问系统相关的功能和变量 |
-| import cv2 | 导入了OpenCV库，用于图像处理和计算机视觉相关的功能 |
-| import time | 导入了Python的time模块，用于时间相关的功能，例如延时操作 |
-| import math | 导入了Python的math模块，用于数学运算和函数 |
-| import rospy | 导入了ROS的Python库rospy，用于与ROS系统进行通信和交互 |
-| import numpy as np | 导入了NumPy库，并将其重命名为np，用于进行数组和矩阵操作 |
-| from armpi_pro import misc | 从armpi_pro包中导入了misc模块，用于处理识别得到的矩形数据 |
-| from armpi_pro import apriltag | 从armpi_pro包中导入了apriltag模块，用于Apriltag识别和处理的功能 |
-| from threading import RLock, Timer | 从Python的threading模块中导入了RLock类和Timer类，用于线程相关的操作 |
-| from std_srvs.srv import \* | 从ROS的std_srvs包中导入了所有的服务消息类型，用于定义和使用标准的服务消息 |
-| from std_msgs.msg import \* | 从ROS的std_msgs包中导入了所有的消息类型，用于定义和使用标准的消息 |
-| from sensor_msgs.msg import Image | 从ROS的sensor_msgs包中导入了Image消息类型，用于处理图像数据 |
-| from visual_processing.msg import Result | 从visual_processing包中导入了Result消息类型，用于图像处理结果的消息 |
-| from visual_processing.srv import SetParam | 从visual_processing包中导入了SetParam服务类型，设置参数的自定义服务 |
-| from ros_robot_controller.msg import RGBState, RGBsState | 从ros_robot_controller.msg模块导入 RGBState, RGBsState消息类型。用于控制或表示传感器设备上的RGB灯状态 |
-| from chassis_control.msg import \* | 从 chassis_control.msg 模块导入所有消息类型。这意味着导入该模块中定义的所有消息类型，用于底盘控制 |
-| from visual_patrol.srv import SetTarget | 从 visual_patrol.srv 模块导入 SetTarget 服务类型。用于设置视觉巡逻的目标 |
-| from hiwonder_servo_msgs.msg import MultiRawIdPosDur | hiwonder_servo_msgs.msg 模块导入 MultiRawIdPosDur 消息类型。用于控制舵机设备 |
-| from armpi_pro import pid | 从 armpi_pro 模块导入pid类。用于实现比例-积分-微分（PID）控制算法 |
-| from armpi_pro import bus_servo_control | 从 armpi_pro 模块导入 bus_servo_control 模块。包含与舵机控制相关的函数和方法 |
-| from kinematics import ik_transform | 从 kinematics 模块导入 ik_transform 函数。用于进行逆运动学变换 |
+The process of whole game includes three parts: recognize, grip, stack.
 
-- #### 9.6.2功能逻辑
+Firstly, recognize the block tag within vision range.
 
-根据实现效果，梳理该玩法的实现逻辑如下图所示：
+Next, through positioning, image segmenting, contour search and other processing, the tag contour is found. Then, the quadrilateral is detected,and the straight line is fitted to form a closed loop by acquiring the four corner points.
+Code and decode the tag detected to get corresponding tag ID number.
+Determine the gripping sequence by comparing ID number: small ID number will be gripped first.
 
-<img class="common_img" src="../_static/media/chapter_14/section_9/image24.png"  />
+Finally, pick and stack the block at stacking area. After stacking, the robotic arm will return to the initial position.
 
-通过摄像头获取图像信息，再进行图像处理，即对图像进行二值化处理，为了降低干扰，令图像更平滑，对图像进行腐蚀和膨胀处理，然后获取色块的位置信息，根据位置信息将色块夹取起来，根据提前布置好的地图进行巡线，根据夹取的色块颜色识别到对应横线停下来，将色块放到指定位置。
-
-- #### 9.6.3程序逻辑及对应的代码分析
-
-从程序文件梳理得到程序逻辑流程图如下图所示
-
-<img class="common_img" src="../_static/media/chapter_14/section_9/image25.png"  />
-
-从上图得到，程序的逻辑流程主要为多颜色识别函数和功能实现，以下的文档内容将依照上述程序逻辑流程图进行编写。
-
-1. **图像处理**
-
-- **初始化函数与变量**
-
-<img src="../_static/media/chapter_14/section_9/image26.png"  />
-
-- **二值化处理**
-
-采用cv2库中的inRange()函数对图像进行二值化处理。
-
-<img src="../_static/media/chapter_14/section_9/image27.png"  />
-
-第一个参数"**frame_lab**"是输入图像；
-
-第二个参数"**tuple(color_range\['min'\])**"是阈值下限；
-
-第三个参数"**tuple(color_range\['max'\])**"是阈值上限；
-
-- **腐蚀膨胀处理**
-
-为了降低干扰，令图像更平滑，需要对图像进行腐蚀和膨胀处理。
-
-<img src="../_static/media/chapter_14/section_9/image28.png"  />
-
-erode()函数用于对图像进行腐蚀操作。以代码"**eroded = cv2.erode(frame_mask, cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2)))**"为例，括号内的参数含义如下：
-
-第一个参数"**frame_mask**"是输入图像；
-
-第二个参数"**cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2))**"是决定操作性质的结构元素或内核。其中，括号内的第一个参数是内核形状，第二个参数是内核尺寸。
-
-**dilate()** 函数用于对图像进行膨胀操作。此函数括号内参数的含义与erode()函数的相同。
-
-- **获取最大面积轮廓**
-
-完成上述的图像处理后，需要获取识别目标的轮廓，此处涉及cv2库中的findContours()函数。
-
-<img src="../_static/media/chapter_14/section_9/image29.png"  />
-
-erode()函数用于对图像进行腐蚀操作。以代码"**contours = cv2.findContours(dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)\[-2\]**"为例：
-
-第一个参数"**dilated**"是输入图像；
-
-第二个参数"**cv2.RETR_EXTERNAL**"是轮廓的检索模式；
-
-第三个参数"**cv2.CHAIN_APPROX_NONE)\[-2\]**"是轮廓的近似方法。
-
-在获得的轮廓中寻找面积最大的轮廓，而为了避免干扰，需要设定一个最小值，仅当面积大于该值时，目标轮廓才有效，此处最小值为"50"。
-
-<img src="../_static/media/chapter_14/section_9/image30.png"  />
-
-- **获取最小外接圆，并在回传画面中显示出来**
-
-采用cv2库中的minEnclosingCircle()函数获取目标轮廓的最小外接圆与圆心坐标，并通过circle()函数将外接圆在回传画面中显示出来。
-
-<img src="../_static/media/chapter_14/section_9/image31.png"  />
-
-- **判断颜色最大的色块**
-
-<img src="../_static/media/chapter_14/section_9/image32.png"  />
-
-2. **功能实现**
-
-- **夹取色块**
-
-图像处理之后，得到目标在XYZ轴的位置，通过逆运动学计算，得到目标位置，夹取目标。
-
-<img src="../_static/media/chapter_14/section_9/image33.png"  />
-
-逆运动学计算以代码"**ik.setPitchRanges((0, round(y_dis, 4), 0.03), -180, -180, 0)**"为例，括号内的参数含义如下：
-
-第一个参数："**(0, round(y_dis, 4)**"，"**0**"是X轴上的位置，"**round(y_dis, 4)**"是Y轴上的位置，"**0.03**"是Z 轴上的位置；
-
-第二个参数："**-180**"是X轴角度；
-
-第三个参数："**-180**"是俯仰角范围；
-
-第四个参数："**0**"是俯仰角范围。
-
-舵机控制以代码"**bus_servo_control.set_servos(joints_pub, 20, ( (3, servo_data\['servo3'\]), (4, servo_data\['servo4'\]), (5, servo_data\['servo5'\]), (6, x_dis)))**"为例，括号内的参数含义如下：
-
-第一个参数"**joints_pub**"是发布舵机控制节点消息；
-
-第二个参数："**20**"是运行时间；s
-
-第三个参数："**( (3, servo_data\['servo3'\]), (4, servo_data\['servo4'\]), (5, servo_data\['servo5'\]), (6, x_dis)**"，其中"**3**"是舵机编号，"**servo_data\['servo3'\]**"是舵机角度，后面的一样。
-
-- **巡线行驶**
-
-夹取完色块之后，就开始巡线行驶了。小车先判断画面中有没有线条，代码如下图所示：
-
-<img src="../_static/media/chapter_14/section_9/image34.png"  />
-
-再用线条当前的横坐标减理想中心点的数值，通过PID映射得到偏航角速度，来调整电机转向速度的快慢。
-
-<img src="../_static/media/chapter_14/section_9/image35.png"  />
-
-以"**set_velocity.publish(100, 90, dx)**"为例，其中：
-
-第一个参数"**100**"代表线速度；
-
-第二个参数"**90**"代表角速度：
-
-第三个参数"**dx**"代表偏航角速度，其中偏航角速度越大，小车转向的速度越快。
-
-- **识别横线**
-
-- 1)  判定横线数量
-
-在识别木块颜色的阶段，<span class="mark">我们设定色块放置位置对应的识别横线数量</span>，如下图所示。
-
-<img src="../_static/media/chapter_14/section_9/image36.png"  />
-
-如果识别到的是红色，那当摄像头识别到一根横线时，就会运行搬运色块至第1条横线的代码；
-
-如果识别到的是绿色，只有在摄像头识别到有2两根横线的情况下，才会将绿色木块搬运到第2根横线处；蓝色同理。
-
-在巡线的过程中，小车不断检测横线，如满足如下图条件，则识别到横线。
-
-<img src="../_static/media/chapter_14/section_9/image37.png"  />
-
-接着开始判定横线的位置。
-
-<img src="../_static/media/chapter_14/section_9/image38.png"  />
-
-而线条宽度是由以下函数获取。
-
-<img src="../_static/media/chapter_14/section_9/image39.png"  />
-
-- 2)  屏蔽识别
-
-当横线数量识别完成之后，就会短时间屏蔽识别功能，防止同一根横线重复识别，造成干扰。
-
-<img src="../_static/media/chapter_14/section_9/image40.png"  />
-
-- **放置色块**
-
-识别到横线数量等于目标色块位置对应的横线数量之后，让小车停到对应横线的位置，控制机械臂把色块放置到相应位置。
-
-<img src="../_static/media/chapter_14/section_9/image41.png"  />
-
-在上图代码中，用到的是逆运动学来设置机械臂的运动，以"**target = ik.setPitchRanges((-0.24, 0.00, -0.04), -180, -180, 0)**"为例：
-
-第一个参数"**(-0.24, 0.00, -0.04)**"表示机械臂末端X、Y、Z三轴的坐标值；
-
-第二个参数"**-180**"代表机械臂末端俯仰角数值；
-
-四个参数"**-180**"和"**0**"代表俯仰角的数值范围；
-
-因为摄像头识别范围的限制，小车还未行驶到对应位置时，横线已经不在识别范围，所以需要添加延时，让小车识别不到横线后还继续行驶一段距离。
-
-<img src="../_static/media/chapter_14/section_9/image42.png"  />
-
-然后小车将会继续巡线，回到初始位置，开始下一个色块的识别和分拣。
-
-<img src="../_static/media/chapter_14/section_9/image43.png"  />
-
-## 10. 智能码垛
+### 8.10.2 Operation Steps
 
 :::{Note}
-为保证玩法的实现，建议将色块放置在摄像头视野的中心位置，不能放置过远或靠后，否则机械臂将夹取失败。
+It should be case sensitive when entering command and the “Tab” key can be used to complete the keywords.
 :::
 
-### 10.1 实验原理
+* **Getting Ready** 
 
-智能码垛整个过程包括三个部分：**识别、夹取、码垛**。
-
-首先，需要对视觉范围内的标签木块进行识别。
-
-先通过定位、图像分割、轮廓查找等一系列处理，来找到标签轮廓。接着进行四边形的检测，通过对四个角点的获取，将直线拟合形成一个闭环。
-
-然后对检测的标签进行编码与解码处理，得到标签对应的ID号。
-
-接下来，通过比较ID的大小来确定夹取顺序：ID越小越先被夹取。
-
-最后将标签木块夹取到码垛区进行码垛，当全部方块码垛完毕之后，机械臂便回到初始位置。
-
-### 10.2 玩法开启及关闭
-
-:::{Note}
-指令的输入需严格区分大小写，另外可按键盘"Tab"键进行关键词补齐。
-:::
-
-- #### 10.2.1 玩法准备
-
-准备3个标签方块（tag1、tag2、tag3）随机摆放在摄像头可识别区域，方块之间的间隔不能小于3cm。
+Prepare three tag blocks (tag 1, tag 2, tag3) and place them within the detected range, The distance between two blocks can not smaller than 3cm.
 
 <span id="anchor_10_2_2" class="anchor"></span>
 
-- #### 10.2.2 玩法进入
+* **Enter Game** 
 
-1)  将设备开机，并参照课程资料的"**[远程工具安装及容器进入方法\1. 远程桌面工具安装与连接]()**"内容，通过VNC远程连接工具连接。
+(1) Power on the robot and use VNC Viewer to connect to the remote desktop.
 
-<img src="../_static/media/chapter_14/section_10/image4.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_10/image4.png"  />
 
-2)  点击系统桌面左上角的图标<img src="../_static/media/chapter_14/section_10/image5.png"  />，打开Terminator终端。
+(2)  Click<img src="../_static/media/chapter_14/section_10/image5.png"  />in the upper left corner of the system desktop to open the “Terminator”.
 
-<img src="../_static/media/chapter_14/section_10/image6.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_10/image6.png"  />
 
-3)  输入指令运行智能码垛玩法程序。
+(3) Enter the following command to start the smart stacking game.
 
 ```commandline
 rosrun intelligent_palletizer intelligent_palletizer_node.py
 ```
 
-<img src="../_static/media/chapter_14/section_10/image7.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_10/image7.png"  />
 
-4)  **之前打开的终端不关闭，然后打开一个新的终端**。输入指令，然后按下回车进入智能码垛玩法。当成功进入后，会出现打印提示，如下图所示：
+(4) Keep the previously opened terminal and open a new one. Enter the following command, and press “Enter” to enter the smart stacking game. If successful, a prompt will appear, as shown below:
 
 ```commandline
 rosservice call /intelligent_palletizer/enter "{}"
 ```
 
-<img src="../_static/media/chapter_14/section_10/image8.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_10/image8.png"  />
 
-- #### 10.2.3 回传图像开启
+* **Start image transmission** 
 
-1. **使用外部浏览器开启**
+(1) To avoid consuming too much running memory of Raspberry Pi. It is recommended to use an external browser to start image transmission. 
+The specific steps are as follows:
 
-**为避免过多占用树莓派的运行内存，建议使用外部浏览器来开启图像回传画面，具体步骤如下：**
-
--  选择任意一个外部浏览器，这里以谷歌浏览器为例。
+① Select a browser. Take Google Chrome as example.
 
 <img class="common_img" src="../_static/media/chapter_14/section_10/image9.jpeg"  alt="loading" />
 
--  然后在地址栏输入默认IP地址如"**192.168.149.1:8080/**"，（注意：此IP地址为直连模式下的默认IP地址，若为局域网模式，则输入："**设备IP地址+：8080/"，如"192.168.149.1:8080/**"）。如果打开失败，可以重复多次或者重启树莓派和电脑。
+②  Then enter the default IP address “192.168.149.1:8080/” (Note: this IP address is the default IP address for direction connection mode). If it is LAN mode, please enter “Device IP address+：8080/” such as “192.168.149.1:8080/”) If fail to open, you can try it several times or restart camera.
 
 :::{Note}
-如果是局域网连接模式，设备IP地址获取方法可参考"**[机器人网络课程配置\2. 修改网络连接模式]()**"
+If it is in LAN mode, the method to obtain device IP address can refer to “[Robot Network Configuration Course]()”
 :::
 
 <img class="common_img" src="../_static/media/chapter_14/section_10/image10.png"  />
 
--  然后点击下图框出选项，即可打开回传画面。
+③ Then, click the option shown in the following figure to open the display window of the transmitted image.
 
 <img class="common_img" src="../_static/media/chapter_14/section_10/image11.png"  />
 
-<img src="../_static/media/chapter_14/section_10/image12.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_10/image12.png"  />
 
-2. **使用rqt工具开启**
+* **Start with rqt** 
 
--  [10.2 玩法开启及关闭\ 玩法进入](#anchor_10_2_2)终端不关闭的情况下，再打开一个新的终端。
-
--  输入指令，按下回车，稍等片刻即可打开rqt工具。
+(1)  After completing the steps of “[Enter Game]()” and do not exit the terminal, open a new terminal.
 
 ```commandline
 rqt_image_view
 ```
 
-<img src="../_static/media/chapter_14/section_10/image13.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_10/image13.png"  />
 
--  单击下图所示红框位置，对智能码垛的话题选项（topic）进行选择，选项为"**/visual_processing/image_result**"，其余设置保持不变。
+(2) Enter command “rqt_image_view” and press “Enter” to open rqt.
 
-<img src="../_static/media/chapter_14/section_10/image14.jpeg"  alt="loading" />
+```
+rqt_image_view
+```
+
+(3) Click the red box as the figure shown below, select “/visual_processing/image_result” for the topic of line following and remain other settings unchanged, as the figure shown below:
+
+<img class="common_img" src="../_static/media/chapter_14/section_10/image14.jpeg"  alt="loading" />
 
 :::{Note}
-图像开启后请务必选择话题选项，否则在后续玩法启动后，将无法正常显示其识别过程。
+After opening image, the topic option must be selected. Otherwise, after starting game, the recognition process can not be displayed normally.
 :::
 
-- #### 10.2.4 玩法启动
+* **Start Game** 
 
-此时返回[10.2 玩法开启及关闭\ 玩法进入](#anchor_10_2_2)步骤4开启的终端，输入指令，同理出现下图所框提示即为启动成功。
+Now, enter the terminal according to the steps in “[Enter Game]()” and input the following command. Then if the prompt shown in the following red box appears, which means game has been started successfully.
 
 ```commandline
 rosservice call /intelligent_palletizer/set_running "data: true"
 ```
 
-<img src="../_static/media/chapter_14/section_10/image15.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_10/image15.png"  />
 
-<img src="../_static/media/chapter_14/section_10/image16.jpeg"  alt="loading" />
+<img class="common_img" src="../_static/media/chapter_14/section_10/image16.jpeg"  alt="loading" />
 
-- #### 10.2.5 玩法停止及退出
+* **Stop and Exit**  
 
-1)  如需停止该玩法，输入指令。
+(1) If want to stop the game, enter the following command.
 
 ```commandline
 rosservice call /intelligent_palletizer/set_running "data: false"
 ```
 
-<img src="../_static/media/chapter_14/section_10/image17.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_10/image17.png"  />
 
-2)  如需退出该玩法，输入指令即可退出。
+(2) If want to exit the game, enter this command to exit.
 
 ```commandline
 rosservice call /intelligent_palletizer/exit "{}"
 ```
 
-<img src="../_static/media/chapter_14/section_10/image18.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_10/image18.png"  />
 
 :::{Note}
-玩法在未退出时，会在当前树莓派通电状态下持续运行。为避免过多占用树莓派的运行内存，如需执行其它AI视玩法，请先按照上述指令关闭当前玩法，并将命令行终端关闭。
+Before exiting the game, it will keep running when Raspberry Pi is powered on. To avoid consume too much running memory of Raspberry Pi, you need to exit the game first according to the operation steps above before performing other AI vision games.
 :::
 
-3)  如需关闭摄像头的回传图像，返回开启rqt工具的终端，按下"Ctrl+C"即可。
+(3) If want to close the image transmission, press “Ctrl+C” to return and open the terminal of rqt. If fail to exit, please keep trying several times.
 
-### 10.3 功能实现
+### 8.10.3 Project Outcome
 
 :::{Note}
-为保证玩法的实现，建议将色块放置在摄像头视野的中心位置，不能放置过远或靠后，否则机械臂将夹取失败。
+To ensure proper functionality, it is recommended to place the color block at the center of the camera's field of view. Avoid placing it too far away or too far back, as this may cause the robotic arm to fail in grasping.
 :::
 
-玩法开启后，摄像头会对识别范围内的标签木块进行识别，然后机械臂将夹取标签木块，并依次叠放在机械臂右侧的码垛区。
+After starting game, ArmPi Pro will recognize the block tag within the detected range. Then the robotic arm will grip and stack the block at the stacking area. 
 
-### 10.4 程序简要分析
+### 8.10.4 Program Analysis
 
-本小节课程文档对应程序的源代码位于Docker容器中的：
+The program file is stored in:
 
-**/home/ubuntu/armpi_pro/src/visual_processing/scripts/visual_processing_node.py（图像处理）**
+[/home/ubuntu/armpi_pro/src/visual_processing/scripts/visual_processing_node.py]()（image processing）
 
-**/home/ubuntu/armpi_pro/src/intelligent_palletizer/scripts/intelligent_palletizer_node.py（码垛控制）**
-
-<img src="../_static/media/chapter_14/section_10/image3.jpeg"  alt="loading" />
+[/home/ubuntu/armpi_pro/src/intelligent_palletizer/scripts/intelligent_palletizer_node.py]()（stacking control）
 
 :::{Note}
-在程序修改前务必将原有出厂程序进行备份，再进行修改，禁止直接在源代码文件中进行修改，避免以错误的方式修改参数之后导致机器人异常且无法修复！！！
+please back up the initial program before making any modifications. It is prohibited editing the source code files directly to prevent making changes in an incorrect manner that could lead to robot malfunctions, rendering them irreparable.
 :::
 
-- #### 10.4.1 导入参数模块
+* **Import Parameter Module** 
 
-| **导入模块** | **作用** |
-|----|----|
-| import sys | 导入了Python的sys模块，用于访问系统相关的功能和变量 |
-| import cv2 | 导入了OpenCV库，用于图像处理和计算机视觉相关的功能 |
-| import time | 导入了Python的time模块，用于时间相关的功能，例如延时操作 |
-| import math | 导入了Python的math模块，用于数学运算和函数 |
-| import rospy | 导入了ROS的Python库rospy，用于与ROS系统进行通信和交互 |
-| import numpy as np | 导入了NumPy库，并将其重命名为np，用于进行数组和矩阵操作 |
-| from armpi_pro import misc | 从armpi_pro包中导入了misc模块，用于处理识别得到的矩形数据 |
-| from armpi_pro import apriltag | 从armpi_pro包中导入了apriltag模块，用于Apriltag识别和处理的功能 |
-| from threading import RLock, Timer | 从Python的threading模块中导入了RLock类和Timer类，用于线程相关的操作 |
-| from std_srvs.srv import \* | 从ROS的std_srvs包中导入了所有的服务消息类型，用于定义和使用标准的服务消息 |
-| from std_msgs.msg import \* | 从ROS的std_msgs包中导入了所有的消息类型，用于定义和使用标准的消息 |
-| from sensor_msgs.msg import Image | 从ROS的sensor_msgs包中导入了Image消息类型，用于处理图像数据 |
-| from visual_processing.msg import Result | 从visual_processing包中导入了Result消息类型，用于图像处理结果的消息 |
-| from visual_processing.srv import SetParam | 从visual_processing包中导入了SetParam服务类型，设置参数的自定义服务 |
-| from ros_robot_controller.msg import RGBState, RGBsState | 从ros_robot_controller.msg模块导入 RGBState, RGBsState消息类型。用于控制或表示传感器设备上的RGB灯状态 |
-| from chassis_control.msg import \* | 从 chassis_control.msg 模块导入所有消息类型。这意味着导入该模块中定义的所有消息类型，用于底盘控制 |
-| from visual_patrol.srv import SetTarget | 从 visual_patrol.srv 模块导入 SetTarget 服务类型。用于设置视觉巡逻的目标 |
-| from hiwonder_servo_msgs.msg import MultiRawIdPosDur | hiwonder_servo_msgs.msg 模块导入 MultiRawIdPosDur 消息类型。用于控制舵机设备 |
-| from armpi_pro import pid | 从 armpi_pro 模块导入pid类。用于实现比例-积分-微分（PID）控制算法 |
-| from armpi_pro import bus_servo_control | 从 armpi_pro 模块导入 bus_servo_control 模块。包含与舵机控制相关的函数和方法 |
-| from kinematics import ik_transform | 从 kinematics 模块导入 ik_transform 函数。用于进行逆运动学变换 |
+| **Imported Module**                                  | **Function**                                                 |
+| ---------------------------------------------------- | ------------------------------------------------------------ |
+| import sys                                           | The sys module of Python is imported to access to system-related functionalities and variables. |
+| import cv2                                           | The OpenCV library of Python is imported to perform image processing and computer vision-related functions. |
+| import time                                          | The time module of Python is imported to perform time-related functionalities, such as delay operations. |
+| import math                                          | The math module of Python is imported to perform mathematical operations and functions. |
+| import rospy                                         | The Python library rosy is imported for  communication and interaction with ROS. |
+| import numpy as np                                   | The NumPy library is imported and is renamed as np for performing array and matrix operations. |
+| from armpi_pro import Misc                           | The Misc module is imported from arm_pi_pro package to handle the recognized rectangular data. |
+| from armpi_pro import apriltag                       | The apriltag module is imported from arm_pi_pro package  to perform Apriltag recognition and processing. |
+| from threading import RLock, Timer                   | The “RLock” class and “Timer” class is imported from the threading module of Python for thread-related operations. |
+| from std_srvs.srv import *                           | All service message types are imported from the std_srvs in ROS for defining and using standard service messages. |
+| from std_msgs.msg import *                           | All message types are imported form the std_msgs package in ROS for defining and using standard messages. |
+| from sensor_msgs.msg import Image                    | The image message type is imported from the sensor_msgs packages for processing image data. |
+| from visual_processing.msg import Result             | The Result message type is imported from the visual_processing package for the message of image processing results. |
+| from visual_processing.srv import SetParam           | The SetParam service type is imported from the visual_processing packages for using customs service related to parameter settings. |
+| from sensor.msg import Led                           | The Led message type is imported form the sensor.msg module for controlling or representing the LED status on a sensor. |
+| from chassis_control.msg import *                    | All message types are imported from the chassis_control.msg module, which indicated that all message types defined in this module is imported to perform the chassis control. |
+| from visual_patrol.srv import SetTarget              | The SetTarget service type is imported from the visual_patrol.srv module is used to set a target for line following. |
+| from hiwonder_servo_msgs.msg import MultiRawIdPosDur | The MultiRawIdPosDur message type is imported from the hiwonder_servo_msgs.msg module for controlling servos. |
+| from armpi_pro import PID                            | The PID class is imported from thearmpi_pro module to perform PID algorithm. |
+| from armpi_pro import bus_servo_control              | The bus_servo_control module is imported from the armpi_pro module, including the functions and methods related to the servo control. |
+| from kinematics import ik_transform                  | The ik_transform function is imported from the kinematics module to perform conversion of inverse kinematics. |
 
-- #### 10.4.2 功能逻辑
+* **Initializing Functions and Variables** 
 
-根据实现效果，梳理该玩法的实现逻辑如下图所示：
+{lineno-start=102}
 
-<img class="common_img" src="../_static/media/chapter_14/section_10/image19.png"  />
+```
+	# 检测apriltag函数(detect apriltag function )
+detector = apriltag.Detector(searchpath=apriltag._get_demo_searchpath())
+def apriltag_Detect(img):
+    global pub_time
+    global publish_en
+    global id_smallest
+    
+    msg = Result()
+    img_copy = img.copy()
+    img_h, img_w = img.shape[:2]
+    frame_resize = cv2.resize(img_copy, size_m, interpolation=cv2.INTER_NEAREST)
+    gray = cv2.cvtColor(frame_resize, cv2.COLOR_BGR2GRAY)
+    detections = detector.detect(gray, return_image=False)
+```
 
-通过摄像头获取图像信息，开始检测标签，通过逆运动学获取标签木块的位置进行夹取，再将木块放置到指定位置，并且叠加层数，最多可以叠至3层。
+* **Obtain the information of corner point**
 
-- #### 10.4.3 程序逻辑及对应的代码分析
+Obtain the four corner points through  `np.rint()` function.
 
-从程序文件梳理得到程序逻辑流程图如下图所示。
+{lineno-start=116}
 
-<img class="common_img" src="../_static/media/chapter_14/section_10/image20.png"  />
+```
+	    if len(detections) != 0:
+        for i, detection in enumerate(detections):
+            tag_id = int(detection.tag_id)        # 获取tag_id(obtain tag_id )
+            corners = np.rint(detection.corners)  # 获取四个角点(obtain four corners)
+            for i in range(4):
+                corners[i][0] = int(misc.map(corners[i][0], 0, size_m[0], 0, img_w))
+                corners[i][1] = int(misc.map(corners[i][1], 0, size_m[1], 0, img_h))
+```
 
-从上图得到，程序的逻辑流程主要为颜色识别函数和移动控制，以下的文档内容将依照上述程序逻辑流程图进行编写。
+* **Detect Tag** 
 
-1. **处理图像**
+(1) After getting the corner point information of tag, recognize tag by calling  `drawContours()` function in cv2 library.
 
-- **初始化函数与变量**
+{lineno-start=123}
 
-<img src="../_static/media/chapter_14/section_10/image21.png"  />
+```
+	            cv2.drawContours(img, [np.array(corners, np.int)], -1, (0, 255, 255), 2)
+```
 
-- **获取角点信息**
+The meaning of parameter in parentheses is as follow:
 
-通过np.rint()获取标签的四个角点。
+The first parameter `img` is the input image.
 
-<img src="../_static/media/chapter_14/section_10/image22.png"  />
+The second parameter `[np.array(corners, np.int)]` is the contour which is list in Python.
 
-- **检测标签**
+The third parameter `-1` is the index of contour. The value here represents all contour in drawing contour list.
 
-- 1)  获取标签的角点信息后，通过调用cv2库中的drawContours()函数，标识出标签。
+The fourth parameter `(0, 255, 255)` is the contour color. The value sequence is B, G, and R. The color here is yellow.
 
-<img src="../_static/media/chapter_14/section_10/image23.png"  />
+The fifth parameter `2` is the width of contour.
 
-函数括号内的参数含义如下：
+(2) By calling `putText()` function in cv2 library, print the tag ID and type on the live feed image.
 
-第一个参数"**img**"是输入图像；
+{lineno-start=127}
 
-第二个参数"**\[np.array(corners, np.int)\]**"是轮廓本身，在Python中为list；
+```
+	            cv2.putText(img, str(tag_id), (object_center_x - 10, object_center_y + 10), cv2.FONT_HERSHEY_SIMPLEX, 1, [0, 255, 255], 2)
+```
 
-第三个参数"**-1**"是轮廓的索引，此处数值代表绘制轮廓list内的所有轮廓；
+The meaning of parameters in parentheses is as follow:
 
-第四个参数"**(0, 255, 255)**"是轮廓颜色，其顺序为B、G、R，此处为黄色；
+The first parameter `img` is the input image.
 
-第五个参数"**2**"是轮廓宽度。
+The second parameter `str(tag_id)` is the displayed content.
 
-- 2)  通过调用cv2库中的putText()函数，将标签的ID与类型打印在回传画面内。
+The third parameter `(object_center_x - 10, object_center_y + 10)` is the display position.
 
-<img src="../_static/media/chapter_14/section_10/image24.png"  />
+The fourth parameter `cv2.FONT_HERSHEY_SIMPLEX` is the font type.
 
-函数括号内的参数含义如下：
+The fifth parameter `1` is the size of font.
 
-第一个参数是"**img**"是输入图像；
+The sixth parameter `[0, 255, 255]` is the font color and its sequence is B, G, R. The value here is yellow.
 
-第二个参数是"**str(tag_id)**"是显示内容；
+The seventh parameter `2` is the thickness of font.
 
-第三个参数是"**(object_center_x - 10, object_center_y + 10)**"是显示位置；
+* **Control Action** 
 
-第四个参数是"**cv2.FONT_HERSHEY_SIMPLEX**"是字体类型；
+{lineno-start=50}
 
-第五个参数是"**1**"是字体大小；
+```
+# 初始位置(initial position)
+def initMove(delay=True):
+    with lock:
+        target = ik.setPitchRanges((0, 0.15, 0.0), -180, -180, 0) # 逆运动学求解(inverse kinematics solving)
+        if target:
+            servo_data = target[1]
+            bus_servo_control.set_servos(joints_pub, 1.8, ((1, 200), (2, 500), (3, servo_data['servo3']), (4, servo_data['servo4']),
+                                                                                (5, servo_data['servo5']),(6, servo_data['servo6'])))
+    if delay:
+        rospy.sleep(2)
 
-第六个参数是"**\[0, 255, 255\]**"是字体颜色，其顺序为B、G、R，此处为黄色；
+# 设置蜂鸣器(set buzzer)
+def set_buzzer(freq, on_time, off_time, repeat):
+    msg = BuzzerState()
+    msg.freq = freq
+    msg.on_time = on_time
+    msg.off_time = off_time
+    msg.repeat = repeat
+    buzzer_pub.publish(msg)
+```
 
-第七个参数是"**2**"是字体粗细。
+**(1) Pick the Block**
 
-2. **控制动作**
+① By determining whether the coordinate of tag block is change, then we can determine if the black is stable. If it meets the conditions, robotic arm will grip the block.
 
-<img src="../_static/media/chapter_14/section_10/image25.png"  />
+{lineno-start=108}
 
-- **夹取木块**
+```
+    while __isRunning:
+        if steadier and object_center_x > 0 and object_center_y > 0: 
+            # 木块已经放稳，进行追踪夹取(the color block has been placed stably, and the robotic arm can track and grip it)
+```
 
-- 1)  先通过判断标签木块的坐标是否发生变化，来判断木块是否放稳，若符合判定条件则对开始木块进行夹取。
+② Robotic arm moves to above the block using the inverse kinematics.
 
-<img src="../_static/media/chapter_14/section_10/image26.png"  />
+{lineno-start=144}
 
-- 2)  再通过逆运动学将机械臂运动到木块上方。
+```
+            # 机械臂追踪移动到木块上方(the robotic arm tracks and moves above the color block)
+            target = ik.setPitchRanges((0, round(y_dis, 4), 0.0), -180, -180, 0)
+```
 
-<img src="../_static/media/chapter_14/section_10/image27.png"  />
+The analysis of code above is as follow:
 
-上图代码参数分析如下：
+The first parameter `0` is the position in x-axis.
 
-第一个参数"**0**"是X轴上的位置；
+The second parameter `round(y_dis, 4), 0.0)` is the position in y-axis.
 
-第二个参数"**round(y_dis, 4), 0.0)**"是Y轴的位置；
+The third parameter `-180` is the pitch angle.
 
-第三个参数"**-180**"是俯仰角；
+The fourth and fifth parameter `-180`, `0` is the range of pitch angle.
 
-第四、第五个参数"**-180**"和"**0**"是俯仰角的范围。
+③ When the determination conditions are met, robotic arm will stop above the block and adjust the angle of robotic arm.
 
-- 3)  当木块的位置信息满足以下判定条件时，机械臂则会停在木块上方，并不断调整机械爪的角度，使得机械爪能够夹取木块。
+{lineno-start=152}
 
-<img src="../_static/media/chapter_14/section_10/image28.png"  />
+```
+            if abs(dx) < 3 and abs(dy) < 0.003 and not stack_en: # 等待机械臂稳定停在木块上方(wait for the robotic arm to stably stop above the color block)
+                count_ += 1
+                if count_ == 10:
+                    count_ = 0
+                    stack_en = True
+                    angle = object_angle % 90
+                    offset_y = misc.map(target[2], -180, -150, -0.01, 0.02) # 设置位置补偿(set position compensation)
+```
 
-- 4)  接着通过bus_servo_control.set_servos（）函数直接控制机械爪夹取木块并抬起。
+④ Then the robotic arm is controlled to grip and raise the block through `bus_servo_control.set_servos()` function.
 
-<img src="../_static/media/chapter_14/section_10/image29.png"  />
+{lineno-start=175}
 
-- **放置木块**
+```
+                bus_servo_control.set_servos(joints_pub, 0.5, ((1, 450),)) # 闭合机械爪(close the robotic gripper)
+                rospy.sleep(0.8)
+                
+                bus_servo_control.set_servos(joints_pub, 1.5, ((1, 450), (2, 500), (3, 80), (4, 825), (5, 625), (6, 500))) # 机械臂抬起来(raise the robotic arm)
+                rospy.sleep(1.5)
+```
 
-通过逆运动学控制机械臂搬运到码垛区并放下。
+* **Place the Block** 
 
-<img src="../_static/media/chapter_14/section_10/image30.png"  />
+Using the inverse kinematics to control the robotic arm to transport and put down the block.
 
-以"**target = ik.setPitchRanges(place_coord\[stack_num\], -180, -180, 0)**"为例，其中：
+{lineno-start=192}
 
-第一个参数"**place_coord\[stack_num\]**"代表标签木块码垛的坐标位置，下图为各标签ID对应的位置信息。
+```
+                target = ik.setPitchRanges(place_coord[stack_num], -180, -180, 0) # 机械臂移动到色块放置位置(the robotic arm moves to the position for placing the color block)
+                if target:
+                    servo_data = target[1]
+                    bus_servo_control.set_servos(joints_pub, 1, ((3, servo_data['servo3']), (4, servo_data['servo4']), (5, servo_data['servo5']))) # 再放下了(then put down)
+                rospy.sleep(1)
+```
 
-第二个参数"**-180**"是俯仰角；
+Take `target = ik.setPitchRanges(place_coord[stack_num], -180, -180, 0)` as example. 
 
-第三、第四个参数"**-180**"和"**0**"是俯仰角的范围。
+The first parameter `place_coord[stack_num]` represents the coordinate position of tag block. The following image is the position information of corresponding ID.
 
-<img src="../_static/media/chapter_14/section_10/image31.png"  />
+The second parameter `-180` is the pitch angle.
 
-接着直接通过函数bus_servo_control.set_servos（）控制机械臂各舵机，让机械爪放下木块并松开。
+The third and fourth parameters `-180` and `0` are the range of the pitch angle.
 
-<img src="../_static/media/chapter_14/section_10/image32.png"  />
+{lineno-start=105}
 
-- **判断层数**
+```
+    place_coord = {1:(0.18, 0.0, -0.09),
+                   2:(0.18, 0.0, -0.05),
+                   3:(0.18, 0.0, -0.02)}
+```
 
-当码垛次数累计3次，将重新计数。
+Controlling each servo by bus_servo_control.set_servos（） and let gripper put down and release the block.
 
-<img src="../_static/media/chapter_14/section_10/image33.png"  />
+{lineno-start=206}
 
-- **恢复初始状态**
+```
+                if target:
+                    servo_data = target[1]
+                    bus_servo_control.set_servos(joints_pub, 1, ((1, 200), (2, 500), (3, servo_data['servo3']),
+                                                                    (4, servo_data['servo4']), (5, servo_data['servo5'])))
+                    rospy.sleep(1)
+                    bus_servo_control.set_servos(joints_pub, 1.5, ((6, servo_data['servo6']),))
+                    rospy.sleep(1.5)
+```
 
-通过逆运动学将机械臂恢复到初始姿态。
 
-<img src="../_static/media/chapter_14/section_10/image34.png"  />
+
+<img class="common_img" src="../_static/media/chapter_14/section_10/image32.png"  />
+
+* **Evaluate the layers** 
+
+When stacking action is executed three times, it will starts from scratch.
+
+{lineno-start=201}
+
+```
+                if stack_num >= 3: # 码垛计量大于等于3，进行重置(If the stacking measurement is greater than or equal to 3, reset it)
+                    stack_num = 0
+```
+
+* **Restore to the Initial Status** 
+
+Robotic arm returns to the initial posture through inverse kinematics.
+
+{lineno-start=204}
+
+```
+                #机械臂复位(return the robotic arm to the initial position)
+                target = ik.setPitchRanges((0, 0.15, 0.0), -180, -180, 0)
+                if target:
+                    servo_data = target[1]
+                    bus_servo_control.set_servos(joints_pub, 1, ((1, 200), (2, 500), (3, servo_data['servo3']),
+                                                                    (4, servo_data['servo4']), (5, servo_data['servo5'])))
+                    rospy.sleep(1)
+                    bus_servo_control.set_servos(joints_pub, 1.5, ((6, servo_data['servo6']),))
+                    rospy.sleep(1.5)
+                
+                start_en = True
+                reset()  # 变量重置(reset variables)
+```

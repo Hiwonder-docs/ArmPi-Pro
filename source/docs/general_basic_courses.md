@@ -1,9 +1,17 @@
-# 开发基础课程
+# Basic Development Course
 
-### [Linux基础课程](https://docs.hiwonder.com/projects/General_basic_courses/en/latest/docs/1_linux_fundamentals%20_course.html)
+<p style="margin-top:30px"></p>
 
-### [Python基础课程](https://docs.hiwonder.com/projects/General_basic_courses/en/latest/docs/2_python_basics_course.html)
+### [Linux Basic Lesson](https://docs.hiwonder.com/projects/General_basic_courses/en/latest/docs/1_linux_fundamentals.html)
 
-### [Docker容器基础课程](https://docs.hiwonder.com/projects/General_basic_courses/en/latest/docs/3_docker_container_basics_course.html)
+### [Python Basic Lesson](https://docs.hiwonder.com/projects/General_basic_courses/en/latest/docs/2_python_basics_course.html)
 
-### [ROS基础课程](https://docs.hiwonder.com/projects/General_basic_courses/en/latest/docs/4_ros_basics_course.html)
+### [Docker Container Tutorial](https://docs.hiwonder.com/projects/General_basic_courses/en/latest/docs/3_docker_container_basics_course.html)
+
+### [ROS1 Basic Lesson](https://docs.hiwonder.com/projects/General_basic_courses/en/latest/docs/4_ros_basics_course.html)
+
+### [Raspberry Pi and expansion board course](https://docs.hiwonder.com/projects/General_basic_courses/en/latest/docs/5_pi5_and_expansion.html)
+
+### [OpenCV Computer Vision Lesson](https://docs.hiwonder.com/projects/General_basic_courses/en/latest/docs/6_opencv.html)
+
+### [Raspberry Pi Series Robot Network Configuration Instruction](https://docs.hiwonder.com/projects/General_basic_courses/en/latest/docs/7_network_configuration.html)
