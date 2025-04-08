@@ -80,7 +80,7 @@ After running the program, the robotic arm will perform color recognition on obj
 
 ### 8.1.4 Program Analysis
 
-The source code of program is located in：[/home/ubuntu/course/color_recognition.py]()
+The source code of program is located in：[/home/ubuntu/course/color_recognition.py](../_static/source_code/color_recognition.zip)
 
 The color recognition program mainly uses the functions `inRange()`, `findContours()`, and  `morphologyEx()` from the `cv2` library, as well as the `setPixelColor()` function from the `Board` library.
 
@@ -189,7 +189,7 @@ After running the program, the robotic arm moves to aim the camera directly at t
 
 ### 8.2.4 Program Analysis
 
-The source code of program is located in：[/home/ubuntu/course/get_color_position.py]()
+The source code of program is located in：[/home/ubuntu/course/get_color_position.py](../_static/source_code/get_color_position.zip)
 
 {lineno-start=1}
 
