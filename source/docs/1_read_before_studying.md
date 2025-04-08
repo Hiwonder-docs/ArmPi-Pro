@@ -22,7 +22,7 @@ If the robot runs for an extended period, the servos may become hot. Allow the r
 
 Keep your face, glasses, and other body parts away from the robot while it is operating. Do not place fingers within the joint movement range to prevent injury. Also, be cautious of falls from high edges.
 
-The robot’s servos are precision components and consumable parts. They may need replacement after long-term or intensive use.
+The robot's servos are precision components and consumable parts. They may need replacement after long-term or intensive use.
 
 If the product will not be used for an extended period, fully charge the battery, remove it, and store it in a cool, dry place.
 
@@ -186,7 +186,7 @@ For the users with their own Raspberry Pi board, refer to the content in "[**1.3
 
 <p class="step">Step 1</p>
 
-<img class="common_img"  src="../_static/media/chapter_1/section_2_2/image1.png"  />
+<img class="common_img"  src="../_static/media/chapter_1/section_2_2/image1.png" style="width:600px"  />
 
 <p class="step">Step 2</p>
 

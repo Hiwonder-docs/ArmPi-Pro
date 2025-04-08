@@ -1,11 +1,11 @@
 # 2. Quick User Experience
 
-<p id="anchor_1"></p>
+<p id="anchor_2_1"></p>
 
 ## 2.1 APP Installation and Connection 
 
 The following instructions use TurboPi as an example and apply to other Hiwonder Raspberry Pi series products as well.
-In this section, you will learn how to use APP "WonderPi" to control TurboPi. The installation method is as follows.
+In this section, you will learn how to use APP "**WonderPi**" to control TurboPi. The installation method is as follows.
 
 :::{Note}
 
@@ -32,7 +32,7 @@ In this section, you will learn how to use APP "WonderPi" to control TurboPi. Th
 
 ### 2.1.2 APP Connection
 
-(1) Start robot. (The switch is on Raspberry Pi expansion board). For detailed instruction, please refer to the file in "**[Getting Ready\1.6 Charging and Power-On Status Explanation](https://docs.hiwonder.com/projects/TurboPi/en/latest/docs/1.getting_ready.html#charging-and-power-on-status-description)**".
+(1) Start robot. (The switch is on Raspberry Pi expansion board). For detailed instruction, please refer to the file in "**[Getting Ready\1.4 Charging and Power-On Status Explanation](https://docs.hiwonder.com/projects/ArmPi_Pro/en/latest/docs/1_read_before_studying.html#charging-and-power-on-status-explanation)**".
 
 (2) After TurboPi boots up successfully, it enters AP direct connection mode, and generates a WiFi starting with **"HW"**. Join this WiFi, and then you can experience robot games
 
@@ -58,7 +58,7 @@ After TurboPi boots up successfully, it enters AP direct connection mode, and ge
 
 <img src="../_static/media/chapter_2/section_1/image4.jpeg"   />
 
-(3) Tap **"Go to connect device hotspot"**. Join WiFi starting with "HW". The password is **"hiwonder"**.
+(3) Tap **"Go to connect device hotspot"**. Join WiFi starting with "**HW**". The password is **"hiwonder"**.
 
 <img src="../_static/media/chapter_2/section_1/image5.jpeg"   />
 
@@ -77,14 +77,14 @@ After TurboPi boots up successfully, it enters AP direct connection mode, and ge
 <img src="../_static/media/chapter_2/section_1/image9.jpeg"   />
 
 :::{Note}
-if you are informed of "No Internet. Whether to keep connection", just select "keep connected".
+if you are informed of "**No Internet. Whether to keep connection**", just select "**keep connected**".
 :::
 
 (6) Tap robot icon to enter mode selection interface.
 
 <img src="../_static/media/chapter_2/section_1/image10.jpeg"   />
 
-For detailed introduction to robot games, please refer to the file in "**[2.2 APP Control](#anchor_2)**".
+For detailed introduction to robot games, please refer to the file in "**[2.2 APP Control](#anchor_2_2)**".
 
 **1.2.3  LAN Connection Mode**
 
@@ -96,7 +96,7 @@ For detailed introduction to robot games, please refer to the file in "**[2.2 AP
 
 <img src="../_static/media/chapter_2/section_1/image12.jpeg"   />
 
-(3) Tap "+" in bottom right corner, and then select LAN Mode.
+(3) Tap "**+**" in bottom right corner, and then select LAN Mode.
 
 <img src="../_static/media/chapter_2/section_1/image13.jpeg"   />
 
@@ -110,9 +110,13 @@ For detailed introduction to robot games, please refer to the file in "**[2.2 AP
 
 (6) Join the WiFi starting with **"HW".** The password is **"hiwonder"**. After connection, return back to APP.
 
-<img src="../_static/media/chapter_2/section_1/image6.jpeg" style="width:48%"  />
+<p class="common_img" style="text-align:center;">
 
-<img src="../_static/media/chapter_2/section_1/image7.jpeg" style="width:48%"  />
+<img src="../_static/media/chapter_2/section_1/image6.jpeg" style="width:350px"  />
+
+<img src="../_static/media/chapter_2/section_1/image7.jpeg" style="width:350px"  />
+
+</p>
 
 (7) APP automatically configures network.
 
@@ -130,17 +134,15 @@ For detailed introduction to robot games, please refer to the file in "**[2.2 AP
 
 <img src="../_static/media/chapter_2/section_1/image21.jpeg"   />
 
-For detailed introduction to robot games, please refer to the file in"**[2.2 APP Control](#anchor_2)**".
+For detailed introduction to robot games, please refer to the file in"**[2.2 APP Control](#anchor_2_2)**".
 
-<p id="anchor_2"></p>
-
-<p id="anchor_2"></p>
+<p id="anchor_2_2"></p>
 
 ## 2.2 App Control
 
 **2.2.1 Getting Ready**
 
-Please refer to “[2.1 APP Installation and Connection]()” to install the app and connect to ArmPi Pro.
+Please refer to "[**2.1 APP Installation and Connection**](#anchor_2_1)" to install the app and connect to ArmPi Pro.
 
 **2.2.2 Start Game**
 
@@ -150,11 +152,11 @@ Click ArmPi Pro icon to enter mode selection.
 
 * **Robot Control** 
 
-(1) Select “Robot Control” in Mode Selection interface to enter this game, robotic arm will return to the initial posture.
+(1) Select "**Robot Control**" in Mode Selection interface to enter this game, robotic arm will return to the initial posture.
 
 <img class="common_img" src="../_static/media/chapter_2/section_2/image2.png"  alt="loading" />
 
-(2) The interface of “Robot Control” interface is divided into five parts. The left side is the interface to control the movement of robot by dragging the slider. Other function icons can refer to the following table:
+(2) The interface of "**Robot Control**" interface is divided into five parts. The left side is the interface to control the movement of robot by dragging the slider. Other function icons can refer to the following table:
 
 | Icon | Function |
 |:--:|:--:|
@@ -163,9 +165,9 @@ Click ArmPi Pro icon to enter mode selection.
 | <img src="../_static/media/chapter_2/section_2/image0.png" style="width:1.1811in;height:0.36876in" alt="loading" /> | Control the robotic arm return to the initial posture |
 | <img src="../_static/media/chapter_2/section_2/image5.jpeg" style="width:1.71944in;height:1.28889in" alt="loading" /> | Display the current transmitted image |
 | <img src="../_static/media/chapter_2/section_2/image6.png" style="width:in;height:in" alt="loading" /> | Control the rotation of each servo of robotic arm |
-| <img src="../_static/media/chapter_2/section_2/image7.png" style="width:1.71944in;height:0.31528in" alt="loading" /> | Adjust the speed of mecanum wheel |
+| <img src="../_static/media/chapter_2/section_2/image7.png"  alt="loading" /> | Adjust the speed of mecanum wheel |
 
-(3) If want to back to the mode selection interface, click the blank area of interface and then click<img src="../_static/media/chapter_2/section_2/image8.png" style="width:0.27222in;height:0.21944in" />in the left side.
+(3) If want to back to the mode selection interface, click the blank area of interface and then click <img src="../_static/media/chapter_2/section_2/image8.png" style="width:0.37222in;height:0.31944in" /> in the left side.
 
 * **Line Following** 
 
@@ -173,16 +175,16 @@ Click ArmPi Pro icon to enter mode selection.
 
 * Please start this game in a well-lit environment, but keep robot from the direct light.
 * When recognizing, please do not have the same or similar colored object within the detected range to avoid interference.
-* If the recognition effect is not good enough, please refer to  “[2.3 Adjust Color Threshold]()”.
-  :::
+* If the recognition effect is not good enough, please refer to  "[**2.3 Adjust Color Threshold**](#anchor_2_3)".
+:::
 
-(1) Click **“Line following”** to enter this game.
+(1) Click **"Line following"** to enter this game.
 
-(2) After selecting color for the line, click **“Start”** to start following line.
+(2) After selecting color for the line, click **"Start"** to start following line.
 
-<img class="common_img" src="../_static/media/chapter_2/section_2/image9.png"  alt="loading" />
+<img class="common_img" src="../_static/media/chapter_2/section_2/image9.png" style="width:666px;" alt="loading" />
 
-(3) If want to back to the mode selection interface, click the blank area of interface and then click<img src="../_static/media/chapter_2/section_2/image8.png"  />in the left side.
+(3) If want to back to the mode selection interface, click the blank area of interface and then click <img src="../_static/media/chapter_2/section_2/image8.png"  /> in the left side.
 
 * **Color Tracking** 
 
@@ -190,42 +192,39 @@ Click ArmPi Pro icon to enter mode selection.
 
 * Please start this game in a well-lit environment, but keep robot from the direct light.
 * When recognizing, please do not have the same or similar colored object within the detected range to avoid interference.
-* If the recognition effect is not good enough, please refer to  “[2. Getting Ready \2.3 Color Threshold Adjustment]()”.
+* If the recognition effect is not good enough, please refer to  "[**2.3 Adjust Color Threshold**](#anchor_2_3)".
   :::
 
-(1) Click “Color Tracking” to enter this game.
+(1) Click "**Color Tracking**" to enter this game.
 
 <img class="common_img" src="../_static/media/chapter_2/section_2/image10.png"  />
 
-(2) After selecting color, click “Start” and then the robotic arm will follow the movement of recognized color.
+(2) After selecting color, click "**Start**" and then the robotic arm will follow the movement of recognized color.
 
-(3) If want to back to the mode selection interface, click the blank area of interface and then click<img src="../_static/media/chapter_2/section_2/image8.png"  /> in the left side.
+(3) If want to back to the mode selection interface, click the blank area of interface and then click <img src="../_static/media/chapter_2/section_2/image8.png"  /> in the left side.
 
 * **Face Recognition** 
 
 :::{Note}
-
 * Please start this game in a well-lit environment, but keep robot from the direct light.
+* When recognizing, one human face only is allowed to appear within the detected range. Otherwise, it will affect the game result.
+:::
 
-* When recognizing, one human face only is allowed to appear within the detected range. Otherwise, it will affect the game result. 
-
-  :::
-
-(1) Click “Face Recognition” to enter this game.
+(1) Click "**Face Recognition**" to enter this game.
 
 <img class="common_img" src="../_static/media/chapter_2/section_2/image11.png"  alt="loading" />
 
-(2) After clicking “Start”, robotic arm will search human face within the detected range. The recognized face will be framed in a green box after recognizing and the gripper will open. Then, the robotic arm will move with the recognized face.
+(2) After clicking "**Start**", robotic arm will search human face within the detected range. The recognized face will be framed in a green box after recognizing and the gripper will open. Then, the robotic arm will move with the recognized face.
 
 (3) If want to back to the mode selection interface, click the blank area of interface and then click <img src="../_static/media/chapter_2/section_2/image8.png" style="width:in;height:in" /> in the left side.
 
 * **Tag Recognition** 
 
-(1) Click “Tag Recognition” in mode selection interface to enter this game.
+(1) Click "**Tag Recognition**" in mode selection interface to enter this game.
 
 <img class="common_img" src="../_static/media/chapter_2/section_2/image12.png"  />
 
-(2) Click “Start”. Then ArmPi Pro will identify Tag within the detected range and carry out different actions according to the recognized ID. 
+(2) Click "**Start**". Then ArmPi Pro will identify Tag within the detected range and carry out different actions according to the recognized ID. 
 
 | **ID** |                                       **Corresponding Action**                                        |
 | :----: |:-------------------------------------------------------------------------------------------------:|
@@ -233,15 +232,15 @@ Click ArmPi Pro icon to enter mode selection.
 |   2    |        The mecanum wheel moves in a circle trajectory. (The car is always facing forward)         |
 |   3    | The mecanum wheel moves in a circle trajectory. (The car is always towards the center of circle.) |
 
-<p id="anchor_3"></p>
+<p id="anchor_2_3"></p>
 
 ## 2.3 Adjust Color Threshold
 
-Different light source will have different influence on the colors, which will result in recognition discrepancy. To tackle this problem, you can adjust color threshold via "WonderPi" APP.
+Different light source will have different influence on the colors, which will result in recognition discrepancy. To tackle this problem, you can adjust color threshold via "**WonderPi**" APP.
 
 ### 2.3.1 Preparation
 
-Start TurboPi. Open "WonderPi" APP, and connect it to TurboPi. For how to connect robot to APP, operate referring to "**[2.1 APP Installation and Connection ](#anchor_1)**".
+Start TurboPi. Open "**WonderPi**" APP, and connect it to TurboPi. For how to connect robot to APP, operate referring to "**[2.1 APP Installation and Connection ](#anchor_2_1)**".
 
 ### 2.3.2 Interface Layout
 
@@ -278,11 +277,11 @@ The table below list function of specific icon.
 </tr>
 <tr>
 <td ><img src="../_static/media/chapter_2/section_3/image6.png"style="width:200px"  /><img src="../_static/media/chapter_2/section_3/image7.png" style="width:200px" /></td>
-<td ><p>Adjust L component of camera returned image. "L_min" is lower limit and "L_max" is upper limit.</p>
+<td ><p>Adjust L component of camera returned image. "**L_min**" is lower limit and "**L_max**" is upper limit.</p>
 </tr>
 <tr>
 <td ><img src="../_static/media/chapter_2/section_3/image10.png" style="width:200px" /><img src="../_static/media/chapter_2/section_3/image11.png" style="width:200px" /></td>
-<td ><p>Adjust A component of camera returned image. "a_min" is lower limit and "a_max" is upper limit.</p>
+<td ><p>Adjust A component of camera returned image. "**a_min**" is lower limit and "**a_max**" is upper limit.</p>
 </tr>
 <tr>
 <td ><img src="../_static/media/chapter_2/section_3/image12.png" style="width:200px" /><img src="../_static/media/chapter_2/section_3/image13.png" style="width:200px" /></td>
@@ -322,25 +321,25 @@ The table below list function of specific icon.
 
 <img src="../_static/media/chapter_2/section_3/image20.png"  />
 
-(3) Tap "Instruction" icon to check how to adjust color threshold.
+(3) Tap "**Instruction**" icon to check how to adjust color threshold.
 
 <img src="../_static/media/chapter_2/section_3/image21.png"  />
 
 <img src="../_static/media/chapter_2/section_3/image22.png"  />
 
 :::{Note}
-if you need to close Instruction window, select "OK".
+if you need to close Instruction window, select "**OK**".
 :::
 
-(4) Red approaches "+a" zone, so you need to adjust A component.
+(4) Red approaches "**+a**" zone, so you need to adjust A component.
 
 <img src="../_static/media/chapter_2/section_3/image23.png" style="width:300px" class="common_img"  />
 
-(5) Keep "a_max" value the same, and then increase "a_min" value till red object turns white and other area is black.
+(5) Keep "**a_max**" value the same, and then increase "**a_min**" value till red object turns white and other area is black.
 
 <img src="../_static/media/chapter_2/section_3/image24.png"  />
 
-(6) Adjust "L" and "B" values. If it belongs to light red, increase L_min. Otherwise, decrease L_max. If it belongs to warm tone, increase B_min. Otherwise, decrease B_max.
+(6) Adjust "**L**" and "**B**" values. If it belongs to light red, increase L_min. Otherwise, decrease L_max. If it belongs to warm tone, increase B_min. Otherwise, decrease B_max.
 
 <img src="../_static/media/chapter_2/section_3/image25.png"  />
 
