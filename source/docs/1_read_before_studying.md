@@ -190,15 +190,15 @@ For the users with their own Raspberry Pi board, refer to the content in "[**1.3
 
 <p class="step">Step 2</p>
 
-<img class="common_img"  src="../_static/media/chapter_1/section_2_2/image3.jpeg"  />
+<img class="common_img"  src="../_static/media/chapter_1/section_2_2/image2.jpeg"  />
 
 <p class="step">Step 3</p>
 
-<img class="common_img"  src="../_static/media/chapter_1/section_2_2/image4.jpeg"   />
+<img class="common_img"  src="../_static/media/chapter_1/section_2_2/image3.jpeg"   />
 
 <p class="step">Step 4</p>
 
-<img class="common_img"  src="../_static/media/chapter_1/section_2_2/image5.png"  />
+<img class="common_img"  src="../_static/media/chapter_1/section_2_2/image4.png"  />
 
 <img class="common_img"  src="../_static/media/chapter_1/section_2_2/image5.jpg"  />
 
