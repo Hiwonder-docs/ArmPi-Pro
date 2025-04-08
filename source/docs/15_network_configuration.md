@@ -27,7 +27,7 @@ Using **the Android system** as an example, these instructions also apply to iOS
 <img class="common_img" src="../_static/media/11.network_configuration/section_1/image2.png" style="width:700px"/>
 
 :::{Note}
-If you prefer to connect in LAN mode, refer to [9.3 Connecting in LAN Mode (optional)](#anchor_9_3).
+If you prefer to connect in LAN mode, refer to [**9.3 Connecting in LAN Mode (optional)**](#anchor_9_3).
 :::
 
 (3) Tap **"Connect to Device Hotspot"**. This will take you to your phone's settings to connect to the hotspot created by the robot.
@@ -153,7 +153,7 @@ For LAN mode, please enable location services on your smartphone.
 
 <img class="common_img" src="../_static/media/11.network_configuration/section_1/image25.png" style="width:700px" />
 
-(5) Tap "Connect to Device Hotspot".
+(5) Tap "**Connect to Device Hotspot**".
 
 <img class="common_img" src="../_static/media/11.network_configuration/section_1/image26.png" style="width:700px" />
 
@@ -177,7 +177,7 @@ For LAN mode, please enable location services on your smartphone.
 
 (11) To switch back to direct connection mode from LAN mode, press and hold the KEY1 button on the expansion board until the blue LED flashes, indicating that the switch is complete.
 
-**10.3.2 Switching via Network Configuration File**
+### 9.3.2 Switching via Network Configuration File
 
 (1) Power on the robot and connect it to the remote control software, NoMachine.
 
