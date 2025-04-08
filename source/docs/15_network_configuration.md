@@ -14,7 +14,7 @@ By default, the robot operates in AP (direct connection) mode. The features and 
 
 ## 9.2 AP Direct Connection Mode
 
-**9.2.1 Mode Switching through Phone**
+### 9.2.1 Mode Switching through Phone
 
 Using **the Android system** as an example, these instructions also apply to iOS.
 
@@ -27,7 +27,7 @@ Using **the Android system** as an example, these instructions also apply to iOS
 <img class="common_img" src="../_static/media/11.network_configuration/section_1/image2.png" style="width:700px"/>
 
 :::{Note}
-If you prefer to connect in LAN mode, refer to [10.3 Connecting in LAN Mode (optional)]().
+If you prefer to connect in LAN mode, refer to [10.3 Connecting in LAN Mode (optional)](#anchor_9_3).
 :::
 
 (3) Tap **"Connect to Device Hotspot"**. This will take you to your phone's settings to connect to the hotspot created by the robot.
@@ -62,7 +62,7 @@ For details on each mode, refer to the documentation provided earlier.
 
 <p id="anchor_1_2_2"></p>
 
-**9.2.2 Switching via Network Configuration File**
+### 9.2.2 Switching via Network Configuration File
 
 (1) Power on the robot and connect it to the remote control software, VNC.
 
@@ -120,9 +120,9 @@ sudo systemctl restart hw_wifi.service
 
 <img class="common_img" src="../_static/media/11.network_configuration/section_1/image22.png" style="width:700px" />
 
-<p id="anchor_1_3"></p>
+<p id="anchor_9_3"></p>
 
-## 10.3 Connecting in LAN Mode (optional)
+## 9.3 Connecting in LAN Mode (optional)
 
 :::{Note}
 
@@ -131,7 +131,7 @@ sudo systemctl restart hw_wifi.service
 * Switching to LAN mode cannot be done directly through the system's network settings, as the Wi-Fi has custom configurations. Please follow the instructions in Section 10.3.2 to switch modes using the network configuration file.
   :::
 
-**10.3.1 Switching via the Mobile App**
+### 9.3.1 Switching via the Mobile App
 
 :::{Note}
 For LAN mode, please enable location services on your smartphone.
@@ -203,7 +203,7 @@ vim hiwonder_wifi_conf.py
 
 ③ 3 represents Direct Sharing Mode
 
-```py
+```python
 HW_WIFI_MODE = 2    #wifi的工作模式，1为AP模式，2为STA模式
 ```
 
