@@ -4,21 +4,26 @@
 
 ### 8.1.1 Program Logic
 
-Let’s learn about the overall process of this section.
+Let's learn about the overall process of this section.
 
 **Step 1: Obtain camera image**
+
 Process the live camera feed via OpenCV.
 
 **Step 2: Image binarization**
+
 Convert all pixels in the image to 0 and 1 using OpenCV. Pixels with a value of 0 are represented as black, and pixels with a value of 1 are represented as white.
 
 **Step 3: Erosion and dilation**
+
 Erosion is performed to remove any jagged edges or noise from the image. Dilation expands the image edges to fill in any non-target pixels around the object.
 
 **Step 4: Locate contour** 
+
 Determine the position of the object's contour by separating the black and white areas in the image.
 
 **Step 5: Enclose identified color objects**
+
 Identify color objects (red, green, and blue) and convert their coordinates to the unscaled size. Then, determine if they are the largest color object.
 
 ### 8.1.2 Operation Steps
@@ -33,27 +38,27 @@ The input command is case-sensitive, and keywords can be completed using the Tab
 
 (2) Click-on <img src="../_static/media/chapter_14/section_1/image3.png"  /> to open the command-line terminal. Enter the following command and hit Enter to disable the app auto-start service.
 
-```commandline
+```bash
 sudo ./.stop_ros.sh
 ```
 
 (3) Execute the command to navigate to the directory where the game program is located.
 
-```commandline
+```bash
 cd course
 ```
 
 (4) Run the following command to execute the program.
 
-```commandline
+```bash
 python3 color_recognition.py
 ```
 
-(5) If you want to disable the program, please press “Ctrl+C”. If it fails, try again.
+(5) If you want to disable the program, please press "**Ctrl+C**". If it fails, try again.
 
 (6) After running the program, you can enable the app service by using a command or restarting the robot. If the app service is not enabled, the related app functions will be inactive. If the robot is restarted, the app service will be automatically activated.
 
-(7) click <img src="../_static/media/chapter_14/section_1/image10.png"  />and enter the following command. Press “Enter” to start the app. Wait for the robotic arm to return to its initial posture and the buzzer to beep.
+(7) click <img src="../_static/media/chapter_14/section_1/image10.png"  />and enter the following command. Press "**Enter**" to start the app. Wait for the robotic arm to return to its initial posture and the buzzer to beep.
 
 :::{Note}
 
@@ -61,7 +66,7 @@ please enter the command in the system path, not in the Docker container.
 
 :::
 
-```commandline
+```bash
 sudo systemctl restart start_node.service
 ```
 
@@ -73,8 +78,6 @@ Please perform the operation on a pure background and avoid moving the color blo
 
 After running the program, the robotic arm will perform color recognition on objects within its visual range. When an object in the color of red, green, or blue is recognized, it will be highlighted in the live camera feed.
 
-
-
 ### 8.1.4 Program Analysis
 
 The source code of program is located in：[/home/ubuntu/course/color_recognition.py]()
@@ -85,7 +88,7 @@ The color recognition program mainly uses the functions `inRange()`, `findContou
 
 {lineno-start=63}
 
-```
+```python
             frame_mask = cv2.inRange(frame_lab,
                                          (lab_data[i]['min'][0],
                                           lab_data[i]['min'][1],
@@ -99,7 +102,7 @@ The color recognition program mainly uses the functions `inRange()`, `findContou
 
 {lineno-start=72}
 
-```
+```python
 contours = cv2.findContours(closed, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)[-2]  # 找出轮廓(find out contour)
 ```
 
@@ -107,7 +110,7 @@ contours = cv2.findContours(closed, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)[-2
 
 {lineno-start=70}
 
-```
+```python
             opened = cv2.morphologyEx(frame_mask, cv2.MORPH_OPEN, np.ones((3, 3), np.uint8))  # 开运算(opening operation)
             closed = cv2.morphologyEx(opened, cv2.MORPH_CLOSE, np.ones((3, 3), np.uint8))  # 闭运算(closing operation)
 ```
@@ -116,7 +119,7 @@ contours = cv2.findContours(closed, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)[-2
 
 {lineno-start=24}
 
-```
+```python
 def set_rgb(color):
     if color == "red":
         board.set_rgb([[1, 255, 0, 0], [2, 255, 0, 0]])
@@ -152,31 +155,31 @@ The input command is case-sensitive, and keywords can be completed using the Tab
 
 <img class="common_img" src="../_static/media/chapter_14/section_2/image2.png"  />
 
-(2) Click-on<img src="../_static/media/chapter_14/section_2/image3.png"  />to open the command-line terminal. Enter the following command and hit Enter to disable the app auto-start service.
+(2) Click-on <img src="../_static/media/chapter_14/section_2/image3.png"  /> to open the command-line terminal. Enter the following command and hit Enter to disable the app auto-start service.
 
-```commandline
+```bash
 sudo ./.stop_ros.sh
 ```
 
 (3) Execute the command to navigate to the directory where the game program is located.
 
-```commandline
+```bash
 cd course
 ```
 
 (4) Run the following command to execute the program.
 
-```commandline
+```bash
 python3 get_color_position.py
 ```
 
-(5) If you want to disable the program, please press “Ctrl+C”. If it fails, try again.
+(5) If you want to disable the program, please press "**Ctrl+C**". If it fails, try again.
 
 (6) After running the program, you can enable the app service by using a command or restarting the robot. If the app service is not enabled, the related app functions will be inactive. If the robot is restarted, the app service will be automatically activated.
 
-(7) Click<img src="../_static/media/chapter_14/section_2/image10.png"  />and enter the following command. Press “Enter” to start the app. Wait for the robotic arm to return to its initial posture and the buzzer to beep once.
+(7) Click <img src="../_static/media/chapter_14/section_2/image10.png"  /> and enter the following command. Press "**Enter**" to start the app. Wait for the robotic arm to return to its initial posture and the buzzer to beep once.
 
-```commandline
+```bash
 sudo systemctl restart start_node.service
 ```
 
@@ -184,15 +187,13 @@ sudo systemctl restart start_node.service
 
 After running the program, the robotic arm moves to aim the camera directly at the front. In the live camera feed, when a red color block is recognized, it will be outlined in a bounding box. The x and y coordinates of the color block's center point will be displayed. The recognized color will be shown in the lower-left corner of the live camera feed.
 
-
-
 ### 8.2.4 Program Analysis
 
 The source code of program is located in：[/home/ubuntu/course/get_color_position.py]()
 
 {lineno-start=1}
 
-```
+```python
 #!/usr/bin/python3
 # coding=utf8
 import os
@@ -217,7 +218,7 @@ Call the `boxPoints()` function to obtain the coordinates of the four corners fo
 
 {lineno-start=82}
 
-```
+```python
         box = np.int0(cv2.boxPoints(rect))
 ```
 
@@ -231,13 +232,15 @@ Recognize the color and process it with Lab color space. Firstly, convert RGB co
 Then process height of robotic arm after recognition. The coordinates (x,y,z) of center point of image take as the set value and the currently obtained coordinates are used as input value to update pid.
 Then, calculate on the basis the feedback of image position. Finally, the coordinate value will change linearly through the change of the position, so as to achieve the effect of tracking. 
 
+<p id="anchor_8_3_2"></p>
+
 ### 8.3.2 Operation Steps
 
 :::{Note}
-It should be case sensitive when entering command and the “Tab” key can be used to complete the keywords.
+It should be case sensitive when entering command and the "**Tab**" key can be used to complete the keywords.
 :::
 
-<span id="anchor_3_2_1" class="anchor"></span>
+<span id="3_enter_game"></span>
 
 * **Enter Game** 
 
@@ -245,15 +248,13 @@ It should be case sensitive when entering command and the “Tab” key can be u
 
 <img class="common_img" src="../_static/media/chapter_14/section_3/image4.png"  />
 
-<span id="anchor_3_2_1_2" class="anchor"></span>
-
-(2) Click <img src="../_static/media/chapter_14/section_3/image5.png"  />in the upper left corner of the system desktop to open the “Terminator”.
+(2) Click <img src="../_static/media/chapter_14/section_3/image5.png"  /> in the upper left corner of the system desktop to open the "**Terminator**".
 
 <img class="common_img" src="../_static/media/chapter_14/section_3/image6.png"  />
 
-(3) Enter the following command, and press “Enter” to access the color tracking game. After entering the game, the prompt shown in the following red box will appear.
+(3) Enter the following command, and press "**Enter**" to access the color tracking game. After entering the game, the prompt shown in the following red box will appear.
 
-```commandline
+```bash
 rosservice call /color_tracking/enter "{}"
 ```
 
@@ -261,7 +262,7 @@ rosservice call /color_tracking/enter "{}"
 
 * **Start image transmission** 
 
-**(1) Start with browser**
+(1) Start with browser
 
 To avoid consuming too much running memory of Raspberry Pi. It is recommended to use an external browser to open the transmitted image. 
 The specific steps are as follows:
@@ -270,10 +271,10 @@ The specific steps are as follows:
 
 <img class="common_img" src="../_static/media/chapter_14/section_3/image8.jpeg"  alt="loading" />
 
-② Then enter the default IP address **“192.168.149.1:8080/”** (Note: this IP address is the default IP address for direction connection mode. If it is LAN mode, please enter “Device IP address：8080/” for example, “192.168.149.1:8080/”) If fail to open, you can try it several times or restart camera.
+② Then enter the default IP address **"192.168.149.1:8080/"** (Note: this IP address is the default IP address for direction connection mode. If it is LAN mode, please enter "Device IP address：8080/" for example, "192.168.149.1:8080/") If fail to open, you can try it several times or restart camera.
 
 :::{Note}
- If it is in LAN mode, the method to obtain device IP address can refer to “[Robot Network Configuration Course]()”
+ If it is in LAN mode, the method to obtain device IP address can refer to "[**Robot Network Configuration Instruction**](https://docs.hiwonder.com/projects/ArmPi_Pro/en/latest/docs/15_network_configuration.html)"
 :::
 
 <img class="common_img" src="../_static/media/chapter_14/section_3/image9.png"  />
@@ -284,19 +285,19 @@ The specific steps are as follows:
 
 <img class="common_img" src="../_static/media/chapter_14/section_3/image11.png"  />
 
-**(2) Start with rqt** 
+(2) Start with rqt 
 
-① After completing the steps of “[3.2.1 Enter Game]()” and do not exit the terminal, open a new terminal.
+① After completing the steps of "[**8.3.2 Operation Steps -> Enter Game**](#3_enter_game)" and do not exit the terminal, open a new terminal.
 
-② Enter the following command and press “Enter” to open rqt.
+② Enter the following command and press "**Enter**" to open rqt.
 
-```commandline
+```bash
 rqt_image_view
 ```
 
 <img class="common_img" src="../_static/media/chapter_14/section_3/image12.png"  />
 
-③ Click the red box as the figure shown below, select “/visual_processing/image_result” for the topic of color tracking and remain other settings unchanged. 
+③ Click the red box as the figure shown below, select "**/visual_processing/image_result**" for the topic of color tracking and remain other settings unchanged. 
 
 <img class="common_img" src="../_static/media/chapter_14/section_3/image13.png"  alt="loading" />
 
@@ -304,13 +305,13 @@ rqt_image_view
 After opening image, the topic option must be selected. Otherwise, after starting game, the recognition process can not be displayed normally.
 :::
 
-<span id="anchor_3_2_2" class="anchor"></span>
+<span id="3_start_game"></span>
 
 * **Start Game**
 
-(1) Now, enter the terminal according to the steps in “[Enter Game]()” and input the following command. Then if the prompt shown in the following red box appears, which means game has been started successfully.
+(1) Now, enter the terminal according to the steps in "[**8.3.2 Operation Steps -> Enter Game**](#3_enter_game)" and input the following command. Then if the prompt shown in the following red box appears, which means game has been started successfully.
 
-```commandline
+```bash
 rosservice call /color_tracking/set_running "data: true"
 ```
 
@@ -318,27 +319,27 @@ rosservice call /color_tracking/set_running "data: true"
 
 (2) After starting the game, select the target color. Take blue as example. Enter the following command. 
 
-```commandline
+```bash
 rosservice call /color_tracking/set_target "data: 'blue'"
 ```
 
 :::{Note}
- If want to change to green or red, you can fill in green or red in "data: ' ' (The entered command should be case sensitive).
+ If want to change to green or red, you can fill in green or red in "**data: ' '**" (The entered command should be case sensitive).
 :::
 
 <img class="common_img" src="../_static/media/chapter_14/section_3/image15.png"  />
 
 * **Stop and Exit** 
 
-(1) If want to stop the game, enter the following command. After stopping, you can refer to the content of “[Start Game]()” to change the tracking color to green or red.
+(1) If want to stop the game, enter the following command. After stopping, you can refer to the content of "[**8.3.2 Operation Steps -> Start Game**](#3_start_game)" to change the tracking color to green or red.
 
-```commandline
+```bash
 rosservice call /color_tracking/set_running "data: false"
 ```
 
 (2) If want to exit the game, enter the command below to exit.
 
-```commandline
+```bash
 rosservice call /color_tracking/exit "{}"
 ```
 
@@ -348,27 +349,25 @@ rosservice call /color_tracking/exit "{}"
 Before exiting the game, it will keep running when Raspberry Pi is powered on. To avoid consume too much running memory of Raspberry Pi, you need to exit the game first according to the operation steps above before performing other AI vision games.
 :::
 
-(3) If want exit the image transmission, press “Ctrl+C” to return and open the terminal of rqt. If fail to exit, please keep trying several times.
+(3) If want exit the image transmission, press "**Ctrl+C**" to return and open the terminal of rqt. If fail to exit, please keep trying several times.
 
 ### 8.3.3 Project Outcome
 
 After starting game, place the blue block within the detected range of camera. The target color will be framed in rqt tool after recognition. At this time, move the block slowly. Then the robotic arm will move with the target color.
 
-
-
-### 8.4.4 Program Analysis
+### 8.3.4 Program Analysis
 
 The source code for the program corresponding to this section is located in the Docker container:
 
-[/home/ubuntu/armpi_pro/src/visual_processing/scripts/visual_processing_node.py]()（image processing）
+[/home/ubuntu/armpi_pro/src/visual_processing/scripts/visual_processing_node.py](../_static/source_code/visual_processing_node.zip)(image processing)
 
-[/home/ubuntu/armpi_pro/src/color_tracking/scripts/color_tracking_node.py]()（tracking control）
+[/home/ubuntu/armpi_pro/src/color_tracking/scripts/color_tracking_node.py](../_static/source_code/color_tracking_node.zip)(tracking control)
 
 :::{Note}
 please back up the initial program before making any modifications. It is prohibited editing the source code files directly to prevent making changes in an incorrect manner that could lead to robot malfunctions, rendering them irreparable.
 :::
 
-**4.4.1 Import Parameter Module**
+* **Import Parameter Module**
 
 | **Imported Module**                                  | **Function**                                                 |
 | ---------------------------------------------------- | ------------------------------------------------------------ |
@@ -380,7 +379,7 @@ please back up the initial program before making any modifications. It is prohib
 | import numpy as np                                   | The NumPy library is imported and is renamed as np for performing array and matrix operations. |
 | from armpi_pro import Misc                           | The Misc module is imported from arm_pi_pro package to handle the recognized rectangular data. |
 | from armpi_pro import apriltag                       | The apriltag module is imported from arm_pi_pro package  to perform Apriltag recognition and processing. |
-| from threading import RLock, Timer                   | The “RLock” class and “Timer” class is imported from the threading module of Python for thread-related operations. |
+| from threading import RLock, Timer                   | The "**RLock**" class and "**Timer**" class is imported from the threading module of Python for thread-related operations. |
 | from std_srvs.srv import *                           | All service message types are imported from the std_srvs in ROS for defining and using standard service messages. |
 | from std_msgs.msg import *                           | All message types are imported form the std_msgs package in ROS for defining and using standard messages. |
 | from sensor_msgs.msg import Image                    | The image message type is imported from the sensor_msgs packages for processing image data. |
@@ -394,11 +393,11 @@ please back up the initial program before making any modifications. It is prohib
 | from armpi_pro import bus_servo_control              | The bus_servo_control module is imported from the armpi_pro module, including the functions and methods related to the servo control. |
 | from kinematics import ik_transform                  | The ik_transform function is imported from the kinematics module to perform conversion of inverse kinematics. |
 
-**(1) Initializing functions and variables**
+(1) Initializing functions and variables
 
 {lineno-start=229}
 
-```
+```python
 	# 单颜色识别函数(single color recognition function)
 def color_detect(img, color):
     global pub_time
@@ -432,13 +431,13 @@ def color_detect(img, color):
             cv2.circle(img, (msg.center_x, msg.center_y), msg.data+5, range_rgb[color], 2)
 ```
 
-**(2) Binarization**
+(2) Binarization
 
 Using the `inRange()` function from the cv2 library to perform binarization on image. 
 
 {lineno-start=248}
 
-```
+```python
 	        frame_mask = cv2.inRange(frame_lab, tuple(color_range['min']), tuple(color_range['max']))  # 对原图像和掩模进行位运算(perform bitwise operation on the original image and the mask)
 ```
 
@@ -448,13 +447,13 @@ The second parameter `tuple(color_range['min'])` is the lower limit of threshold
 
 The third parameter `tuple(color_range['max'])` is the upper limit of threshold.
 
-**(3) Dilation and erosion**
+(3) Dilation and erosion
 
 To reduce interference and create smoother images, erosion and dilation processes are applied.
 
 {lineno-start=249}
 
-```
+```python
 	        eroded = cv2.erode(frame_mask, cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2)))          # 腐蚀(erode)
         dilated = cv2.dilate(eroded, cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2)))            # 膨胀(dilate)
 ```
@@ -467,17 +466,17 @@ The second parameter `cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))` is the 
 
 dilate() function is applied to dilate image. The meaning of parameters in parentheses is the same as the parameters of erode() function.
 
-**(4) Obtain the contour of the maximum area**
+(4) Obtain the contour of the maximum area
 
 After processing the above image, obtain the contour of the recognition target.  The findContours() function in cv2 library is involved in this process.
 
 {lineno-start=251}
 
-```
+```python
 	        contours = cv2.findContours(dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)[-2]         # 找出轮廓(find contours)
 ```
 
-The `erode()` function is applied to erode. Take code “contours = cv2.findContours(dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)[-2]” as example.
+The `erode()` function is applied to erode. Take code "**contours = cv2.findContours(dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)\[-2\]**" as example.
 
 The first parameter `dilated` is the input image.
 
@@ -490,19 +489,19 @@ here is  `100`.
 
 {lineno-start=252}
 
-```
+```python
 	        area_max_contour, area_max = getAreaMaxContour(contours)                                   # 找出最大轮廓(find the largest contour)
 
         if area_max > 100:  # 有找到最大面积(found the maximum area)
 ```
 
-**(5) Obtain the minimum enclosing circle and display it on the transmitted image**
+(5) Obtain the minimum enclosing circle and display it on the transmitted image
 
 Using the `minEnclosingCircle()` function from the cv2 library to obtain the minimum bounding circle and its center coordinates for the target contour. Then, utilize the `circle()` function to display the enclosing circle on the live feed image.
 
 {lineno-start=254}
 
-```
+```python
 	        if area_max > 100:  # 有找到最大面积(found the maximum area)
             (centerx, centery), radius = cv2.minEnclosingCircle(area_max_contour)  # 获取最小外接圆(obtain the minimum circumscribed circle)
             msg.center_x = int(misc.map(centerx, 0, size_m[0], 0, img_w))
@@ -512,15 +511,15 @@ Using the `minEnclosingCircle()` function from the cv2 library to obtain the min
             publish_en = True
 ```
 
-**(6) Tracking Control**
+(6) Tracking Control
 
 Take the center coordinates X and Y as the set value.
 Perform an inverse kinematic calculation using the X and Y coordinates of the image center as set values and the X and Y coordinates of the currently detected target as input values to determine the target position. 
 
 {lineno-start=142}
 
-```
-                # Z轴追踪((tracking along the Z-axis)）
+```python
+                # Z轴追踪((tracking along the Z-axis))
                 z_pid.SetPoint = img_h / 2.0  # 设定(set)
                 z_pid.update(center_y)        # 当前(current)
                 dy = z_pid.output             # 输出(output)
@@ -529,7 +528,7 @@ Perform an inverse kinematic calculation using the X and Y coordinates of the im
                 z_dis = 0.22 if z_dis > 0.22 else z_dis
                 z_dis = 0.17 if z_dis < 0.17 else z_dis
 
-	                target = ik.setPitchRanges((0, round(y_dis, 4), round(z_dis, 4)), -90, -85, -95) # 逆运动学求解（inverse kinematics solving）
+	                target = ik.setPitchRanges((0, round(y_dis, 4), round(z_dis, 4)), -90, -85, -95) # 逆运动学求解(inverse kinematics solving)
                 if target:
                     # 发布舵机控制节点消息,移动机械臂(publish node message for servo control to move the robotic arm)
                     servo_data = target[1]
@@ -559,18 +558,17 @@ The third parameter, `((3, servo_data['servo3']), (4, servo_data['servo4']), (5,
 
 Similarly, `(4, servo_data['servo4']), (5, servo_data['servo5']), (6, x_dis)` follow the same pattern.
 
-
 ### 8.3.5 Function Extension
 
-<span id="canchor_3_4_1" class="anchor"></span>
+<p id="anchor_8_3_5_1"></p>
 
 * **Add New Recognition Color** 
 
 Color tracking has three built-in color red, green and blue. In addition to the built-in colors, we can add other recognition colors. For example, add pink as a new recognizable color. The operation steps are as follow:
 
-(1) Open the terminal, enter the following command and press “Enter” to open the tool for color threshold adjustment. If no transmitted image appears in the pop-up interface, it means the camera fails to connect and needs to be checked whether the wire is connected.
+(1) Open the terminal, enter the following command and press "**Enter**" to open the tool for color threshold adjustment. If no transmitted image appears in the pop-up interface, it means the camera fails to connect and needs to be checked whether the wire is connected.
 
-```commandline
+```bash
 python3 /home/ubuntu/software/lab_config/main.py
 ```
 
@@ -578,23 +576,23 @@ python3 /home/ubuntu/software/lab_config/main.py
 
 <img class="common_img" src="../_static/media/chapter_14/section_3/image20.png"  alt="loading" />
 
-(2) After the camera is connected completely, you can see that the right side is real-time transmitted image and the right side is the color to be collected. Then click “Add” in the lower right color to name the new color.
+(2) After the camera is connected completely, you can see that the right side is real-time transmitted image and the right side is the color to be collected. Then click "**Add**" in the lower right color to name the new color.
 
 <img class="common_img" src="../_static/media/chapter_14/section_3/image21.png"  alt="loading" />
 
-(3)  Fill in the name of added color and click “Ok”. The color will be updated to “pink” in the color options bar in the lower right corner.
+(3)  Fill in the name of added color and click "**Ok**". The color will be updated to "**pink**" in the color options bar in the lower right corner.
 
 <img class="common_img" src="../_static/media/chapter_14/section_3/image22.png"  alt="loading" />
 
 <img class="common_img" src="../_static/media/chapter_14/section_3/image23.png"  alt="loading" />
 
-(4) Point the camera at the pink object. Then drag the following six slider bars until the pink area becomes white and other areas become black and click “Save” to save data.
+(4) Point the camera at the pink object. Then drag the following six slider bars until the pink area becomes white and other areas become black and click "**Save**" to save data.
 
 <img class="common_img" src="../_static/media/chapter_14/section_3/image24.png"  alt="loading" />
 
-(5) Refer to step 2 to open a new terminal. Enter the following command to navigate to the directory where the game program is located, then press “Enter”. 
+(5) Refer to step 2 to open a new terminal. Enter the following command to navigate to the directory where the game program is located, then press "**Enter**". 
 
-```commandline
+```bash
 cd /home/ubuntu/armpi_pro/src/color_tracking/scripts/
 ```
 
@@ -602,35 +600,35 @@ cd /home/ubuntu/armpi_pro/src/color_tracking/scripts/
 
 (6) Enter the command below to open the program.
 
-```commandline
+```bash
 vim color_tracking_node.py
 ```
 
 <img class="common_img" src="../_static/media/chapter_14/section_3/image26.png"  />
 
-(7) Locate the code to be modified, press the “i” key on the keyboard, and enter the editing mode when the content shown in the following red box in the lower-left corner appears.
+(7) Locate the code to be modified, press the "**i**" key on the keyboard, and enter the editing mode when the content shown in the following red box in the lower-left corner appears.
 
 <img class="common_img" src="../_static/media/chapter_14/section_3/image27.png"  />
 
-(8) Enter the pink’s RGB value “'pink': (203, 192, 255),” into the source code.
-```py
+(8) Enter the pink's RGB value "**'pink': (203, 192, 255),**" into the source code.
+
+```python
 'pink': (203, 192, 255),
 ```
 
 <img class="common_img" src="../_static/media/chapter_14/section_3/image28.png"  />
 
-(9)  Press the “Esc”, enter “:wq”, and press “Enter” to complete the save and exit operation.
+(9)  Press the "**Esc**", enter "**:wq**", and press "**Enter**" to complete the save and exit operation.
 
 <img class="common_img" src="../_static/media/chapter_14/section_3/image29.png"  />
 
-(10)  Follow “[Operation Steps]()” to start the color tracking game.
+(10)  Follow "[**8.3.2 Operation Steps**](#anchor_8_3_2)" to start the color tracking game.
 
 (11) Place the pink object in front of the camera, and move it slowly. The ArmPi Pro robotic arm will follow its movement.
 
 <img class="common_img" src="../_static/media/chapter_14/section_3/image30.png"  alt="loading" />
 
-(12) If you need to add other colors as recognizable colors, you can refer to “[3.4.1 Add New recognition Color]()”.
-
+(12) If you need to add other colors as recognizable colors, you can refer to "[**8.3.5 Function Extension -> Add New recognition Color**](#anchor_8_3_5_1)".
 
 ## 8.4 Tag Recognition
 
@@ -643,10 +641,10 @@ We use the trained tag. Firstly, obtain and process image. Then detect the tag a
 ### 8.4.2 Operation Steps
 
 :::{Note}
-It should be case sensitive when entering command and the “Tab” key can be used to complete the keywords.
+It should be case sensitive when entering command and the "**Tab**" key can be used to complete the keywords.
 :::
 
-<span id="anchor_4_2_1" class="anchor"></span>
+<span id="4_enter_game"></span>
 
 * **Enter Game** 
 
@@ -654,13 +652,13 @@ It should be case sensitive when entering command and the “Tab” key can be u
 
 <img class="common_img"  src="../_static/media/chapter_14/section_4/image4.png"  />
 
-(2) Click <img src="../_static/media/chapter_14/section_4/image5.png"  /> in the upper left corner of the system desktop to open the “Terminator”.
+(2) Click <img src="../_static/media/chapter_14/section_4/image5.png"  /> in the upper left corner of the system desktop to open the "**Terminator**".
 
 <img class="common_img" src="../_static/media/chapter_14/section_4/image6.png"  />
 
-(3) Enter the following command, and press “Enter” to access the tag recognition game. After entering the game, the prompt shown in the following red box will appear.
+(3) Enter the following command, and press "**Enter**" to access the tag recognition game. After entering the game, the prompt shown in the following red box will appear.
 
-```commandline
+```bash
 rosservice call /apriltag_detect/enter "{}"
 ```
 
@@ -668,7 +666,7 @@ rosservice call /apriltag_detect/enter "{}"
 
 * **Start image transmission** 
 
-**(1)  Start with browser**
+(1)  Start with browser
 
 To avoid consuming too much running memory of Raspberry Pi. It is recommended to use an external browser to open the transmitted image. 
 The specific steps are as follows:
@@ -677,15 +675,13 @@ The specific steps are as follows:
 
 <img class="common_img" src="../_static/media/chapter_14/section_4/image8.jpeg"  alt="loading" />
 
-② Then enter the default IP address “192.168.149.1:8080/” (Note: this IP address is the default IP address for direction connection mode. If it is LAN mode, please enter “Device IP address+：8080/” for example, “192.168.149.1:8080/”) If fail to open, you can try it several times or restart camera.
+② Then enter the default IP address "**192.168.149.1:8080/**" (Note: this IP address is the default IP address for direction connection mode. If it is LAN mode, please enter "**Device IP address+：8080/**" for example, "**192.168.149.1:8080/**") If fail to open, you can try it several times or restart camera.
 
 :::{Note}
-If it is in LAN mode, the method to obtain device IP address can refer to “[Robot Network Configuration Course]()”
+If it is in LAN mode, the method to obtain device IP address can refer to "[**Robot Network Configuration Course**](https://docs.hiwonder.com/projects/ArmPi_Pro/en/latest/docs/15_network_configuration.html)"
 :::
 
 <img class="common_img" src="../_static/media/chapter_14/section_4/image9.png"  />
-
-
 
 ③ Then, click the option shown in the following figure to open the display window of the transmitted image.
 
@@ -693,13 +689,13 @@ If it is in LAN mode, the method to obtain device IP address can refer to “[Ro
 
 <img class="common_img" src="../_static/media/chapter_14/section_4/image11.png"  />
 
-**(2) Start with rqt**
+(2) Start with rqt
 
-① After completing the steps of “[Enter Game]()” and do not exit the terminal, open a new terminal.
+① After completing the steps of "[**8.4.2 Operation Steps -> Enter Game**](#4_enter_game)" and do not exit the terminal, open a new terminal.
 
-② Enter command “rqt_image_view” and press “Enter” to open rqt.
+② Enter command and press "**Enter**" to open rqt.
 
-```
+```bash
 rqt_image_view
 ```
 
@@ -709,21 +705,21 @@ rqt_image_view
  After opening image, the topic option must be selected. Otherwise, after starting game, the recognition process can not be displayed normally.
 :::
 
-**4.2.3 Start Game**
+* **Start Game**
 
-Now, enter the terminal according to the steps in “[Enter Game]()” and input the following command. 
+Now, enter the terminal according to the steps in "[**8.4.2 Operation Steps -> Enter Game**](#4_enter_game)" and input the following command. 
 
-```commandline
+```bash
 rosservice call /apriltag_detect/set_running "data: true"
 ```
 
 <img class="common_img" src="../_static/media/chapter_14/section_4/image14.png"  />
 
-**4.2.4 Stop and Exit** 
+* **Stop and Exit** 
 
 (1) If want to stop the game, enter the following command.
 
-```commandline
+```bash
 rosservice call /apriltag_detect/set_running "data: false"
 ```
 
@@ -731,7 +727,7 @@ rosservice call /apriltag_detect/set_running "data: false"
 
 (2) If want to exit the game, enter the command below to exit.
 
-```commandline
+```bash
 rosservice call /apriltag_detect/exit "{}"
 ```
 
@@ -741,7 +737,7 @@ rosservice call /apriltag_detect/exit "{}"
 Before exiting the game, it will keep running when Raspberry Pi is powered on. To avoid consume too much running memory of Raspberry Pi, you need to exit the game first according to the operation steps above before performing other AI vision games.
 :::
 
-(3) If want to exit the image transmission, press “Ctrl+C” to return and open the terminal of rqt. If fail to exit, please keep trying several times.
+(3) If want to exit the image transmission, press "**Ctrl+C**" to return and open the terminal of rqt. If fail to exit, please keep trying several times.
 
 ### 8.4.3 Project Outcome
 
@@ -753,15 +749,13 @@ After starting the game, the robotic arm will recognize the tag ID. Then, you ca
 |     2      |     Drawing a circle     |
 |     3      |   Drifting performance   |
 
-
-
 ### 8.4.4 Program Analysis
 
 The source code for the program corresponding to this section is located in the Docker container:
 
-[/home/ubuntu/armpi_pro/src/visual_processing/scripts/visual_processing_node.py]()（image processing）
+[/home/ubuntu/armpi_pro/src/visual_processing/scripts/visual_processing_node.py](../_static/source_code/visual_processing_node.zip)(image processing)
 
-[/home/ubuntu/armpi_pro/src/apriltag_detect/scripts/apriltag_detect_node.py]()（chassis control）
+[/home/ubuntu/armpi_pro/src/apriltag_detect/scripts/apriltag_detect_node.py](../_static/source_code/apriltag_detect_node.zip)(chassis control)
 
 :::{Note}
 please back up the initial program before making any modifications. It is prohibited editing the source code files directly to prevent making changes in an incorrect manner that could lead to robot malfunctions, rendering them irreparable.
@@ -779,7 +773,7 @@ please back up the initial program before making any modifications. It is prohib
 |                  import numpy as np                  | The NumPy library is imported and is renamed as np for performing array and matrix operations. |
 |              from armpi_pro import Misc              | The Misc module is imported from arm_pi_pro package to handle the recognized rectangular data. |
 |            from armpi_pro import apriltag            | The apriltag module is imported from arm_pi_pro package  to perform Apriltag recognition and processing. |
-|          from threading import RLock, Timer          | The “RLock” class and “Timer” class is imported from the threading module of Python for thread-related operations. |
+|          from threading import RLock, Timer          | The "**RLock**" class and "**Timer**" class is imported from the threading module of Python for thread-related operations. |
 |              from std_srvs.srv import *              | All service message types are imported from the std_srvs in ROS for defining and using standard service messages. |
 |              from std_msgs.msg import *              | All message types are imported form the std_msgs package in ROS for defining and using standard messages. |
 |          from sensor_msgs.msg import Image           | The image message type is imported from the sensor_msgs packages for processing image data. |
@@ -793,11 +787,11 @@ please back up the initial program before making any modifications. It is prohib
 |       from armpi_pro import bus_servo_control        | The bus_servo_control module is imported from the armpi_pro module, including the functions and methods related to the servo control. |
 |         from kinematics import ik_transform          | The ik_transform function is imported from the kinematics module to perform conversion of inverse kinematics |
 
-**(1)  Initializing Functions and Variables**
+(1)  Initializing Functions and Variables
 
 {lineno-start=102}
 
-```
+```python
 	# 检测apriltag函数(detect apriltag function )
 detector = apriltag.Detector(searchpath=apriltag._get_demo_searchpath())
 def apriltag_Detect(img):
@@ -835,13 +829,13 @@ def apriltag_Detect(img):
         publish_en = True
 ```
 
-**(2) Obtain the Vertices Information**
+(2) Obtain the Vertices Information
 
 Get the four vertices of tag with `np.rint()` function.
 
 {lineno-start=116}
 
-```
+```python
 	    if len(detections) != 0:
         for i, detection in enumerate(detections):
             tag_id = int(detection.tag_id)        # 获取tag_id(obtain tag_id )
@@ -851,13 +845,13 @@ Get the four vertices of tag with `np.rint()` function.
                 corners[i][1] = int(misc.map(corners[i][1], 0, size_m[1], 0, img_h))
 ```
 
-**(3) Detect Tag**
+(3) Detect Tag
 
 ① After obtaining the vertices information, the tag is recognized by calling `drawContours()` function in cv2 library. 
 
 {lineno-start=123}
 
-```
+```python
 	            cv2.drawContours(img, [np.array(corners, np.int)], -1, (0, 255, 255), 2)
 ```
 
@@ -869,13 +863,13 @@ The second parameter `[np.array(corners, np.int)]` is the contour which is list 
 The third parameter `-1` is the index of the contour, where the value represents all contours in the drawn contour list.
 
 The fourth parameter `(0, 255, 255)` is the color of contour and its order is B, G and R.
-The fifth parameter “2” is the width of contour.
+The fifth parameter "**2**" is the width of contour.
 
 ② Obtain the ID (tag_id) of the tag.
 
 {lineno-start=117}
 
-```
+```python
 	        for i, detection in enumerate(detections):
             tag_id = int(detection.tag_id)        # 获取tag_id(obtain tag_id )
 ```
@@ -884,7 +878,7 @@ The fifth parameter “2” is the width of contour.
 
 {lineno-start=127}
 
-```
+```python
             cv2.putText(img, str(tag_id), (object_center_x - 10, object_center_y + 10), cv2.FONT_HERSHEY_SIMPLEX, 1, [0, 255, 255], 2)
 ```
 
@@ -904,13 +898,13 @@ The sixth parameter `[0, 255, 255]` is the color of font and its color is B, G a
 
 The seventh parameter `2` is the thickness of font.
 
-**(4)  Action Control**
+(4)  Action Control
 
 After obtaining ID, control ArmPi Pro to perform corresponding action by calling `set_velocity.publish()` function in hiwonder_servo_msgs.msg library.
 
 {lineno-start=68}
 
-```
+```python
 # 移动控制函数(motion control functions)
 def move():
     global move_en
@@ -947,11 +941,11 @@ def move():
 
 Motor control is illustrated by the code example `set_velocity.publish(100, 60, 0),` where the meanings of the parameters within the parentheses are as follows:
 
-The first parameter `100` represents the linear velocity, indicating the motor's speed in millimeters per second. The range is "-100 to 100," and when the value is negative, the motor rotates in reverse.
+The first parameter `100` represents the linear velocity, indicating the motor's speed in millimeters per second. The range is "**-100 to 100**", and when the value is negative, the motor rotates in reverse.
 
-The second parameter `90` denotes the orientation angle, representing the direction of the vehicle's movement in degrees. The range is "0 to 360." Here, 90 degrees corresponds to forward movement, 270 degrees is backward, 0 degrees is right, and 180 degrees is left. Other angle values represent corresponding directions.
+The second parameter `90` denotes the orientation angle, representing the direction of the vehicle's movement in degrees. The range is "**0 to 360**". Here, 90 degrees corresponds to forward movement, 270 degrees is backward, 0 degrees is right, and 180 degrees is left. Other angle values represent corresponding directions.
 
-The third parameter `dx` stands for the yaw angular velocity, indicating the rate of deviation for the vehicle. It is measured in 5 degrees per second. In the program, the range is set as "-0.8 to 0.8." Positive values result in clockwise rotation, while negative values lead to counterclockwise rotation.
+The third parameter `dx` stands for the yaw angular velocity, indicating the rate of deviation for the vehicle. It is measured in 5 degrees per second. In the program, the range is set as "**-0.8 to 0.8**". Positive values result in clockwise rotation, while negative values lead to counterclockwise rotation.
 
 ## 8.5 Target Tracking
 
@@ -963,15 +957,15 @@ Then process height of robotic arm after recognition. The coordinates (x,y,z) of
 
 Then, calculate on the basis the feedback of image position. Finally, the coordinate value will change linearly through the change of the position, so as to achieve the effect of tracking.
 
-<p id="anchor_5_2"></p>
+<p id="anchor_8_5_2"></p>
 
 ### 8.5.2 Operation Steps
 
 :::{Note}
-It should be case sensitive when entering command and the “Tab” key can be used to complete the keywords.
+It should be case sensitive when entering command and the "**Tab**" key can be used to complete the keywords.
 :::
 
-<span id="anchor_5_2_1" class="anchor"></span>
+<span id="5_enter_game"></span>
 
 * **Enter Game** 
 
@@ -979,21 +973,21 @@ It should be case sensitive when entering command and the “Tab” key can be u
 
 <img class="common_img" src="../_static/media/chapter_14/section_5/image4.png"  />
 
-(2) Click<img src="../_static/media/chapter_14/section_5/image5.png"  />in the upper left corner of the system desktop to open the “Terminator”.
+(2) Click<img src="../_static/media/chapter_14/section_5/image5.png"  />in the upper left corner of the system desktop to open the "**Terminator**".
 
 <img class="common_img" src="../_static/media/chapter_14/section_5/image6.png"  />
 
 (3) Enter the following command to execute the target tracking program. 
 
-```commandline
+```bash
 rosrun object_tracking object_tracking_node.py
 ```
 
 <img class="common_img" src="../_static/media/chapter_14/section_5/image7.png"  />
 
-(4)  Keep the previously opened terminal and open a new one. Enter the following command in the new terminal and press “Enter” to enter the target tracking game. If successful, a prompt will appear, as shown below:
+(4)  Keep the previously opened terminal and open a new one. Enter the following command in the new terminal and press "**Enter**" to enter the target tracking game. If successful, a prompt will appear, as shown below:
 
-```commandline
+```bash
 rosservice call /object_tracking/enter "{}"
 ```
 
@@ -1001,7 +995,7 @@ rosservice call /object_tracking/enter "{}"
 
 * **Start image transmission** 
 
-**(1) Start with Browser**
+(1) Start with Browser
 
 To avoid consuming too much running memory of Raspberry Pi. It is recommended to use an external browser to open the transmitted image. 
 
@@ -1009,10 +1003,10 @@ To avoid consuming too much running memory of Raspberry Pi. It is recommended to
 
 <img class="common_img" src="../_static/media/chapter_14/section_5/image9.jpeg"  alt="loading" />
 
-② Then enter the default IP address “192.168.149.1:8080/” (Note: this IP address is the default IP address for direction connection mode. If it is LAN mode, please enter “Device IP address+：8080/”. For example, “192.168.149.1:8080/”) If fail to open, you can try it several times or restart camera.
+② Then enter the default IP address "**192.168.149.1:8080/**" (Note: this IP address is the default IP address for direction connection mode. If it is LAN mode, please enter "**Device IP address+：8080/**". For example, "**192.168.149.1:8080/**") If fail to open, you can try it several times or restart camera.
 
 :::{Note}
-If it is in LAN mode, the method to obtain device IP address can refer to “[Robot Network Configuration Course]()”.
+If it is in LAN mode, the method to obtain device IP address can refer to "[**Robot Network Configuration Course**](https://docs.hiwonder.com/projects/ArmPi_Pro/en/latest/docs/15_network_configuration.html)".
 :::
 
 <img class="common_img" src="../_static/media/chapter_14/section_5/image10.png"  />
@@ -1023,19 +1017,19 @@ If it is in LAN mode, the method to obtain device IP address can refer to “[Ro
 
 <img class="common_img" src="../_static/media/chapter_14/section_5/image12.png"  />
 
-**(2) Start with rqt** 
+(2) Start with rqt 
 
-① After completing the steps of “ [Enter Game]()” and do not exit the terminal, open a new terminal.
+① After completing the steps of "[**8.5.2 Operation Steps -> Enter Game**](#5_enter_game)" and do not exit the terminal, open a new terminal.
 
-② Enter the command and press “Enter” to open rqt.
+② Enter the command and press "**Enter**" to open rqt.
 
-```commandline
+```bash
 rqt_image_view
 ```
 
 <img class="common_img" src="../_static/media/chapter_14/section_5/image13.png"  />
 
-③ Click the red box as the figure shown below, select **“/visual_processing/image_result”** for the topic of line following and remain other settings unchanged. 
+③ Click the red box as the figure shown below, select **"/visual_processing/image_result"** for the topic of line following and remain other settings unchanged. 
 
 <img class="common_img" src="../_static/media/chapter_14/section_5/image14.png"  alt="loading" />
 
@@ -1043,13 +1037,13 @@ rqt_image_view
 After opening image, the topic option must be selected. Otherwise, after starting game, the recognition process can not be displayed normally.
 :::
 
-<span id="anchor_5_2_3" class="anchor"></span>
+<span id="5_start_game"></span>
 
-**5.2.3 Start Game**
+* **Start Game**
 
-(1) Now, enter the terminal according to the steps in “[Enter Game]()” and input command “rosservice call /object_tracking/set_running "data: true"”. Then if the prompt shown in the following red box appears, which means game has been started successfully.
+(1) Now, enter the terminal according to the steps in "[**8.5.2 Operation Steps -> Enter Game**](#5_enter_game)" and input command "**rosservice call /object_tracking/set_running 'data: true'**". Then if the prompt shown in the following red box appears, which means game has been started successfully.
 
-```commandline
+```bash
 rosservice call /object_tracking/set_running "data: true"
 ```
 
@@ -1057,21 +1051,21 @@ rosservice call /object_tracking/set_running "data: true"
 
 (2) After starting the game, select the target color. Take blue as example. Enter the command 
 
-```commandline
+```bash
 rosservice call /object_tracking/set_target "data: 'blue'"
 ```
 
 :::{Note}
-If want to change to green or red, you can fill in green or red in "data: ' ' (The entered command should be case sensitive).
+If want to change to green or red, you can fill in green or red in "**data: ' '**" (The entered command should be case sensitive).
 :::
 
 <img class="common_img" src="../_static/media/chapter_14/section_5/image16.png"  />
 
-**5.2.4 Stop and Exit** 
+* **Stop and Exit** 
 
-(1) If want to stop the game, enter command “rosservice call /object_tracking/set_running "data: false"”. After stopping, you can refer to the content of “[Start Game]()” to change other tracking colors.
+(1) If want to stop the game, enter command "**rosservice call /object_tracking/set_running 'data: false'**". After stopping, you can refer to the content of "[**8.5.2 Operation Steps -> Start Game**](#5_start_game)" to change other tracking colors.
 
-```commandline
+```bash
 rosservice call /object_tracking/set_running "data: false"
 ```
 
@@ -1079,7 +1073,7 @@ rosservice call /object_tracking/set_running "data: false"
 
 (2) If want to exit the game, enter the following command to exit.
 
-```
+```bash
 rosservice call /object_tracking/exit "{}"
 ```
 
@@ -1091,26 +1085,25 @@ Before exiting the game, it will keep running when Raspberry Pi is powered on. T
 
 :::
 
-(3) If want to close the image transmission, press “Ctrl+C” to return and open the terminal of rqt. If fail to exit, please keep trying several times.
+(3) If want to close the image transmission, press "**Ctrl+C**" to return and open the terminal of rqt. If fail to exit, please keep trying several times.
 
 ### 8.5.3 Project Outcome
 
 After starting game, place the blue block within the detected range of camera. The target color will be framed in rqt tool after recognition. At this time, move the block slowly. Then the robotic arm will rotate to the direction of the block and the car will move to the block.
 
-
 ### 8.5.4 Program Analysis
 
 The source code of the program is located in the Docker container:
 
-[/home/ubuntu/armpi_pro/src/visual_processing/scripts/visual_processing_node.py]()（image processing）
+[/home/ubuntu/armpi_pro/src/visual_processing/scripts/visual_processing_node.py](../_static/source_code/visual_processing_node.zip)(image processing)
 
-[/home/ubuntu/armpi_pro/src/object_tracking/scripts/object_tracking_node.py]()（motion control）
+[/home/ubuntu/armpi_pro/src/object_tracking/scripts/object_tracking_node.py](../_static/source_code/object_tracking_node.zip)(motion control)
 
 :::{Note}
  please back up the initial program before making any modifications. It is prohibited editing the source code files directly to prevent making changes in an incorrect manner that could lead to robot malfunctions, rendering them irreparable.
 :::
 
-**5.4.1  Import Parameter Module**
+* **Import Parameter Module**
 
 | **Imported Module**                                  | **Function**                                                 |
 | ---------------------------------------------------- | ------------------------------------------------------------ |
@@ -1122,7 +1115,7 @@ The source code of the program is located in the Docker container:
 | import numpy as np                                   | The NumPy library is imported and is renamed as np for performing array and matrix operations. |
 | from armpi_pro import Misc                           | The Misc module is imported from arm_pi_pro package to handle the recognized rectangular data. |
 | from armpi_pro import apriltag                       | The apriltag module is imported from arm_pi_pro package  to perform Apriltag recognition and processing. |
-| from threading import RLock, Timer                   | The “RLock” class and “Timer” class is imported from the threading module of Python for thread-related operations. |
+| from threading import RLock, Timer                   | The "**RLock**" class and "**Timer**" class is imported from the threading module of Python for thread-related operations. |
 | from std_srvs.srv import *                           | All service message types are imported from the std_srvs in ROS for defining and using standard service messages. |
 | from std_msgs.msg import *                           | All message types are imported form the std_msgs package in ROS for defining and using standard messages. |
 | from sensor_msgs.msg import Image                    | The image message type is imported from the sensor_msgs packages for processing image data. |
@@ -1136,11 +1129,11 @@ The source code of the program is located in the Docker container:
 | from armpi_pro import bus_servo_control              | The bus_servo_control module is imported from the armpi_pro module, including the functions and methods related to the servo control. |
 | from kinematics import ik_transform                  | The ik_transform function is imported from the kinematics module to perform conversion of inverse kinematics. |
 
-**5.4.2 Image Processing**
+* **Image Processing**
 
 {lineno-start=229}
 
-```
+```python
 	# 单颜色识别函数(single color recognition function)
 def color_detect(img, color):
     global pub_time
@@ -1180,13 +1173,13 @@ def color_detect(img, color):
                 pub_time = time.time()
 ```
 
-**5.5.3 Binarization** 
+* **Binarization** 
 
 Using the `inRange ()` function from the cv2 library to perform binarization operation on image
 
 {lineno-start=248}
 
-```
+```python
 	        frame_mask = cv2.inRange(frame_lab, tuple(color_range['min']), tuple(color_range['max']))  # 对原图像和掩模进行位运算(perform bitwise operation on the original image and the mask)
 ```
 
@@ -1196,13 +1189,13 @@ The second parameter `tuple(color_range['min'])` is the lower limit of threshold
 
 The third parameter `tuple(color_range['max'])` is the upper lower of threshold.
 
-**5.4.4 Dilation and erosion** 
+* **Dilation and erosion** 
 
 Using the `inRange ()` function from the cv2 library to perform binarization operation on image.
 
 {lineno-start=249}
 
-```
+```python
 	        eroded = cv2.erode(frame_mask, cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2)))          # 腐蚀(erode)
         dilated = cv2.dilate(eroded, cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2)))            # 膨胀(dilate)
 ```
@@ -1211,13 +1204,13 @@ The first parameter `frame_lab` is the input image.
 The second parameter `tuple(color_range['min'])`is the lower limit of threshold.
 The third parameter `tuple(color_range['max'])` is the upper lower of threshold.
 
-**5.4.5 Obtain the contour with the largest area**
+* **Obtain the contour with the largest area**
 
 After processing the above image, it is necessary to obtain the contour of the target. The findContours() function from the cv2 library is involved in this process.
 
 {lineno-start=251}
 
-```
+```python
 	        contours = cv2.findContours(dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)[-2]         # 找出轮廓(find contours)
 ```
 
@@ -1225,23 +1218,23 @@ The `erode()` function is applied to erode. Here uses an example of the code `co
 The first parameter `dilated` is the input image.
 The second parameter `cv2.RETR_EXTERNAL` is the contour retrieval mode.
 The third parameter `cv2.CHAIN_APPROX_NONE)[-2]` is the approximate method of contour.
-Find the maximum contour from the obtained contours. To avoid interference, set a minimum value. Only when the area is greater than this minimum value, the target contour will take effect. The minimum value here is “50”. 
+Find the maximum contour from the obtained contours. To avoid interference, set a minimum value. Only when the area is greater than this minimum value, the target contour will take effect. The minimum value here is "**50**". 
 
 {lineno-start=252}
 
-```
+```python
 	        area_max_contour, area_max = getAreaMaxContour(contours)                                   # 找出最大轮廓(find the largest contour)
 
         if area_max > 100:  # 有找到最大面积(found the maximum area)
 ```
 
-**5.4.6 Obtain the minimum enclosing circle and display on the live feed image**
+* **Obtain the minimum enclosing circle and display on the live feed image**
 
 The `minEnclosingCircle()` function from the cv2 library is utilized to obtain the minimum enclosing circle and the coordinates of its center for the target contour. The obtained circle is then displayed in the feedback image using the `circle()` function.
 
 {lineno-start=254}
 
-```
+```python
         if area_max > 100:  # 有找到最大面积(found the maximum area)
             (centerx, centery), radius = cv2.minEnclosingCircle(area_max_contour)  # 获取最小外接圆(obtain the minimum circumscribed circle)
             msg.center_x = int(misc.map(centerx, 0, size_m[0], 0, img_w))
@@ -1251,13 +1244,13 @@ The `minEnclosingCircle()` function from the cv2 library is utilized to obtain t
             publish_en = True
 ```
 
-**5.4.7 Motion Control**
+* **Motion Control**
 
 By invoking the `bus_servo_control.set_servos()` function to control the servos on robotic arm to allow the robotic arm to move with the target within the recognition range.
 
 {lineno-start=125}
 
-```
+```python
         if __isRunning:
             if center_x > 0 and center_y > 0:
                 # 机械臂X轴追踪(robotic arm X-axis tracking)
@@ -1297,13 +1290,13 @@ The first parameter `joints_pub` is to publish the message of the servo control 
 
 The second parameter `20` is the running time.
 
-The third parameter is `( (3, arm_y), (6, arm_x)`. `3` is the servo number, “arm_y']” is the servo angle.
+The third parameter is `( (3, arm_y), (6, arm_x)`. `3` is the servo number, "**arm_y']**" is the servo angle.
 
 Lastly, by invoking the `set_velocity.publis()` function, the motors on ArmPi Pro is controlled to drive the mecanum wheels to achieve the performance of tracking.
 
 {lineno-start=148}
 
-```
+```python
                 # 麦轮底盘X轴追踪(mecanum chassis X-axis tracking)
                 if abs(arm_x - Arm_X) < 5:
                     arm_x = Arm_X
@@ -1337,18 +1330,17 @@ Third parameter: `((3, arm_y), (6, arm_x))`. Here, 3 represents the servo ID, an
 
 Finally, the robot's Mecanum wheels can be controlled to achieve tracking functionality by calling the `set_velocity.publish()` function, which adjusts the motor movement of the ArmPi Pro robot.
 
-
 ### 8.5.5 Function Extension
 
-<span id="anchor_5_4_1" class="anchor"></span>
+<span id="anchor_8_5_5_1" class="anchor"></span>
 
 * **Add New Recognition Color** 
 
 Target tracking has three built-in color red, green and blue. In addition to the built-in colors, you can add other recognition colors. For example, add pink as a new recognizable color. The operation steps are as follow:
 
-(1)  Open the terminal, enter the following command and press “Enter” to open the tool for color threshold adjustment. If no transmitted image appears in the pop-up interface, it means the camera fails to connect and needs to be checked whether the wire is connected.
+(1)  Open the terminal, enter the following command and press "**Enter**" to open the tool for color threshold adjustment. If no transmitted image appears in the pop-up interface, it means the camera fails to connect and needs to be checked whether the wire is connected.
 
-```commandline
+```bash
 python3 /home/ubuntu/software/lab_config/main.py
 ```
 
@@ -1356,23 +1348,23 @@ python3 /home/ubuntu/software/lab_config/main.py
 
 <img class="common_img" src="../_static/media/chapter_14/section_5/image21.png"  alt="loading" />
 
-(2) After the camera is connected completely, you can see that the right side is real-time transmitted image and the right side is the color to be collected. Then click “Add” in the lower right color to name the new color.
+(2) After the camera is connected completely, you can see that the right side is real-time transmitted image and the right side is the color to be collected. Then click "**Add**" in the lower right color to name the new color.
 
 <img class="common_img" src="../_static/media/chapter_14/section_5/image22.png"  alt="loading" />
 
-(3) Fill in the name of added color and click “Ok”. The color will be updated to “pink” in the color options bar in the lower right corner.
+(3) Fill in the name of added color and click "**Ok**". The color will be updated to "**pink**" in the color options bar in the lower right corner.
 
 <img class="common_img" src="../_static/media/chapter_14/section_5/image23.png"  alt="loading" />
 
 <img class="common_img" src="../_static/media/chapter_14/section_5/image24.png"  alt="loading" />
 
-(4) Point the camera at the pink object. Then drag the following six slider bars until the pink area becomes white and other areas become black and click “Save” to save data.
+(4) Point the camera at the pink object. Then drag the following six slider bars until the pink area becomes white and other areas become black and click "**Save**" to save data.
 
 <img class="common_img" src="../_static/media/chapter_14/section_5/image25.png"  alt="loading" />
 
-(5) Refer to step 2 to open a new terminal, and enter the following command to navigate to the directory where the program is located. Then, press “Enter”.
+(5) Refer to step 2 to open a new terminal, and enter the following command to navigate to the directory where the program is located. Then, press "**Enter**".
 
-```commandline
+```bash
 cd /home/ubuntu/armpi_pro/src/object_tracking/scripts/
 ```
 
@@ -1380,30 +1372,29 @@ cd /home/ubuntu/armpi_pro/src/object_tracking/scripts/
 
 (6) Enter the following command to open the program.
 
-```commandline
+```bash
 vim object_tracking_node.py
 ```
 
 <img class="common_img" src="../_static/media/chapter_14/section_5/image27.png"  />
 
-(7) Locate the code to be modified, press the “i” key on the keyboard, and enter the editing mode when the content shown in the following red box in the lower-left corner appears.
+(7) Locate the code to be modified, press the "**i**" key on the keyboard, and enter the editing mode when the content shown in the following red box in the lower-left corner appears.
 
 <img class="common_img" src="../_static/media/chapter_14/section_5/image28.png"  />
 
-(8) Enter the pink’s RGB value “'pink': (203, 192, 255),” into the source code.
+(8) Enter the pink's RGB value "'pink': (203, 192, 255)," into the source code.
 
 <img class="common_img" src="../_static/media/chapter_14/section_5/image29.png"  />
 
-(9) Press the “Esc”, enter “:wq”, and press “Enter” to complete the save and exit operation.
+(9) Press the "**Esc**", enter "**:wq**", and press "**Enter**" to complete the save and exit operation.
 
-(10) Follow “[8.5.2 Operation Steps]()” to start the color tracking.
+(10) Follow "[**8.5.2 Operation Steps**](#anchor_8_5_2)" to start the color tracking.
 
 (11) Put pink object in front of the camera then slowly move the object. Arm Pi Pro will move with it.
 
 <img class="common_img" src="../_static/media/chapter_14/section_5/image31.png"  alt="loading" />
 
-(12)  If want to add other colors as new recognizable color, you can refer to the operation steps of “[8.5.5 Function Extension -> Add New Recognition Color]()”.
-
+(12) If want to add other colors as new recognizable color, you can refer to the operation steps of "[**8.5.5 Function Extension -> Add New Recognition Color**](#anchor_8_5_5_1)".
 
 ## 8.6 Face Recognition
 
@@ -1416,10 +1407,10 @@ Finally, control the servo angle to let robot perform the feedback after recogni
 ### 8.6.2 Operation Steps
 
 :::{Note}
-It should be case sensitive when entering command and the **“Tab”** key can be used to complete the keywords.
+It should be case sensitive when entering command and the **"Tab"** key can be used to complete the keywords.
 :::
 
-<p id="anchor_6_2_1"></p>
+<p id="5_enter_game"></p>
 
 * **Enter Game** 
 
@@ -1427,13 +1418,13 @@ It should be case sensitive when entering command and the **“Tab”** key can 
 
 <img class="common_img" src="../_static/media/chapter_14/section_6/image4.png"  />
 
-(2)  click<img src="../_static/media/chapter_14/section_6/image5.png"  />in the upper left corner of the system desktop to open the “Terminator”.
+(2)  click<img src="../_static/media/chapter_14/section_6/image5.png"  />in the upper left corner of the system desktop to open the "**Terminator**".
 
 <img class="common_img" src="../_static/media/chapter_14/section_6/image6.png"  />
 
-(3) Enter the following command, and press “Enter” to access the face recognition game. After entering the game, the prompt shown in the following red box will appear.
+(3) Enter the following command, and press "**Enter**" to access the face recognition game. After entering the game, the prompt shown in the following red box will appear.
 
-```commandline
+```bash
 rosservice call /face_detect/enter "{}"
 ```
 
@@ -1441,7 +1432,7 @@ rosservice call /face_detect/enter "{}"
 
 * **Start image transmission** 
 
-**(1)  Start with browser**
+(1)  Start with browser
 
 To avoid consuming too much running memory of Raspberry Pi. It is recommended to use an external browser to open the transmitted image. 
 The specific steps are as follows:
@@ -1450,10 +1441,10 @@ The specific steps are as follows:
 
 <img class="common_img" src="../_static/media/chapter_14/section_6/image8.jpeg"  alt="loading" />
 
-② Then enter the default IP address “192.168.149.1:8080/” (Note: this IP address is the default IP address for direction connection mode. If it is LAN mode, please enter “Device IP address+：8080/” such as “192.168.149.1:8080/”) If fail to open, you can try it several times or restart camera.
+② Then enter the default IP address "**192.168.149.1:8080/**" (Note: this IP address is the default IP address for direction connection mode. If it is LAN mode, please enter "**Device IP address+：8080/**" such as "**192.168.149.1:8080/**") If fail to open, you can try it several times or restart camera.
 
 :::{Note}
- If it is in LAN mode, the method to obtain device IP address can refer to “[Robot Network Configuration Course]()”.
+ If it is in LAN mode, the method to obtain device IP address can refer to "[**Robot Network Configuration Course**](https://docs.hiwonder.com/projects/ArmPi_Pro/en/latest/docs/15_network_configuration.html)".
 :::
 
 <img class="common_img" src="../_static/media/chapter_14/section_6/image9.png"  />
@@ -1462,19 +1453,19 @@ The specific steps are as follows:
 
 <img class="common_img" src="../_static/media/chapter_14/section_6/image10.png"  />
 
-**(2) Start with rqt**
+(2) Start with rqt
 
-① After completing the steps of “[Enter Game]()” and do not exit the terminal, open a new terminal.
+① After completing the steps of "[**8.6.2 Operation Steps -> Enter Game**](#6_enter_game)" and do not exit the terminal, open a new terminal.
 
-② Enter command “rqt_image_view” and press “Enter” to open rqt.
+② Enter command "**rqt_image_view**" and press "**Enter**" to open rqt.
 
-```commandline
+```bash
 rqt_image_view
 ```
 
 <img class="common_img" src="../_static/media/chapter_14/section_6/image12.png"  />
 
-③ Click the red box as the figure shown below, select “/visual_processing/image_result” for the topic of line following and remain other settings unchanged. 
+③ Click the red box as the figure shown below, select "**/visual_processing/image_result**" for the topic of line following and remain other settings unchanged. 
 
 <img class="common_img" src="../_static/media/chapter_14/section_6/image13.png"  alt="loading" />
 
@@ -1484,9 +1475,9 @@ rqt_image_view
 
 * **Start Game** 
 
-(1) Now, enter the terminal according to the steps in “[Enter Game]()” and input the following command. 
+(1) Now, enter the terminal according to the steps in "[**8.6.2 Operation Steps -> Enter Game**](#6_enter_game)" and input the following command. 
 
-```commandline
+```bash
 rosservice call /face_detect/set_running "data: true"
 ```
 
@@ -1496,27 +1487,25 @@ rosservice call /face_detect/set_running "data: true"
 
 (1) If want to stop the game, enter the command.
 
-```commandline
+```bash
 rosservice call /face_detect/set_running "data: false"
 ```
 
 <img class="common_img" src="../_static/media/chapter_14/section_6/image15.png"  />
 
-(2) If want to exit the game, enter command “rosservice call /face_detect/exit "{}"” to exit.
+(2) If want to exit the game, enter command "**rosservice call /face_detect/exit '{}'**" to exit.
 
-```commandline
+```bash
 rosservice call /face_detect/exit "{}"
 ```
 
 <img class="common_img" src="../_static/media/chapter_14/section_6/image16.png"  />
 
 :::{Note}
-
 Before exiting the game, it will keep running when Raspberry Pi is powered on. To avoid consume too much running memory of Raspberry Pi, you need to exit the game first according to the operation steps above before performing other AI vision games.
-
 :::
 
-(3) If want to exit the image transmission, press “Ctrl+C” to return and open the terminal of rqt. If fail to exit, please keep trying several times.
+(3) If want to exit the image transmission, press "**Ctrl+C**" to return and open the terminal of rqt. If fail to exit, please keep trying several times.
 
 ### 8.6.3 Project Outcome
 
@@ -1526,9 +1515,9 @@ After starting the game, the robotic arm will search for human face from side to
 
 The source code for the program corresponding to this section is located in the Docker container:
 
-[/home/ubuntu/armpi_pro/src/visual_processing/scripts/visual_processing_node.py]()（image processing）
+[/home/ubuntu/armpi_pro/src/visual_processing/scripts/visual_processing_node.py](../_static/source_code/visual_processing_node.zip)(image processing)
 
-[/home/ubuntu/armpi_pro/src/face_detect/scripts/face_detect_node.py]()（action feedback）
+[/home/ubuntu/armpi_pro/src/face_detect/scripts/face_detect_node.py](../_static/source_code/face_detect_node.zip)(action feedback)
 
 :::{Note}
  please back up the initial program before making any modifications. It is prohibited editing the source code files directly to prevent making changes in an incorrect manner that could lead to robot malfunctions, rendering them irreparable.
@@ -1546,7 +1535,7 @@ The source code for the program corresponding to this section is located in the 
 | import numpy as np                                   | The NumPy library is imported and is renamed as np for performing array and matrix operations. |
 | from armpi_pro import Misc                           | The Misc module is imported from arm_pi_pro package to handle the recognized rectangular data. |
 | from armpi_pro import apriltag                       | The apriltag module is imported from arm_pi_pro package  to perform Apriltag recognition and processing. |
-| from threading import RLock, Timer                   | The “RLock” class and “Timer” class is imported from the threading module of Python for thread-related operations. |
+| from threading import RLock, Timer                   | The "**RLock**" class and "**Timer**" class is imported from the threading module of Python for thread-related operations. |
 | from std_srvs.srv import *                           | All service message types are imported from the std_srvs in ROS for defining and using standard service messages. |
 | from std_msgs.msg import *                           | All message types are imported form the std_msgs package in ROS for defining and using standard messages. |
 | from sensor_msgs.msg import Image                    | The image message type is imported from the sensor_msgs packages for processing image data. |
@@ -1564,7 +1553,7 @@ The source code for the program corresponding to this section is located in the 
 
 {lineno-start=64}
 
-```
+```python
 	# 人脸识别函数(face recognition function)
 def face_detect(img):
     global pub_time
@@ -1579,7 +1568,7 @@ def face_detect(img):
     for i in range(detections.shape[2]):
         confidence = detections[0, 0, i, 2]
         if confidence > conf_threshold:
-	            #识别到人脸的各个坐标转换会回未缩放前的坐标（each coordinate of the recognized face will be converted to the coordinate before scaling）
+	            #识别到人脸的各个坐标转换会回未缩放前的坐标(each coordinate of the recognized face will be converted to the coordinate before scaling)
             x1 = int(detections[0, 0, i, 3] * img_w)
             y1 = int(detections[0, 0, i, 4] * img_h)
             x2 = int(detections[0, 0, i, 5] * img_w)
@@ -1603,7 +1592,7 @@ Using the `cv2.dnn.blobFromImage()` function from cv2 library to perform pre-pro
 
 {lineno-start=72}
 
-```
+```python
 	    blob = cv2.dnn.blobFromImage(img_copy, 1, (140, 140), [104, 117, 123], False, False)
 ```
 
@@ -1615,9 +1604,9 @@ Using the `cv2.dnn.blobFromImage()` function from cv2 library to perform pre-pro
 
 ④ The fourth parameter `[104, 117, 123]` signifies the values subtracted from each channel. 
 
-⑤ In OpenCV, the channel order is B, G, R. Here, the values imply subtracting 104 from the B channel, 117 from the G channel, and 123 from the R channel. The fifth parameter "False" determines whether to swap the R and B channels. By default, it is set to "False," meaning no swapping of R and B channels. If the mean subtraction order is assumed to be R, G, B, then R and B channels need to be swapped, which would require setting this parameter to "True." 
+⑤ In OpenCV, the channel order is B, G, R. Here, the values imply subtracting 104 from the B channel, 117 from the G channel, and 123 from the R channel. The fifth parameter "**False**" determines whether to swap the R and B channels. By default, it is set to "**False**", meaning no swapping of R and B channels. If the mean subtraction order is assumed to be R, G, B, then R and B channels need to be swapped, which would require setting this parameter to "**True**". 
 
-⑥ The sixth parameter "False" decides whether to crop the image. By default, it is set to "False," implying no image cropping. The image's size is adjusted directly, while preserving the aspect ratio. If set to "True," the image is first scaled proportionally, and then cropped from its center according to the dimensions specified in parameter three.
+⑥ The sixth parameter "**False**" decides whether to crop the image. By default, it is set to "**False**", implying no image cropping. The image's size is adjusted directly, while preserving the aspect ratio. If set to "**True**", the image is first scaled proportionally, and then cropped from its center according to the dimensions specified in parameter three.
 
 * **Coordinates conversion** 
 
@@ -1625,8 +1614,8 @@ During the preprocessing process, the image undergoes scaling, resulting in mism
 
 {lineno-start=78}
 
-```
-	            #识别到人脸的各个坐标转换会回未缩放前的坐标（each coordinate of the recognized face will be converted to the coordinate before scaling）
+```python
+	            #识别到人脸的各个坐标转换会回未缩放前的坐标(each coordinate of the recognized face will be converted to the coordinate before scaling)
             x1 = int(detections[0, 0, i, 3] * img_w)
             y1 = int(detections[0, 0, i, 4] * img_h)
             x2 = int(detections[0, 0, i, 5] * img_w)
@@ -1639,7 +1628,7 @@ By using the `rectangle()` function from the cv2 library, the faces within the r
 
 {lineno-start=83}
 
-```
+```python
             cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2) #将识别到的人脸框出(frame the recognized face)
 ```
 
@@ -1662,7 +1651,7 @@ When a face is detected, the corresponding action of the ArmPi Pro robot can be 
 
 {lineno-start=82}
 
-```
+```python
     while __isRunning:
         if start_greet: #人脸在画面中间(The face is in the center of the image)
             start_greet = False                
@@ -1693,7 +1682,7 @@ When a face is detected, the corresponding action of the ArmPi Pro robot can be 
 
 {lineno-start=115}
 
-```
+```python
         else:
             if have_move:
                 # 机械臂打招呼后复位(the robotic arm returns to the initial position after waving hello)
@@ -1725,15 +1714,15 @@ Third parameter: `((2, 300),),` where 2 is the servo ID and 300 is the servo ang
 Recognize the color and process it with Lab color space. Firstly, convert RGB color space to LAB and then perform binaryzation, dilation and erosion and other operations to obtain the outline of the target color. Then frame the line and its center point.
 Finally, after identifying red line, ArmPi Pro will follow the line.
 
-<p id="anchor_7_2"></p>
+<p id="anchor_8_7_2"></p>
 
 ### 8.7.2 Operation Steps
 
 :::{Note}
-It should be case sensitive when entering command and the “Tab” key can be used to complete the keywords.
+It should be case sensitive when entering command and the "**Tab**" key can be used to complete the keywords.
 :::
 
-<span id="anchor_7_2_1" class="anchor"></span>
+<span id="7_enter_game"></span>
 
 * **Enter Game** 
 
@@ -1743,13 +1732,13 @@ It should be case sensitive when entering command and the “Tab” key can be u
 
 <span id="anchor_7_2_1_1" class="anchor"></span>
 
-(2) Click <img src="../_static/media/chapter_14/section_7/image5.png"  /> in the upper left corner of the system desktop to open the “Terminator”.
+(2) Click <img src="../_static/media/chapter_14/section_7/image5.png"  /> in the upper left corner of the system desktop to open the "**Terminator**".
 
 <img class="common_img" src="../_static/media/chapter_14/section_7/image6.png"  />
 
-(3) Enter the following command, and press “Enter” to access the line following game. After entering the game, the prompt shown in the following red box will appear.
+(3) Enter the following command, and press "**Enter**" to access the line following game. After entering the game, the prompt shown in the following red box will appear.
 
-```commandline
+```bash
 rosservice call /visual_patrol/enter "{}"
 ```
 
@@ -1757,7 +1746,7 @@ rosservice call /visual_patrol/enter "{}"
 
 * **Start image transmission** 
 
-**(1) Start with browser**
+(1) Start with browser
 
 To avoid consuming too much running memory of Raspberry Pi. It is recommended to use an external browser to start image transmission. 
 
@@ -1769,7 +1758,7 @@ The specific steps are as follows:
 
 <img class="common_img" src="../_static/media/chapter_14/section_7/image9.png"  />
 
-② Then enter the default IP address “192.168.149.1:8080/” (Note: this IP address is the default IP address for direction connection mode. If it is LAN mode, please enter “Device IP address+：8080/”, for example, “192.168.149.1:8080/” ) If fail to open, you can try it several times or restart the Raspberry Pi and the computer.
+② Then enter the default IP address "**192.168.149.1:8080/**" (Note: this IP address is the default IP address for direction connection mode. If it is LAN mode, please enter "**Device IP address+：8080/**", for example, "**192.168.149.1:8080/**" ) If fail to open, you can try it several times or restart the Raspberry Pi and the computer.
 
 <img class="common_img" src="../_static/media/chapter_14/section_7/image10.png"  />
 
@@ -1777,17 +1766,17 @@ The specific steps are as follows:
 
 * **Start with rqt** 
 
-(1) After completing the steps of  “[Enter Game]()”  and do not exit the terminal, open a new terminal.
+(1) After completing the steps of  "[**8.7.2 Operation Steps -> Enter Game**](#7_enter_game)"  and do not exit the terminal, open a new terminal.
 
-(2) Enter the following command and press “Enter” to open rqt.
+(2) Enter the following command and press "**Enter**" to open rqt.
 
-```commandline
+```bash
 rqt_image_view
 ```
 
 <img class="common_img" src="../_static/media/chapter_14/section_7/image12.png"  />
 
-(3) Click the red box as the figure shown below, select “/visual_processing/image_result” for the topic of line following and remain other settings unchanged. 
+(3) Click the red box as the figure shown below, select "**/visual_processing/image_result**" for the topic of line following and remain other settings unchanged. 
 
 <img class="common_img" src="../_static/media/chapter_14/section_7/image13.png"  alt="loading" />
 
@@ -1795,13 +1784,13 @@ rqt_image_view
 After opening image, the topic option must be selected. Otherwise, after starting game, the recognition process can not be displayed normally.
 :::
 
-<span id="anchor_7_2_3" class="anchor"></span>
+<span id="7_start_game" class="anchor"></span>
 
 * **Start Game** 
 
-(1) Now, enter the terminal according to the steps in “[Enter Game]()” and input the following command. Then if the prompt shown in the following red box appears, which means game has been started successfully.
+(1) Now, enter the terminal according to the steps in "[**8.7.2 Operation Steps -> Enter Game**](#7_enter_game)" and input the following command. Then if the prompt shown in the following red box appears, which means game has been started successfully.
 
-```commandline
+```bash
 rosservice call /visual_patrol/set_running "data: true"
 ```
 
@@ -1809,21 +1798,21 @@ rosservice call /visual_patrol/set_running "data: true"
 
 (2) After starting the game, select the line color. Take following red line as example. Enter the command below.
 
-```commandline
+```bash
 rosservice call /visual_patrol/set_target "data: 'red'"
 ```
 
 :::{Note}
-If want to change the target line from red to green or blue. You can replace red in “data: 'red '” with green or blue. (The entered command should be case sensitive.)
+If want to change the target line from red to green or blue. You can replace red in "**data: 'red '**" with green or blue. (The entered command should be case sensitive.)
 :::
 
 <img class="common_img" src="../_static/media/chapter_14/section_7/image15.png"  />
 
 * **Stop and Exit** 
 
-(1) If want to stop the game, enter the following command. After stopping , you can refer to the content of “[Start Game]()” to change line color and start following again. 
+(1) If want to stop the game, enter the following command. After stopping , you can refer to the content of "[**8.7.2 Operation Steps -> Start Game**](#7_start_game)" to change line color and start following again. 
 
-```commandline
+```bash
 rosservice call /visual_patrol/set_running "data: false"
 ```
 
@@ -1831,7 +1820,7 @@ rosservice call /visual_patrol/set_running "data: false"
 
 (2) If want to exit the game, enter the following command to exit.
 
-```commandline
+```bash
 rosservice call /visual_patrol/exit "{}"
 ```
 
@@ -1841,7 +1830,7 @@ rosservice call /visual_patrol/exit "{}"
 Before exiting the game, it will keep running when Raspberry Pi is powered on. To avoid consume too much running memory of Raspberry Pi, you need to exit the game first according to the operation steps above before performing other AI vision games.
 :::
 
-(3) If want to exit the image transmission, press “Ctrl+C” to return and open the terminal of rqt. If fail to exit, please keep trying several times.
+(3) If want to exit the image transmission, press "**Ctrl+C**" to return and open the terminal of rqt. If fail to exit, please keep trying several times.
 
 ### 8.7.3 Project Outcome
 
@@ -1852,9 +1841,9 @@ Stick the tape on a flat surface and put ArmPi Pro on the red line. After starti
 
 The source code for the program corresponding to this section is located in the Docker container:
 
-[/home/ubuntu/armpi_pro/src/visual_processing/scripts/visual_processing_node.py]()（image processing）
+[/home/ubuntu/armpi_pro/src/visual_processing/scripts/visual_processing_node.py](../_static/source_code/visual_processing_node.zip)(image processing)
 
-[/home/ubuntu/armpi_pro/src/visual_patrol/scripts/visual_patrol_node.py]()（line following）
+[/home/ubuntu/armpi_pro/src/visual_patrol/scripts/visual_patrol_node.py](../_static/source_code/visual_patrol_node.zip)(line following)
 
 :::{Note}
 please back up the initial program before making any modifications. It is prohibited editing the source code files directly to prevent making changes in an incorrect manner that could lead to robot malfunctions, rendering them irreparable.
@@ -1872,7 +1861,7 @@ please back up the initial program before making any modifications. It is prohib
 | import numpy as np                                   | The NumPy library is imported and is renamed as np for performing array and matrix operations. |
 | from armpi_pro import Misc                           | The Misc module is imported from arm_pi_pro package to handle the recognized rectangular data. |
 | from armpi_pro import apriltag                       | The apriltag module is imported from arm_pi_pro package  to perform Apriltag recognition and processing. |
-| from threading import RLock, Timer                   | The “RLock” class and “Timer” class is imported from the threading module of Python for thread-related operations. |
+| from threading import RLock, Timer                   | The "**RLock**" class and "**Timer**" class is imported from the threading module of Python for thread-related operations. |
 | from std_srvs.srv import *                           | All service message types are imported from the std_srvs in ROS for defining and using standard service messages. |
 | from std_msgs.msg import *                           | All message types are imported form the std_msgs package in ROS for defining and using standard messages. |
 | from sensor_msgs.msg import Image                    | The image message type is imported from the sensor_msgs packages for processing image data. |
@@ -1890,7 +1879,7 @@ please back up the initial program before making any modifications. It is prohib
 
 {lineno-start=159}
 
-```
+```python
 	# 线条识别函数(line recognition function)
 def line_detect(img, color):
     global pub_time
@@ -1936,7 +1925,7 @@ Using the `inRange()` function from the cv2 library to perform binarization on i
 
 {lineno-start=187}
 
-```
+```python
 	            frame_mask = cv2.inRange(frame_lab, tuple(color_range['min']), tuple(color_range['max']))  # 对原图像和掩模进行位运算(perform bitwise operation on the original image and the mask)
 ```
 
@@ -1953,7 +1942,7 @@ To reduce interference and create smoother images, erosion and dilation processe
 
 {lineno-start=188}
 
-```
+```python
 	            eroded = cv2.erode(frame_mask, cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2)))  # 腐蚀(erode)
             dilated = cv2.dilate(eroded, cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2)))  # 膨胀(dilate)
 ```
@@ -1966,15 +1955,15 @@ The second parameter `cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))` is the 
 
 The first parameter in parentheses is the shape of kernel and the second parameter is the size of kernel.
 
-`dilate()` function is applied to dilate image. The meaning of parameters in parentheses is the same as the parameters of “erode()” function.
+`dilate()` function is applied to dilate image. The meaning of parameters in parentheses is the same as the parameters of "**erode()**" function.
 
 * **Obtain the contour of the maximum area** 
 
-After processing the above image, obtain the contour of the recognition target.  The “findContours()” function in cv2 library is involved in this process.
+After processing the above image, obtain the contour of the recognition target.  The "**findContours()**" function in cv2 library is involved in this process.
 
 {lineno-start=190}
 
-```
+```python
 	            contours = cv2.findContours(dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)[-2]  # 找出轮廓(find contours)
 ```
 
@@ -1990,7 +1979,7 @@ Find the maximum contour from the obtained contours. To avoid interference, set 
 
 {lineno-start=191}
 
-```
+```python
 	            area_max_contour, area_max = getAreaMaxContour(contours)  # 找出最大轮廓(find the largest contour)
         if area_max > 50:  # 有找到最大面积(found the maximum area)
 ```
@@ -2001,7 +1990,7 @@ The `minAreaRect()` function in cv2 library is used to obtain the minimum extern
 
 {lineno-start=193}
 
-```
+```python
 	            rect = cv2.minAreaRect(area_max_contour)  #最小外接矩形(minimum bounding rectangle)
             box = np.int0(cv2.boxPoints(rect))        #最小外接矩形的四个顶点(four vertices of the minimum bounding rectangle)
             for i in range(4):
@@ -2025,7 +2014,7 @@ After performing the image processing, control the motors on ArmPi Pro through i
 
 {lineno-start=104}
 
-```
+```python
             # PID算法巡线(line following with PID algorithm)
             if abs(center_x - img_w/2) < 20: # 目标横坐标与画面中心坐标的差值小于20像素点，机器人不做处理(If the difference between the target placement coordinate and the center coordinate of the image is less than 20 pixels, the robot will not take any action.)
                 center_x = img_w/2
@@ -2040,23 +2029,23 @@ After performing the image processing, control the motors on ArmPi Pro through i
 
 `set_velocity.publish()` function is used for motor control. Here use an example of the code `set_velocity.publish(100, 90, dx)`:
 
-The first parameter `100` represents the linear velocity, indicating the speed of the motor in millimeters per second. The range is “-100 to 100”. When the value is negative, the motor rotates in the opposite direction.
+The first parameter `100` represents the linear velocity, indicating the speed of the motor in millimeters per second. The range is "**-100 to 100**". When the value is negative, the motor rotates in the opposite direction.
 
-The second parameter `90` represents the heading angle, indicating the direction of movement for the vehicle in degrees. The range is “0 to 360”. Where 90 degrees corresponds to forward, 270 degrees to backward, 0 degrees to right, and 180 degrees to left. 
+The second parameter `90` represents the heading angle, indicating the direction of movement for the vehicle in degrees. The range is "**0 to 360**". Where 90 degrees corresponds to forward, 270 degrees to backward, 0 degrees to right, and 180 degrees to left. 
 
-The third parameter `dx` represents the yaw angular velocity, indicating the rate of yaw change for the vehicle. It is measured in 5 degrees per second and is constrained in the program to the range of “-0.8 to 0.8”. A positive value corresponds to clockwise rotation, 
+The third parameter `dx` represents the yaw angular velocity, indicating the rate of yaw change for the vehicle. It is measured in 5 degrees per second and is constrained in the program to the range of "**-0.8 to 0.8**". A positive value corresponds to clockwise rotation, 
 
 ### 8.7.5 Function Extension
 
-<span id="anchor_7_4_1" class="anchor"></span>
+<span id="anchor_8_7_5_1" class="anchor"></span>
 
 * **Add New Recognition Color** 
 
 In addition to the built-in colors (red and white), we can add other colors for line following. For example, add purple as a new recognition color. The operation step are as follow:
 
-(1) Open the terminal, enter the following command and press “Enter” to open the tool for color threshold adjustment. If no transmitted image appears in the pop-up interface, it means the camera fails to connect and needs to be checked whether the cable is connected.
+(1) Open the terminal, enter the following command and press "**Enter**" to open the tool for color threshold adjustment. If no transmitted image appears in the pop-up interface, it means the camera fails to connect and needs to be checked whether the cable is connected.
 
-```commandline
+```bash
 python3 /home/ubuntu/software/lab_config/main.py
 ```
 
@@ -2064,49 +2053,49 @@ python3 /home/ubuntu/software/lab_config/main.py
 
 <img class="common_img" src="../_static/media/chapter_14/section_7/image20.png"  />
 
-(2) After the camera is connected completely, click “Add” in the lower right color to name the new color.
+(2) After the camera is connected completely, click "**Add**" in the lower right color to name the new color.
 
 <img class="common_img" src="../_static/media/chapter_14/section_7/image21.png"  />
 
-(3) The right side is real-time transmitted image and the right side is the color to be collected. Point the camera at the purple tape and then drag the following six slider bars until the purple area becomes white and other areas become black. The threshold can be adjusted according the actual situation. Then click “Save” to save data.
+(3) The right side is real-time transmitted image and the right side is the color to be collected. Point the camera at the purple tape and then drag the following six slider bars until the purple area becomes white and other areas become black. The threshold can be adjusted according the actual situation. Then click "**Save**" to save data.
 
 <img class="common_img" src="../_static/media/chapter_14/section_7/image22.png"  />
 
-(4) Refer to step 2 to open a new terminal. Enter the following command to navigate to the directory where the game program is located, then press “Enter”. 
+(4) Refer to step 2 to open a new terminal. Enter the following command to navigate to the directory where the game program is located, then press "**Enter**". 
 
-```commandline
+```bash
 cd /home/ubuntu/armpi_pro/src/visual_patrol/scripts/
 ```
 
 <img class="common_img" src="../_static/media/chapter_14/section_7/image23.png"  />
 
-(5) Enter the command below to open the program file, then press “Enter”.
+(5) Enter the command below to open the program file, then press "**Enter**".
 
-```commandline
+```bash
 vim visual_patrol_node.py
 ```
 
 <img class="common_img" src="../_static/media/chapter_14/section_7/image24.png"  />
 
-(6) Locate the code to be modified, press the “i” key on the keyboard, and enter the editing mode when the content shown in the following red box in the lower-left corner appears.
+(6) Locate the code to be modified, press the "**i**" key on the keyboard, and enter the editing mode when the content shown in the following red box in the lower-left corner appears.
 
 <img class="common_img" src="../_static/media/chapter_14/section_7/image25.png"  />
 
-(7) Enter the purple’s RGB value into the source code.
+(7) Enter the purple's RGB value into the source code.
 
 {lineno-start=51}
 
-```py
+```python
 'purple': (203, 192, 255),
 ```
 
-(8) Press the “Esc”, enter “:wq”, and press “Enter” to complete the save and exit operation.
+(8) Press the "**Esc**", enter "**:wq**", and press "**Enter**" to complete the save and exit operation.
 
 <img class="common_img" src="../_static/media/chapter_14/section_7/image27.png"  />
 
-(9) Follow “[8.7.2 Operation Steps]()” to start the visual line following game.
+(9) Follow "[**8.7.2 Operation Steps**](#anchor_8_7_2)" to start the visual line following game.
 
-(10) Place the ArmPi Pro in front of the purple line, and it will follow the movement of the purple line. If you need to add other colors as recognizable color, please refer to step “[8.7.5 Function Extension -> Add New Recognition Color]()”.
+(10) Place the ArmPi Pro in front of the purple line, and it will follow the movement of the purple line. If you need to add other colors as recognizable color, please refer to step "[**8.7.5 Function Extension -> Add New Recognition Color**](#anchor_8_7_5_1)".
 
 ## 8.8 Intelligent Picking
 
@@ -2123,10 +2112,10 @@ After recognizing, robotic arm will pick according to the position of block and 
 ### 8.8.2 Operation Steps
 
 :::{Note}
-It should be case sensitive when entering command and the “Tab” key can be used to complete the keywords.
+It should be case sensitive when entering command and the "**Tab**" key can be used to complete the keywords.
 :::
 
-<span id="anchor_8_2_2" class="anchor"></span>
+<span id="8_enter_game" class="anchor"></span>
 
 * **Enter Game** 
 
@@ -2134,21 +2123,21 @@ It should be case sensitive when entering command and the “Tab” key can be u
 
 <img class="common_img" src="../_static/media/chapter_14/section_8/image4.png"  />
 
-(1) click<img src="../_static/media/chapter_14/section_8/image5.png"  /> in the upper left corner of the system desktop to open the “Terminator”.
+(1) click<img src="../_static/media/chapter_14/section_8/image5.png"  /> in the upper left corner of the system desktop to open the "**Terminator**".
 
 <img class="common_img" src="../_static/media/chapter_14/section_8/image6.png"  />
 
-(3) Enter the following command, and press “Enter” to access the intelligent picking game. 
+(3) Enter the following command, and press "**Enter**" to access the intelligent picking game. 
 
-```commandline
+```bash
 rosrun intelligent_grasp intelligent_grasp_node.py
 ```
 
 <img class="common_img" src="../_static/media/chapter_14/section_8/image7.png"  />
 
-(4) Keep the previously opened terminal and open a new one. Enter the following command in the new terminal and press “Enter” to enter the intelligent picking game. If successful, a prompt will appear, as shown below:
+(4) Keep the previously opened terminal and open a new one. Enter the following command in the new terminal and press "**Enter**" to enter the intelligent picking game. If successful, a prompt will appear, as shown below:
 
-```commandline
+```bash
 rosservice call /intelligent_grasp/enter "{}"
 ```
 <img class="common_img" src="../_static/media/chapter_14/section_8/image8.png"  />
@@ -2162,10 +2151,10 @@ The specific steps are as follows:
 
 <img class="common_img" src="../_static/media/chapter_14/section_8/image9.jpeg"  alt="loading" />
 
-(2) Then enter the default IP address “192.168.149.1:8080/” (Note: this IP address is the default IP address for direction connection mode. If it is LAN mode, please enter “Device IP address+：8080/” for example, “192.168.149.1:8080/”) If fail to open, you can try it several times or restart camera.
+(2) Then enter the default IP address "**192.168.149.1:8080/**" (Note: this IP address is the default IP address for direction connection mode. If it is LAN mode, please enter "**Device IP address+：8080/**" for example, "**192.168.149.1:8080/**") If fail to open, you can try it several times or restart camera.
 
 :::{Note}
-If it is in LAN mode, the method to obtain device IP address can refer to “[Robot Network Configuration Course]()”
+If it is in LAN mode, the method to obtain device IP address can refer to "[**Robot Network Configuration Course**](https://docs.hiwonder.com/projects/ArmPi_Pro/en/latest/docs/15_network_configuration.html)"
 :::
 
 <img class="common_img" src="../_static/media/chapter_14/section_8/image10.png"  />
@@ -2176,19 +2165,19 @@ If it is in LAN mode, the method to obtain device IP address can refer to “[Ro
 
 <img class="common_img" src="../_static/media/chapter_14/section_8/image12.png"  />
 
-**8.2.3 Start with rqt** 
+* **Start with rqt** 
 
-(1) After completing the steps of “[8.2.1 Enter Game]()” and do not exit the terminal, open a new terminal.
+(1) After completing the steps of "[**8.8.2 Operation Steps -> Enter Game**](#8_enter_game)" and do not exit the terminal, open a new terminal.
 
-(2) Enter the following command and press “Enter” to open rqt.
+(2) Enter the following command and press "**Enter**" to open rqt.
 
-```commandline
+```bash
 rqt_image_view
 ```
 
 <img class="common_img" src="../_static/media/chapter_14/section_8/image13.png"  />
 
-(3) Click the red box as the figure shown below, select “/visual_processing/image_result” for the topic of line following and remain other settings unchanged. 
+(3) Click the red box as the figure shown below, select "**/visual_processing/image_result**" for the topic of line following and remain other settings unchanged. 
 
 <img class="common_img" src="../_static/media/chapter_14/section_8/image14.png"  alt="loading" />
 
@@ -2196,21 +2185,21 @@ rqt_image_view
  After opening image, the topic option must be selected. Otherwise, after starting game, the recognition process can not be displayed normally.
 :::
 
-**8.2.3 Start Game**
+* **Start Game**
 
-Now, enter the terminal according to the steps in “[8.2.1 Enter Game]()” and input the following command. Then if the prompt shown in the following red box appears, which means game has been started successfully.
+Now, enter the terminal according to the steps in "[**8.8.2 Operation Steps -> Enter Game**](#8_enter_game)" and input the following command. Then if the prompt shown in the following red box appears, which means game has been started successfully.
 
-```commandline
+```bash
 rosservice call /intelligent_grasp/set_running "data: true"
 ```
 
 <img class="common_img" src="../_static/media/chapter_14/section_8/image15.png"  />
 
-**8.2.4 Stop and Exit**
+* **Stop and Exit**
 
 (1) If want to stop the game, enter the following command to exit.
 
-```commandline
+```bash
 rosservice call /intelligent_grasp/set_running "data: false"
 ```
 
@@ -2218,7 +2207,7 @@ rosservice call /intelligent_grasp/set_running "data: false"
 
 (2) If want to exit the game, enter the command below to exit.
 
-```commandline
+```bash
 rosservice call /intelligent_grasp/exit "{}"
 ```
 
@@ -2228,7 +2217,7 @@ rosservice call /intelligent_grasp/exit "{}"
 Before exiting the game, it will keep running when Raspberry Pi is powered on. To avoid consume too much running memory of Raspberry Pi, you need to exit the game first according to the operation steps above before performing other AI vision games.
 :::
 
-(3) If want to close the image transmission, press “Ctrl+C” to return and open the terminal of rqt. If fail to exit, please keep trying several times.
+(3) If want to close the image transmission, press "**Ctrl+C**" to return and open the terminal of rqt. If fail to exit, please keep trying several times.
 
 ### 8.8.3 Project Outcome
 
@@ -2238,18 +2227,18 @@ After starting the game, the robotic arm will rotate to search the block. We can
 
 The source code of the program is located in the Docker container:
 
-[/home/ubuntu/armpi_pro/src/visual_processing/scripts/visual_processing_node.py]()（image analysis）
+[/home/ubuntu/armpi_pro/src/visual_processing/scripts/visual_processing_node.py](../_static/source_code/visual_processing_node.zip)(image analysis)
 
-[/home/ubuntu/armpi_pro/src/intelligent_grasp/scripts/intelligent_grasp_node.py]()（picking control）
+[/home/ubuntu/armpi_pro/src/intelligent_grasp/scripts/intelligent_grasp_node.py](../_static/source_code/intelligent_grasp_node.zip)(picking control)
 
-The source code of program is located in: [/home/ubuntu/armpi_pro/src/intelligent_grasp/scripts/intelligent_grasp_node.py]()
+The source code of program is located in: [/home/ubuntu/armpi_pro/src/intelligent_grasp/scripts/intelligent_grasp_node.py](../_static/source_code/intelligent_grasp_node.zip)
 
 :::{Note}
 
 please back up the initial program before making any modifications. It is prohibited editing the source code files directly to prevent making changes in an incorrect manner that could lead to robot malfunctions, rendering them irreparable.
 :::
 
-**8.4.1 Import Parameter Module**
+* **Import Parameter Module**
 
 | **Imported Module**                                  | **Function**                                                 |
 | ---------------------------------------------------- | ------------------------------------------------------------ |
@@ -2261,7 +2250,7 @@ please back up the initial program before making any modifications. It is prohib
 | import numpy as np                                   | The NumPy library is imported and is renamed as np for performing array and matrix operations. |
 | from armpi_pro import Misc                           | The Misc module is imported from arm_pi_pro package to handle the recognized rectangular data. |
 | from armpi_pro import apriltag                       | The apriltag module is imported from arm_pi_pro package  to perform Apriltag recognition and processing. |
-| from threading import RLock, Timer                   | The “RLock” class and “Timer” class is imported from the threading module of Python for thread-related operations. |
+| from threading import RLock, Timer                   | The "**RLock**" class and "**Timer**" class is imported from the threading module of Python for thread-related operations. |
 | from std_srvs.srv import *                           | All service message types are imported from the std_srvs in ROS for defining and using standard service messages. |
 | from std_msgs.msg import *                           | All message types are imported form the std_msgs package in ROS for defining and using standard messages. |
 | from sensor_msgs.msg import Image                    | The image message type is imported from the sensor_msgs packages for processing image data. |
@@ -2275,11 +2264,11 @@ please back up the initial program before making any modifications. It is prohib
 | from armpi_pro import bus_servo_control              | The bus_servo_control module is imported from the armpi_pro module, including the functions and methods related to the servo control. |
 | from kinematics import ik_transform                  | The ik_transform function is imported from the kinematics module to perform conversion of inverse kinematics. |
 
-**8.4.2 Initializing functions and variables**
+* **Initializing functions and variables**
 
 {lineno-start=273}
 
-```
+```python
 	# 多颜色识别函数(multiple colors recognition function)
 def colors_detect(img, color_list):
     global pub_time
@@ -2317,13 +2306,13 @@ def colors_detect(img, color_list):
                     color_area_max = color
 ```
 
-**8.4.3 Binarization** 
+* **Binarization** 
 
 Use the `inRange ()` function from the cv2 library to binarize the image
 
 {lineno-start=299}
 
-```
+```python
 	            frame_mask = cv2.inRange(frame_lab, tuple(color_range['min']), tuple(color_range['max']))  # 对原图像和掩模进行位运算(perform bitwise operation on the original image and the mask)
 ```
 
@@ -2333,13 +2322,13 @@ The second parameter `tuple(color_range['min'])` is the lower limit of threshold
 
 The third parameter `tuple(color_range['max'])` is the upper lower of threshold.
 
-**8.4.4 Dilation and erosion** 
+* **Dilation and erosion** 
 
 To reduce interference and make a smooth image, it is necessary to perform dilation and erosion operations on the image.
 
 {lineno-start=300}
 
-```
+```python
 	            eroded = cv2.erode(frame_mask, cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2)))          # 腐蚀(erode)
             dilated = cv2.dilate(eroded, cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2)))            # 膨胀(dilate)
 ```
@@ -2350,15 +2339,15 @@ The first parameter `frame_mask` is the input image.
 
 The second parameter `cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2))` is the structural elements and kernel that determines the nature of operation. The first parameter in parentheses is the shape of kernel and the second parameter is the size of kernel.
 
-`dilate()` function is applied to dilate image. The meaning of parameters in parentheses is the same as the parameters of “erode()” function.
+`dilate()` function is applied to dilate image. The meaning of parameters in parentheses is the same as the parameters of "**erode()**" function.
 
-**8.4.5 Obtain the contour with the maximum area**
+* **Obtain the contour with the maximum area**
 
 After processing the above image, obtain the contour of the recognition target. The `findContours()` function from the cv2 library is involved in this process.
 
 {lineno-start=251}
 
-```
+```python
 	            contours = cv2.findContours(dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)[-2]         # 找出轮廓(find contours)
 ```
 
@@ -2374,18 +2363,18 @@ Find the maximum contour from the obtained contours. To avoid interference, set 
 
 {lineno-start=303}
 
-``` 
+```python
             areaMaxContour, area_max = getAreaMaxContour(contours)                                   # 找出最大轮廓(find the largest contour)
             if areaMaxContour is not None:
 ```
 
-**8.4.6 Obtain position information**
+* **Obtain position information**
 
 The `minAreaRect()` function from the cv2 library is used to obtain the minimum enclosing circle and its center coordinates for the target contour. The `circle()`function is employed to display the circumcircle in the feedback image.
 
 {lineno-start=310}
 
-```
+```python
 	    if max_area > 100:  # 有找到最大面积(found the maximum area)
         (centerx, centery), radius = cv2.minEnclosingCircle(areaMaxContour_max)  # 获取最小外接圆(obtain the minimum circumscribed circle)
         msg.center_x = int(misc.map(centerx, 0, size_m[0], 0, img_w))
@@ -2393,11 +2382,11 @@ The `minAreaRect()` function from the cv2 library is used to obtain the minimum 
         radius = int(misc.map(radius, 0, size_m[0], 0, img_w))
 ```
 
-**8.4.7 Determine the color block with the largest area.**
+* **Determine the color block with the largest area.**
 
 {lineno-start=318}
 
-```
+```python
 	        if color_area_max == 'red':  #红色最大(red is the largest)
             msg.data = 1
         elif color_area_max == 'green':  #绿色最大(green is the largest)
@@ -2406,13 +2395,13 @@ The `minAreaRect()` function from the cv2 library is used to obtain the minimum 
             msg.data = 3
 ```
 
-**8.4.8 Gripping Control**
+* **Gripping Control**
 
 The position of the target on x, y and z axes are obtained after processing image. Then get the target position calculated by inverse kinematics and grip it.
 
 {lineno-start=118}
 
-```
+```python
 # 机器人移动函数(robot movement function)
 def move():
     global arm_move
@@ -2442,23 +2431,23 @@ def move():
 
 The inverse kinematics takes `ik.setPitchRanges((0, round(y_dis + offset_y, 4), -0.08), -180, -180, 0)` as an example and the meaning of parameters in parentheses are as follow:
 
-The first parameter is`(0, round(y_dis + offset_y, 4)`. “0” is the position of the target on x-axis. `round(y_dis, 4)` is the position of the target on y-axis. `round(z_dis, 4)” is the position of the target on z-axis.
+The first parameter is`(0, round(y_dis + offset_y, 4)`. "**0**" is the position of the target on x-axis. `round(y_dis, 4)` is the position of the target on y-axis. `round(z_dis, 4)` is the position of the target on z-axis.
 
 The second parameter `-180` is the pitch angle.
 
-The third parameter “-180” is the range of the pitch angle.
+The third parameter "**-180**" is the range of the pitch angle.
 
 The fourth parameter `0` is the range of pitch angle.The servo control uses an example of code `bus_servo_control.set_servos(joints_pub, 20, ( (3, servo_data['servo3']), (4, servo_data['servo4']), (5, servo_data['servo5']), (6, x_dis)))` and the meaning of parameters in parentheses is as follow:
 
 The first parameter `joints_pub` is to publish the message of servo control node.
-The second parameter “20” is the running time.
+The second parameter "**20**" is the running time.
 
 The third parameter is `( (3, servo_data['servo3']), (4, servo_data['servo4']), (5, servo_data['servo5']), (6, x_dis)`. Among them, `3` is the servo number. `servo_data['servo3']` and the rest of parameters are the servo angle.
 
 ### 8.8.5 Function Extension
 
 During the process of the game, if the robotic gripper fails to pick up the target, please ensure that the robotic arm deviation has been properly adjusted first. After confirming the adjustment, if the problem persists, you can modify the relevant parameters based on the following content.
-As shown in the figure below, when the robotic arm recognizes the target, it will move to the top of the target. You can modify the parameter “y_dis+offset_y” to adjust the position. It is recommended to modify the parameter by ±0.01 each time. When the value is increased, the robotic arm will move 0.01m in the positive direction of the y-axis, and when the value is decreased, it will move 0.01m in the negative direction.
+As shown in the figure below, when the robotic arm recognizes the target, it will move to the top of the target. You can modify the parameter "**y_dis+offset_y**" to adjust the position. It is recommended to modify the parameter by ±0.01 each time. When the value is increased, the robotic arm will move 0.01m in the positive direction of the y-axis, and when the value is decreased, it will move 0.01m in the negative direction.
 
 <img class="common_img" src="../_static/media/chapter_14/section_8/image29.png"  />
 
@@ -2481,15 +2470,15 @@ It is recommended that the distance between two placement lines should be greate
 Recognize the block color first and grip it. Then read the corresponding position of the recognized color and detect the line color. After recognizing yellow line, the car will follow the line.
 In the process of moving, the car will keep detecting the yellow line. When recognizing the numbers of line corresponding the colored block, the car will move to the corresponding position of color sorting. At this time, the robotic arm will put down the block and enter the next round of recognition.
 
-<p id="anchor_9_3"></p>
+<p id="anchor_8_9_3"></p>
 
 ### 8.9.3 Operation Steps
 
 :::{Note}
-It should be case sensitive when entering command and the “Tab” key can be used to complete the keywords.
+It should be case sensitive when entering command and the "**Tab**" key can be used to complete the keywords.
 :::
 
-<span id="anchor_9_3_1" class="anchor"></span>
+<span id="9_enter_game" class="anchor"></span>
 
 * **Enter Game** 
 
@@ -2497,21 +2486,21 @@ It should be case sensitive when entering command and the “Tab” key can be u
 
 <img class="common_img" src="../_static/media/chapter_14/section_9/image5.png"  />
 
-(2) Click<img src="../_static/media/chapter_14/section_9/image6.png"  />in the upper left corner of the system desktop to open the “Terminator”.
+(2) Click <img src="../_static/media/chapter_14/section_9/image6.png"  /> in the upper left corner of the system desktop to open the "**Terminator**".
 
 <img class="common_img" src="../_static/media/chapter_14/section_9/image7.png"  />
 
 (3) Enter the following command to start the intelligent transport game.
 
-```commandline
+```bash
 rosrun intelligent_transport intelligent_transport_node.py
 ```
 
 <img class="common_img" src="../_static/media/chapter_14/section_9/image8.png"  />
 
-(4) Enter the command below and press “Enter” to enter the intelligent transport game. If successful, a prompt will appear, as shown below:
+(4) Enter the command below and press "**Enter**" to enter the intelligent transport game. If successful, a prompt will appear, as shown below:
 
-```commandline
+```bash
 rosservice call /intelligent_transport/enter "{}"
 ```
 
@@ -2521,7 +2510,7 @@ rosservice call /intelligent_transport/enter "{}"
 
 * **Start image transmission** 
 
-**(1) Start with browser**
+(1) Start with browser
 
 To avoid consuming too much running memory of Raspberry Pi. It is recommended to use an external browser to start image transmission. 
 
@@ -2531,10 +2520,10 @@ The specific steps are as follows:
 
 <img class="common_img" src="../_static/media/chapter_14/section_9/image10.jpeg"  alt="loading" />
 
-② Then enter the default IP address “192.168.149.1:8080/” (Note: this IP address is the default IP address for direction connection mode). If it is LAN mode, please enter “Device IP address+：8080/” such as “192.168.149.1:8080/”) If fail to open, you can try it several times or restart camera.
+② Then enter the default IP address "**192.168.149.1:8080/**" (Note: this IP address is the default IP address for direction connection mode). If it is LAN mode, please enter "**Device IP address+：8080/**" such as "**192.168.149.1:8080/**") If fail to open, you can try it several times or restart camera.
 
 :::{Note}
- If it is in LAN mode, the method to obtain device IP address can refer to “[Robot Network Configuration Course]()”.
+ If it is in LAN mode, the method to obtain device IP address can refer to "[**Robot Network Configuration Course**](https://docs.hiwonder.com/projects/ArmPi_Pro/en/latest/docs/15_network_configuration.html)".
 :::
 
 <img class="common_img" src="../_static/media/chapter_14/section_9/image11.png"  />
@@ -2545,19 +2534,19 @@ The specific steps are as follows:
 
 <img class="common_img" src="../_static/media/chapter_14/section_9/image13.png"  />
 
-**(2) Start with rqt**
+(2) Start with rqt
 
-After completing the steps of “[9.3.1 Enter Game]()” and do not exit the terminal, open a new terminal.
+After completing the steps of "[**8.9.3 Operation Steps -> Enter Game**](#9_enter_game)" and do not exit the terminal, open a new terminal.
 
-① Enter the following command and press “Enter” to open rqt.
+① Enter the following command and press "**Enter**" to open rqt.
 
-```commandline
+```bash
 rqt_image_view
 ```
 
 <img class="common_img" src="../_static/media/chapter_14/section_9/image14.png"  />
 
-② Click the red box as the figure shown below, select “/visual_processing/image_result” for the topic of line following and remain other settings unchanged, as the figure shown below:
+② Click the red box as the figure shown below, select "**/visual_processing/image_result**" for the topic of line following and remain other settings unchanged, as the figure shown below:
 
 <img  src="../_static/media/chapter_14/section_9/image15.png"  alt="loading" />
 
@@ -2567,9 +2556,9 @@ After opening image, the topic option must be selected. Otherwise, after startin
 
 * **Start Game** 
 
-Now, enter the terminal according to the steps in “[Enter Game]()” and input the following command. Then if the prompt shown in the following red box appears, which means game has been started successfully.
+Now, enter the terminal according to the steps in "[**8.9.3 Operation Steps -> Enter Game**](#9_enter_game)" and input the following command. Then if the prompt shown in the following red box appears, which means game has been started successfully.
 
-```commandline
+```bash
 rosservice call /intelligent_transport/set_running "data: true"
 ```
 
@@ -2579,7 +2568,7 @@ rosservice call /intelligent_transport/set_running "data: true"
 
 (1) If want to stop the game, enter the following command.
 
-```commandline
+```bash
 rosservice call /intelligent_transport/set_running "data: false"
 ```
 
@@ -2587,7 +2576,7 @@ rosservice call /intelligent_transport/set_running "data: false"
 
 (2) If want to exit the game, enter the command below to exit.
 
-```commandline
+```bash
 rosservice call /intelligent_transport/exit "{}"
 ```
 
@@ -2597,7 +2586,7 @@ rosservice call /intelligent_transport/exit "{}"
 Before exiting the game, it will keep running when Raspberry Pi is powered on. To avoid consume too much running memory of Raspberry Pi, you need to exit the game first according to the operation steps above before performing other AI vision games.
 :::
 
-(3) If want to close the image transmission, press “Ctrl+C” to return and open the terminal of rqt. If fail to exit, please keep trying several times.
+(3) If want to close the image transmission, press "**Ctrl+C**" to return and open the terminal of rqt. If fail to exit, please keep trying several times.
 
 ### 8.9.4 Project Outcome
 
@@ -2606,17 +2595,17 @@ It is recommended to place the color block in the center of the camera's field o
 :::
 
 After starting the game, hold the block within the detected range of camera. When the block is recognized by ArmPi Pro, it will grip it and keep following line. Then place the block with different colors to the corresponding position.
-If you need to modify the time between placing the color block and waiting for the next pick-up, please refer to the “[8.9.6 Function Extension]()” for further learning.
+If you need to modify the time between placing the color block and waiting for the next pick-up, please refer to the "[**8.9.6 Function Extension**](#anchor_8_9_6)" for further learning.
 
 ### 8.9.5 Program Analysis
 
 The source code of the program is located in the Docker container:
 
-[/home/ubuntu/armpi_pro/src/visual_processing/scripts/visual_processing_node.py]()（image processing）
+[/home/ubuntu/armpi_pro/src/visual_processing/scripts/visual_processing_node.py](../_static/source_code/visual_processing_node.zip)(image processing)
 
-[/home/ubuntu/armpi_pro/src/intelligent_transport/scripts/intelligent_transport_node.py]()（function realization）
+[/home/ubuntu/armpi_pro/src/intelligent_transport/scripts/intelligent_transport_node.py](../_static/source_code/intelligent_transport_node.zip)(function realization)
 
-The source code of program is located in:[/home/ubuntu/armpi_pro/src/intelligent_transport/scripts/intelligent_transport_node.py]().
+The source code of program is located in: [/home/ubuntu/armpi_pro/src/intelligent_transport/scripts/intelligent_transport_node.py](../_static/source_code/intelligent_transport_node.zip).
 
 :::{Note}
  please back up the initial program before making any modifications. It is prohibited editing the source code files directly to prevent making changes in an incorrect manner that could lead to robot malfunctions, rendering them irreparable.
@@ -2634,7 +2623,7 @@ The source code of program is located in:[/home/ubuntu/armpi_pro/src/intelligent
 | import numpy as np                                   | The NumPy library is imported and is renamed as np for performing array and matrix operations. |
 | from armpi_pro import Misc                           | The Misc module is imported from arm_pi_pro package to handle the recognized rectangular data. |
 | from armpi_pro import apriltag                       | The apriltag module is imported from arm_pi_pro package  to perform Apriltag recognition and processing. |
-| from threading import RLock, Timer                   | The “RLock” class and “Timer” class is imported from the threading module of Python for thread-related operations. |
+| from threading import RLock, Timer                   | The "**RLock**" class and "**Timer**" class is imported from the threading module of Python for thread-related operations. |
 | from std_srvs.srv import *                           | All service message types are imported from the std_srvs in ROS for defining and using standard service messages. |
 | from std_msgs.msg import *                           | All message types are imported form the std_msgs package in ROS for defining and using standard messages. |
 | from sensor_msgs.msg import Image                    | The image message type is imported from the sensor_msgs packages for processing image data. |
@@ -2652,7 +2641,7 @@ The source code of program is located in:[/home/ubuntu/armpi_pro/src/intelligent
 
 {lineno-start=273}
 
-```
+```python
 	# 多颜色识别函数(multiple colors recognition function)
 def colors_detect(img, color_list):
     global pub_time
@@ -2696,7 +2685,7 @@ Use the `inRange ()` function from the cv2 library to perform binarization opera
 
 {lineno-start=299}
 
-```
+```python
 	            frame_mask = cv2.inRange(frame_lab, tuple(color_range['min']), tuple(color_range['max']))  # 对原图像和掩模进行位运算(perform bitwise operation on the original image and the mask)
 ```
 
@@ -2712,7 +2701,7 @@ To reduce interference and make a smoother image, it is necessary to perform dil
 
 {lineno-start=300}
 
-```
+```python
 	            eroded = cv2.erode(frame_mask, cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2)))          # 腐蚀(erode)
             dilated = cv2.dilate(eroded, cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2)))            # 膨胀(dilate)
 ```
@@ -2730,13 +2719,13 @@ After processing the above image, it is necessary to obtain the contour of the t
 
 {lineno-start=302}
 
-```
+```python
 	            contours = cv2.findContours(dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)[-2]         # 找出轮廓(find contours)
 ```
 
 {lineno-start=303}
 
-```
+```python
 	            areaMaxContour, area_max = getAreaMaxContour(contours)                                   # 找出最大轮廓(find the largest contour)
             if areaMaxContour is not None:
 ```
@@ -2747,7 +2736,7 @@ The `minEnclosingCircle()` function from the cv2 library is utilized to obtain t
 
 {lineno-start=310}
 
-```
+```python
 	    if max_area > 100:  # 有找到最大面积(found the maximum area)
         (centerx, centery), radius = cv2.minEnclosingCircle(areaMaxContour_max)  # 获取最小外接圆(obtain the minimum circumscribed circle)
         msg.center_x = int(misc.map(centerx, 0, size_m[0], 0, img_w))
@@ -2761,7 +2750,7 @@ The `minEnclosingCircle()` function from the cv2 library is utilized to obtain t
 
 {lineno-start=318}
 
-```
+```python
 	        if color_area_max == 'red':  #红色最大(red is the largest)
             msg.data = 1
         elif color_area_max == 'green':  #绿色最大(green is the largest)
@@ -2776,7 +2765,7 @@ The position of the target on x, y and z axes is obtained after processing image
 
 {lineno-start=331}
 
-```
+```python
                     # 机械臂追踪移动到色块上方(the robotic arm tracks and moves above the color block)
                     target = ik.setPitchRanges((0, round(y_dis, 4), 0.03), -180, -180, 0)
                     if target:
@@ -2805,7 +2794,7 @@ The position of the target on x, y and z axes is obtained after processing image
 
 The inverse kinematics takes `((0, round(y_dis, 4), 0.03), -180, -180, 0)` as example and the meanings of parameters in parentheses are as follows:
 
-The first parameter is `(0, round(y_dis, 4)`. “0” is the position of the target on x-axis. `round(y_dis, 4)` is the position of the target on y-axis. `0.03` is the position of the target on z-axis.
+The first parameter is `(0, round(y_dis, 4)`. "**0**" is the position of the target on x-axis. `round(y_dis, 4)` is the position of the target on y-axis. `0.03` is the position of the target on z-axis.
 
 The second parameter `-180` is the angle of x-axis.
 
@@ -2827,7 +2816,7 @@ After gripping the block, the car will follow the line. Firstly, judge if there 
 
 {lineno-start=218}
 
-```
+```python
             elif line_width > 0: #识别到线条(detected line)
 ```
 
@@ -2835,7 +2824,7 @@ Then the current x-coordinate of line subtracts the value of ideal center point.
 
 {lineno-start=219}
 
-```
+```python
                 # PID算法巡线(Line following with PID algorithm)
                 if abs(line_center_x - img_w/2) < 30:
                     line_center_x = img_w/2
@@ -2865,7 +2854,7 @@ In the process of identifying the color of block, we set the corresponding numbe
 
 {lineno-start=206}
 
-```
+```python
     position = {'red':1, 'green':2, 'blue':3, 'None':-1} # 色块对应位置横线数(number of placement lines corresponding to the color block position)
 ```
 
@@ -2877,7 +2866,7 @@ In the process of following line, the car will keep detecting the placement line
 
 {lineno-start=232}
 
-```
+```python
                     if line_width > 100 and block_clamp:  # 在夹取着色块时检测横线(detect placement line while gripping the color block)
 ```
 
@@ -2885,7 +2874,7 @@ Then determine the position of placement line.
 
 {lineno-start=238}
 
-```
+```python
                         if transversae_num == position[target_color]: # 判断当前横线数量是否等于目标颜色对应的数量(check if the current number of placement lines equals the number of lines corresponding to the target color)
 ```
 
@@ -2893,7 +2882,7 @@ The width of the line is obtained by the following function.
 
 {lineno-start=158}
 
-```
+```python
         # 更新线条或者色块位置参数(update line or color block position parameters)
         if detect_step == 'line':
             line_center_x = center_x
@@ -2907,7 +2896,7 @@ After all the lines are recognized completely, the recognition function will be 
 
 {lineno-start=233}
 
-```
+```python
                         if (time.time()-transversae_time) > 1:
                             transversae_num += 1
                             print(transversae_num)
@@ -2920,7 +2909,7 @@ When the numbers of recognized placement lines is equivalent to the numbers of p
 
 {lineno-start=247}
 
-```
+```python
                 elif place_en:
                     if time.time() >= place_delay: # 延时停下来，把色块放到横线旁边(Delay and stop, place the color block next to the placement line)
                         rospy.sleep(0.1)
@@ -2949,7 +2938,7 @@ Due the limitation of the detected range of camera, when the car has not moved t
 
 {lineno-start=239}
 
-```
+```python
                             place_en = True  # 放置使能(placement enable)
                             if transversae_num == 1:
                                 place_delay = time.time() + 1.1 # 设置延时停下来时间(set delay stopping time)
@@ -2963,7 +2952,7 @@ Then the car continues following the line and return to the initial position, an
 
 {lineno-start=268}
 
-```
+```python
                         move_time = time.time() + (11.5 - transversae_num) # 设置放置色块后要巡线的时间，让机器人回到初始位置(set the time for line following after placing the color block, and make the robot return to the initial position)
                             
                         # 变量重置(reset variables)
@@ -2979,29 +2968,31 @@ Then the car continues following the line and return to the initial position, an
                     detect_step = 'color'
 ```
 
+<p id="anchor_8_9_6"></p>
+
 ### 8.9.6 Function Extension
 
-(1) Click<img src="../_static/media/chapter_14/section_9/image6.png"  />in the upper left corner of the system desktop to open the “Terminator”.
+(1) Click <img src="../_static/media/chapter_14/section_9/image6.png"  /> in the upper left corner of the system desktop to open the "**Terminator**".
 
 <img class="common_img" src="../_static/media/chapter_14/section_9/image7.png"  />
 
-(2) Enter the following command in the command line terminal, and press “Enter” to navigate to the game directory.
+(2) Enter the following command in the command line terminal, and press "**Enter**" to navigate to the game directory.
 
-```commandline
+```bash
 cd armpi_pro/src/intelligent_transport/scripts/
 ```
 
 <img class="common_img" src="../_static/media/chapter_14/section_9/image19.png"  />
 
-(3) Enter the command in the command line terminal, and press “Enter” to open the program file.
+(3) Enter the command in the command line terminal, and press "**Enter**" to open the program file.
 
-```commandline
+```bash
 vim intelligent_transport_node.py
 ```
 
 <img class="common_img" src="../_static/media/chapter_14/section_9/image20.png"  />
 
-(4) Press “i” to enter the editing mode.
+(4) Press "**i**" to enter the editing mode.
 
 <img class="common_img" src="../_static/media/chapter_14/section_9/image21.png"  />
 
@@ -3009,11 +3000,11 @@ vim intelligent_transport_node.py
 
 <img class="common_img" src="../_static/media/chapter_14/section_9/image22.png"  />
 
-(6) After modifying, press the “Esc”, and enter “:wq” to save and exit operation.
+(6) After modifying, press the "**Esc**", and enter "**:wq**" to save and exit operation.
 
 <img class="common_img" src="../_static/media/chapter_14/section_9/image23.png"  />
 
-(7) After that, please follow [9.3 Operation Steps]() to start the game.
+(7) After that, please follow [**8.9.3 Operation Steps**](#anchor_8_9_3) to start the game.
 
 ## 8.10 Smart Stacking
 
@@ -3036,14 +3027,14 @@ Finally, pick and stack the block at stacking area. After stacking, the robotic 
 ### 8.10.2 Operation Steps
 
 :::{Note}
-It should be case sensitive when entering command and the “Tab” key can be used to complete the keywords.
+It should be case sensitive when entering command and the "**Tab**" key can be used to complete the keywords.
 :::
 
 * **Getting Ready** 
 
 Prepare three tag blocks (tag 1, tag 2, tag3) and place them within the detected range, The distance between two blocks can not smaller than 3cm.
 
-<span id="anchor_10_2_2" class="anchor"></span>
+<span id="10_enter_game" class="anchor"></span>
 
 * **Enter Game** 
 
@@ -3051,21 +3042,21 @@ Prepare three tag blocks (tag 1, tag 2, tag3) and place them within the detected
 
 <img class="common_img" src="../_static/media/chapter_14/section_10/image4.png"  />
 
-(2)  Click<img src="../_static/media/chapter_14/section_10/image5.png"  />in the upper left corner of the system desktop to open the “Terminator”.
+(2)  Click <img src="../_static/media/chapter_14/section_10/image5.png"  /> in the upper left corner of the system desktop to open the "**Terminator**".
 
 <img class="common_img" src="../_static/media/chapter_14/section_10/image6.png"  />
 
 (3) Enter the following command to start the smart stacking game.
 
-```commandline
+```bash
 rosrun intelligent_palletizer intelligent_palletizer_node.py
 ```
 
 <img class="common_img" src="../_static/media/chapter_14/section_10/image7.png"  />
 
-(4) Keep the previously opened terminal and open a new one. Enter the following command, and press “Enter” to enter the smart stacking game. If successful, a prompt will appear, as shown below:
+(4) Keep the previously opened terminal and open a new one. Enter the following command, and press "**Enter**" to enter the smart stacking game. If successful, a prompt will appear, as shown below:
 
-```commandline
+```bash
 rosservice call /intelligent_palletizer/enter "{}"
 ```
 
@@ -3080,10 +3071,10 @@ The specific steps are as follows:
 
 <img class="common_img" src="../_static/media/chapter_14/section_10/image9.jpeg"  alt="loading" />
 
-②  Then enter the default IP address “192.168.149.1:8080/” (Note: this IP address is the default IP address for direction connection mode). If it is LAN mode, please enter “Device IP address+：8080/” such as “192.168.149.1:8080/”) If fail to open, you can try it several times or restart camera.
+②  Then enter the default IP address "**192.168.149.1:8080/**" (Note: this IP address is the default IP address for direction connection mode). If it is LAN mode, please enter "**Device IP address+：8080/**" such as "**192.168.149.1:8080/**") If fail to open, you can try it several times or restart camera.
 
 :::{Note}
-If it is in LAN mode, the method to obtain device IP address can refer to “[Robot Network Configuration Course]()”
+If it is in LAN mode, the method to obtain device IP address can refer to "[**Robot Network Configuration Course**](https://docs.hiwonder.com/projects/ArmPi_Pro/en/latest/docs/15_network_configuration.html)"
 :::
 
 <img class="common_img" src="../_static/media/chapter_14/section_10/image10.png"  />
@@ -3096,21 +3087,21 @@ If it is in LAN mode, the method to obtain device IP address can refer to “[Ro
 
 * **Start with rqt** 
 
-(1)  After completing the steps of “[Enter Game]()” and do not exit the terminal, open a new terminal.
+(1)  After completing the steps of "[**8.10.2 Operation Steps -> Enter Game**](#10_enter_game)" and do not exit the terminal, open a new terminal.
 
-```commandline
+```bash
 rqt_image_view
 ```
 
 <img class="common_img" src="../_static/media/chapter_14/section_10/image13.png"  />
 
-(2) Enter command “rqt_image_view” and press “Enter” to open rqt.
+(2) Enter command "**rqt_image_view**" and press "**Enter**" to open rqt.
 
-```
+```bash
 rqt_image_view
 ```
 
-(3) Click the red box as the figure shown below, select “/visual_processing/image_result” for the topic of line following and remain other settings unchanged, as the figure shown below:
+(3) Click the red box as the figure shown below, select "**/visual_processing/image_result**" for the topic of line following and remain other settings unchanged, as the figure shown below:
 
 <img class="common_img" src="../_static/media/chapter_14/section_10/image14.jpeg"  alt="loading" />
 
@@ -3120,9 +3111,9 @@ After opening image, the topic option must be selected. Otherwise, after startin
 
 * **Start Game** 
 
-Now, enter the terminal according to the steps in “[Enter Game]()” and input the following command. Then if the prompt shown in the following red box appears, which means game has been started successfully.
+Now, enter the terminal according to the steps in "[**8.10.2 Operation Steps -> Enter Game**](#10_enter_game)" and input the following command. Then if the prompt shown in the following red box appears, which means game has been started successfully.
 
-```commandline
+```bash
 rosservice call /intelligent_palletizer/set_running "data: true"
 ```
 
@@ -3134,7 +3125,7 @@ rosservice call /intelligent_palletizer/set_running "data: true"
 
 (1) If want to stop the game, enter the following command.
 
-```commandline
+```bash
 rosservice call /intelligent_palletizer/set_running "data: false"
 ```
 
@@ -3142,7 +3133,7 @@ rosservice call /intelligent_palletizer/set_running "data: false"
 
 (2) If want to exit the game, enter this command to exit.
 
-```commandline
+```bash
 rosservice call /intelligent_palletizer/exit "{}"
 ```
 
@@ -3152,7 +3143,7 @@ rosservice call /intelligent_palletizer/exit "{}"
 Before exiting the game, it will keep running when Raspberry Pi is powered on. To avoid consume too much running memory of Raspberry Pi, you need to exit the game first according to the operation steps above before performing other AI vision games.
 :::
 
-(3) If want to close the image transmission, press “Ctrl+C” to return and open the terminal of rqt. If fail to exit, please keep trying several times.
+(3) If want to close the image transmission, press "**Ctrl+C**" to return and open the terminal of rqt. If fail to exit, please keep trying several times.
 
 ### 8.10.3 Project Outcome
 
@@ -3166,9 +3157,9 @@ After starting game, ArmPi Pro will recognize the block tag within the detected 
 
 The program file is stored in:
 
-[/home/ubuntu/armpi_pro/src/visual_processing/scripts/visual_processing_node.py]()（image processing）
+[/home/ubuntu/armpi_pro/src/visual_processing/scripts/visual_processing_node.py](../_static/source_code/visual_processing_node.zip)(image processing)
 
-[/home/ubuntu/armpi_pro/src/intelligent_palletizer/scripts/intelligent_palletizer_node.py]()（stacking control）
+[/home/ubuntu/armpi_pro/src/intelligent_palletizer/scripts/intelligent_palletizer_node.py](../_static/source_code/intelligent_palletizer_node.zip)(stacking control)
 
 :::{Note}
 please back up the initial program before making any modifications. It is prohibited editing the source code files directly to prevent making changes in an incorrect manner that could lead to robot malfunctions, rendering them irreparable.
@@ -3186,7 +3177,7 @@ please back up the initial program before making any modifications. It is prohib
 | import numpy as np                                   | The NumPy library is imported and is renamed as np for performing array and matrix operations. |
 | from armpi_pro import Misc                           | The Misc module is imported from arm_pi_pro package to handle the recognized rectangular data. |
 | from armpi_pro import apriltag                       | The apriltag module is imported from arm_pi_pro package  to perform Apriltag recognition and processing. |
-| from threading import RLock, Timer                   | The “RLock” class and “Timer” class is imported from the threading module of Python for thread-related operations. |
+| from threading import RLock, Timer                   | The "**RLock**" class and "**Timer**" class is imported from the threading module of Python for thread-related operations. |
 | from std_srvs.srv import *                           | All service message types are imported from the std_srvs in ROS for defining and using standard service messages. |
 | from std_msgs.msg import *                           | All message types are imported form the std_msgs package in ROS for defining and using standard messages. |
 | from sensor_msgs.msg import Image                    | The image message type is imported from the sensor_msgs packages for processing image data. |
@@ -3204,7 +3195,7 @@ please back up the initial program before making any modifications. It is prohib
 
 {lineno-start=102}
 
-```
+```python
 	# 检测apriltag函数(detect apriltag function )
 detector = apriltag.Detector(searchpath=apriltag._get_demo_searchpath())
 def apriltag_Detect(img):
@@ -3226,7 +3217,7 @@ Obtain the four corner points through  `np.rint()` function.
 
 {lineno-start=116}
 
-```
+```python
 	    if len(detections) != 0:
         for i, detection in enumerate(detections):
             tag_id = int(detection.tag_id)        # 获取tag_id(obtain tag_id )
@@ -3242,7 +3233,7 @@ Obtain the four corner points through  `np.rint()` function.
 
 {lineno-start=123}
 
-```
+```python
 	            cv2.drawContours(img, [np.array(corners, np.int)], -1, (0, 255, 255), 2)
 ```
 
@@ -3262,7 +3253,7 @@ The fifth parameter `2` is the width of contour.
 
 {lineno-start=127}
 
-```
+```python
 	            cv2.putText(img, str(tag_id), (object_center_x - 10, object_center_y + 10), cv2.FONT_HERSHEY_SIMPLEX, 1, [0, 255, 255], 2)
 ```
 
@@ -3286,7 +3277,7 @@ The seventh parameter `2` is the thickness of font.
 
 {lineno-start=50}
 
-```
+```python
 # 初始位置(initial position)
 def initMove(delay=True):
     with lock:
@@ -3308,13 +3299,13 @@ def set_buzzer(freq, on_time, off_time, repeat):
     buzzer_pub.publish(msg)
 ```
 
-**(1) Pick the Block**
+(1) Pick the Block
 
 ① By determining whether the coordinate of tag block is change, then we can determine if the black is stable. If it meets the conditions, robotic arm will grip the block.
 
 {lineno-start=108}
 
-```
+```python
     while __isRunning:
         if steadier and object_center_x > 0 and object_center_y > 0: 
             # 木块已经放稳，进行追踪夹取(the color block has been placed stably, and the robotic arm can track and grip it)
@@ -3324,7 +3315,7 @@ def set_buzzer(freq, on_time, off_time, repeat):
 
 {lineno-start=144}
 
-```
+```python
             # 机械臂追踪移动到木块上方(the robotic arm tracks and moves above the color block)
             target = ik.setPitchRanges((0, round(y_dis, 4), 0.0), -180, -180, 0)
 ```
@@ -3343,7 +3334,7 @@ The fourth and fifth parameter `-180`, `0` is the range of pitch angle.
 
 {lineno-start=152}
 
-```
+```python
             if abs(dx) < 3 and abs(dy) < 0.003 and not stack_en: # 等待机械臂稳定停在木块上方(wait for the robotic arm to stably stop above the color block)
                 count_ += 1
                 if count_ == 10:
@@ -3357,7 +3348,7 @@ The fourth and fifth parameter `-180`, `0` is the range of pitch angle.
 
 {lineno-start=175}
 
-```
+```python
                 bus_servo_control.set_servos(joints_pub, 0.5, ((1, 450),)) # 闭合机械爪(close the robotic gripper)
                 rospy.sleep(0.8)
                 
@@ -3371,7 +3362,7 @@ Using the inverse kinematics to control the robotic arm to transport and put dow
 
 {lineno-start=192}
 
-```
+```python
                 target = ik.setPitchRanges(place_coord[stack_num], -180, -180, 0) # 机械臂移动到色块放置位置(the robotic arm moves to the position for placing the color block)
                 if target:
                     servo_data = target[1]
@@ -3389,17 +3380,17 @@ The third and fourth parameters `-180` and `0` are the range of the pitch angle.
 
 {lineno-start=105}
 
-```
+```python
     place_coord = {1:(0.18, 0.0, -0.09),
                    2:(0.18, 0.0, -0.05),
                    3:(0.18, 0.0, -0.02)}
 ```
 
-Controlling each servo by bus_servo_control.set_servos（） and let gripper put down and release the block.
+Controlling each servo by bus_servo_control.set_servos() and let gripper put down and release the block.
 
 {lineno-start=206}
 
-```
+```python
                 if target:
                     servo_data = target[1]
                     bus_servo_control.set_servos(joints_pub, 1, ((1, 200), (2, 500), (3, servo_data['servo3']),
@@ -3409,8 +3400,6 @@ Controlling each servo by bus_servo_control.set_servos（） and let gripper put
                     rospy.sleep(1.5)
 ```
 
-
-
 <img class="common_img" src="../_static/media/chapter_14/section_10/image32.png"  />
 
 * **Evaluate the layers** 
@@ -3419,7 +3408,7 @@ When stacking action is executed three times, it will starts from scratch.
 
 {lineno-start=201}
 
-```
+```python
                 if stack_num >= 3: # 码垛计量大于等于3，进行重置(If the stacking measurement is greater than or equal to 3, reset it)
                     stack_num = 0
 ```
@@ -3430,7 +3419,7 @@ Robotic arm returns to the initial posture through inverse kinematics.
 
 {lineno-start=204}
 
-```
+```python
                 #机械臂复位(return the robotic arm to the initial position)
                 target = ik.setPitchRanges((0, 0.15, 0.0), -180, -180, 0)
                 if target:

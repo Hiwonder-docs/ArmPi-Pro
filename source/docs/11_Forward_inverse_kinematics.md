@@ -16,7 +16,7 @@ The position is represented by a three-dimensional vector, and the translation t
 
 ### 6.1.3 Angle/Direction, Rotation Transformation
 
-Compared with the position, the representation method of the bearing is relatively troublesome. Before discussing the bearing , it is necessary to explain one point: the three-dimensional position and orientation of an object are usually "attached" to the object with a coordinate system that moves and rotates with it, and then by describing the coordinate system and the reference coordinate system Relationship to describe this object.
+Compared with the position, the representation method of the bearing is relatively troublesome. Before discussing the bearing , it is necessary to explain one point: the three-dimensional position and orientation of an object are usually "**attached**" to the object with a coordinate system that moves and rotates with it, and then by describing the coordinate system and the reference coordinate system Relationship to describe this object.
 Describing the position and orientation of an object in the coordinate system can be equivalently understood as describing the relationship between the coordinate systems. We talk about angle/direction notation here, as long as we talk about the relationship between two coordinate systems. To know how and how much a coordinate system is rotated relative to another coordinate system, what should be done? Let's start with the two-dimensional situation:
 
 <img class="common_img" src="../_static/media/chapter_11/section_1/image3.png"   />
@@ -56,7 +56,7 @@ The four parameters selected by DH have very clear physical meanings, as follows
 
 The above definition is very complicated, but it will be much clearer when combined with the coordinate system.
 
-First of all you should pay attention to the two most important "lines": the joint axis, and the common normal between the axis joint and the adjacent joint.
+First of all you should pay attention to the two most important "**lines**": the joint axis, and the common normal between the axis joint and the adjacent joint.
 
 In the DH parameter system, we set axis as the z axis; common normal as the x axis, and the direction of the x axis is: from this joint to the next joint.
 Of course, these two rules alone are not enough to completely determine the coordinate system of each joint. Let's talk about the steps to determine the coordinate system in detail below.
@@ -117,7 +117,7 @@ After obtaining the rotation matrix of each joint, the coordinates of the end ca
 ### 6.3.1 Inverse Kinematics Introduction
 
 Inverse kinematics is the process of determining the parameters of the joint movable object to be set to achieve the required posture.
-The inverse kinematics of the robotic arm is an important foundation for its trajectory planning and control. Whether the inverse kinematics solution is fast and accurate will directly affect the accuracy of the robotic arm’s trajectory planning and control. Therefore, for the six-degree-of-freedom robotic arm, a fast and accurate The inverse kinematics solution method of is very important.
+The inverse kinematics of the robotic arm is an important foundation for its trajectory planning and control. Whether the inverse kinematics solution is fast and accurate will directly affect the accuracy of the robotic arm's trajectory planning and control. Therefore, for the six-degree-of-freedom robotic arm, a fast and accurate The inverse kinematics solution method of is very important.
 
 ### 6.3.2 Brief Analysis of Inverse Kinematics
 
@@ -164,39 +164,40 @@ The inverse kinematics program has been packaged, and the path can be found in  
 
 Based on the previous basic lessons of forward and inverse kinematics, this lesson will explain how to apply them.
 Firstly, return to the initial position and ensure the coordinate system of the starting position of robotic arm. Then use reverse kinematics to control the robotic arm. Calculate the solution of the pitch angle of robotic arm by using the new coordinate system of robotic arm and use the solution of the pitch angle to set the servo angle.
-The source code of program is located in: [/home/ubuntu/armpi_pro/src/armpi_pro_demo/kinematics_demokinematics_demo.py]()
+
+The source code of program is located in: [/home/ubuntu/armpi_pro/src/armpi_pro_demo/kinematics_demo/kinematics_demo.py](../_static/source_code/kinematics_demo.zip)
 
 ### 6.4.2 Operation Steps
 
 :::{Note}
-It should be case sensitive when entering command and the “Tab” key can be used to complete the keywords.
+It should be case sensitive when entering command and the "**Tab**" key can be used to complete the keywords.
 :::
 
 (1) Power on the robot and use VNC Viewer to connect to the remote desktop.
 
-<img class="common_img" src="../_static/media/chapter_11/section_4/image4.png"  />
+<img class="common_img" src="../_static/media/chapter_11/section_4/image4.png" style="width:822px;" />
 
-(2) click<img src="../_static/media/chapter_11/section_4/image5.png"  />at the upper left corner of the system desktop to open the Terminator.
+(2) click <img src="../_static/media/chapter_11/section_4/image5.png"  /> at the upper left corner of the system desktop to open the Terminator.
 
 <img class="common_img" src="../_static/media/chapter_11/section_4/image6.png"  />
 
-(3) Enter the following command to navigate to the directory where the program is located, and press “Enter”. After entering, the terminal will print the prompt.
+(3) Enter the following command to navigate to the directory where the program is located, and press "**Enter**". After entering, the terminal will print the prompt.
 
-```commandline
+```bash
 cd armpi_pro/src/armpi_pro_demo/kinematics_demo/
 ```
 
 <img class="common_img" src="../_static/media/chapter_11/section_4/image7.png"  />
 
-(4) Enter the following command, and press “Enter” to start the program. After entering, the terminal will print the prompt.
+(4) Enter the following command, and press "**Enter**" to start the program. After entering, the terminal will print the prompt.
 
-```commandline
+```bash
 python3 kinematics_demo.py
 ```
 
 <img class="common_img" src="../_static/media/chapter_11/section_4/image8.png"  />
 
-(5) If you want to exit the game, please press “Ctrl+C” in the terminal interface. If it fails, please try more times. 
+(5) If you want to exit the game, please press "**Ctrl+C**" in the terminal interface. If it fails, please try more times. 
 
 ### 6.4.3 Project Outcome
 
@@ -204,7 +205,7 @@ After starting the game, robotic arm will return to the initial position. Next, 
 
 ### 6.4.4 Program Analysis
 
-The source code corresponding to this lesson is stored in: [/home/ubuntu/armpi_pro/src/armpi_pro_demo/kinematics_demo/kinematics_demo.py]()
+The source code corresponding to this lesson is stored in: [/home/ubuntu/armpi_pro/src/armpi_pro_demo/kinematics_demo/kinematics_demo.py](../_static/source_code/kinematics_demo.zip)
 
 :::{Note}
 Before modifying the program, it is necessary to back up the original file. Only after that, proceed with the modifications. Directly modifying the source code files is strictly prohibited to avoid any errors that could lead to the robot malfunctioning and becoming irreparable!!!
@@ -227,40 +228,40 @@ The packaged inverse kinematics program is called here.
 
 {lineno-start=28}
 
-```
+```python
 ik = ik_transform.ArmIK()
 ```
 
-**(1) Initialize node**    
+(1) Initialize node    
 
 {lineno-start=42}
 
-```
+```python
     rospy.init_node('kinematics_demo', log_level=rospy.DEBUG)
 ```
 
-Register a callback function named “stop” that will be automatically called when the ROS node is about to close.
+Register a callback function named "**stop**" that will be automatically called when the ROS node is about to close.
 
 {lineno-start=43}
 
-```
+```python
     rospy.on_shutdown(stop)
 ```
 
-A ROS publisher named `joints_pub` has been created to publish messages to the “/servo_controllers/port_id_1/multi_id_pos_dur” topic.
+A ROS publisher named `joints_pub` has been created to publish messages to the "**/servo_controllers/port_id_1/multi_id_pos_dur**" topic.
 
 {lineno-start=45}
 
-```
+```python
     joints_pub = rospy.Publisher('/servo_controllers/port_id_1/multi_id_pos_dur', MultiRawIdPosDur, queue_size=1)
     rospy.sleep(0.2)
 ```
 
-**(2) Set initial position**
+(2) Set initial position
 
 {lineno-start=49}
 
-```
+```python
     target = ik.setPitchRanges((0.0, 0.12, 0.15), -90, -180, 0)
 ```
 
@@ -272,20 +273,20 @@ Calculate the solution α of pitch angle based on the given coordinates, pitch a
 
 ③ The third and fourth parameters `-180` and `0` are the range of pitch angle.
 
-**(3) Calculate with inverse kinematics**
+(3) Calculate with inverse kinematics
 
-Determine if there is a solution for calculating the pitch angle. If there is a solution, the servo can be controlled. The pulse width obtained by calculating the pitch angle is assigned to “servo_data” and the servo angle of 1, 2, 3, 4, 5, and 6 are set to control servo movement.
+Determine if there is a solution for calculating the pitch angle. If there is a solution, the servo can be controlled. The pulse width obtained by calculating the pitch angle is assigned to "**servo_data**" and the servo angle of 1, 2, 3, 4, 5, and 6 are set to control servo movement.
 
 {lineno-start=50}
 
-```
+```python
     if target: 
         servo_data = target[1]
 ```
 
-**(4) Drive the robotic arm to move**
+(4) Drive the robotic arm to move
 
-For `bus_servo_control.set_servos(joints_pub, 1.5, ((1, 200), (2, 500), (3, servo_data['servo3']), (4, servo_data['servo4']),(5, servo_data['servo5']),(6, servo_data['servo6'])))`, the parameters in the parentheses have the following meanings:
+For `bus_servo_control.set_servos(joints_pub, 1.5, ((1, 200), (2, 500), (3, servo_data['servo3']), (4, servo_data['servo4']),(5, servo_data['servo5']),(6, servo_data['servo6'])))`, the parameters in the parentheses have the following meanings:
 
 ① The first parameter `joints_pub` is the publisher of the servo control node message.
 
@@ -295,17 +296,17 @@ Determine if there is a solution for calculating the pitch angle. If there is a 
 
 {lineno-start=53}
 
-```
+```python
         bus_servo_control.set_servos(joints_pub, 1.5, ((1, 200), (2, 500), (3, servo_data['servo3']),
                         (4, servo_data['servo4']),(5, servo_data['servo5']),(6, servo_data['servo6'])))
     time.sleep(1.5)
 ```
 
-**(5) Return to initial position**
+(5) Return to initial position
 
 {lineno-start=64}
 
-```
+```python
     target = ik.setPitchRanges((0.0, 0.12, 0.15), -90, -180, 0)
 ```
 
@@ -319,35 +320,33 @@ According to the inverse kinematics, By adjusting the value of y-axis coordinate
 
 The chassis is set to motion mode and adjust corresponding movement position according to the posture of robotic arm.
 
-
-
 ### 6.5.2 Operation Steps
 
 :::{Note}
-It should be case sensitive when entering command and the “Tab” key can be used to complete the keywords.
+It should be case sensitive when entering command and the "**Tab**" key can be used to complete the keywords.
 :::
 
 (1) Power on the robot and use VNC Viewer to connect to the remote desktop.
 
-<img src="../_static/media/chapter_11/section_5/image4.png"  />
+<img src="../_static/media/chapter_11/section_5/image4.png" style="width:822px;" />
 
 (2) click <img src="../_static/media/chapter_11/section_5/image5.png"  /> at the upper left corner of the system desktop to open the Terminator.
 
 <img class="common_img" src="../_static/media/chapter_11/section_5/image6.png"  />
 
-(3) Enter the command to navigate to the directory where the program is located, and press “Enter”. After entering, the terminal will print the prompt.
+(3) Enter the command to navigate to the directory where the program is located, and press "**Enter**". After entering, the terminal will print the prompt.
 
-```commandline
+```bash
 cd armpi_pro/src/armpi_pro_demo/kinematics_demo/
 ```
 
-(4) Enter the following command, and press “Enter” to start the program. After entering, the terminal will print the prompt.
+(4) Enter the following command, and press "**Enter**" to start the program. After entering, the terminal will print the prompt.
 
-```commandline
+```bash
 python3 linkage.py
 ```
 
-(5) If you want to exit the game, please press “Ctrl+C” in the terminal interface. If it fails, please try more times. 
+(5) If you want to exit the game, please press "**Ctrl+C**" in the terminal interface. If it fails, please try more times. 
 
 ### 6.5.3 Project Outcome
 
@@ -355,7 +354,7 @@ After starting game, ArmPi Pro will constantly change the posture of robotic arm
 
 ### 6.5.4 Program Analysis
 
-The source code corresponding to this lesson is stored in: [/home/ubuntu/armpi_pro/src/armpi_pro_demo/kinematics_demo/linkage.py]()
+The source code corresponding to this lesson is stored in: [/home/ubuntu/armpi_pro/src/armpi_pro_demo/kinematics_demo/linkage.py](../_static/source_code/linkage.zip)
 
 :::{Note}
  Before modifying the program, it is necessary to back up the original file. Only after that, proceed with the modifications. Directly modifying the source code files is strictly prohibited to avoid any errors that could lead to the robot malfunctioning and becoming irreparable!!!
@@ -372,19 +371,19 @@ The source code corresponding to this lesson is stored in: [/home/ubuntu/armpi_p
 |       from armpi_pro import bus_servo_control        | Import the bus_servo_control module from the armpi_pro module. It contains functions and methods related to servo control. |
 | from hiwonder_servo_msgs.msg import MultiRawIdPosDur | Import the MultiRawIdPosDur message type from the hiwonder_servo_msgs.msg module. It is used to control servo devices. |
 
-**(1) Initialize node** 
+(1) Initialize node 
 
 {lineno-start=48}
 
-```
+```python
     rospy.init_node('linkage', log_level=rospy.DEBUG)
 ```
 
-Register a callback function named “stop” that will be automatically called when the ROS node is about to close.
+Register a callback function named "**stop**" that will be automatically called when the ROS node is about to close.
 
 {lineno-start=49}
 
-```
+```python
     rospy.on_shutdown(stop)
 ```
 
@@ -394,7 +393,7 @@ A ROS publisher named  `joints_pub` has been created to publish messages to the 
 
 {lineno-start=50}
 
-```
+```python
 	    # 麦轮底盘控制(mecanum chassis control)
     set_velocity = rospy.Publisher('/chassis_control/set_velocity', SetVelocity, queue_size=1)
     # 舵机发布(publish servo)
@@ -402,11 +401,11 @@ A ROS publisher named  `joints_pub` has been created to publish messages to the 
     rospy.sleep(0.2) # 延时等生效(delay for taking effect)
 ```
 
-**(2) Set initial position**
+(2) Set initial position
 
 {lineno-start=56}
 
-```
+```python
 	    # 设置初始位置(set initial position)
     target = ik.setPitchRanges((0.0, 0.10, 0.2), -90, -180, 0) # 运动学求解(kinematics solving)
 ```
@@ -419,13 +418,13 @@ The second parameter `-90` is the pitch angle.
 
 The third and fourth parameters `-180` and `0` are the range of pitch angle.
 
-**(3) Implementation analysis of chassis kinematics**
+(3) Implementation analysis of chassis kinematics
 
 The chassis motion is controlled by the function `set_velocity.publish()`. It controls the chassis to continuously move.
 
 {lineno-start=67}
 
-```
+```python
 	        set_velocity.publish(80,270,0) # 线速度80，方向角270，偏航角速度0(小于0，为顺时针方向)(linear velocity is 80, orientation angle is 270, and yaw angular velocity is 0 (if it is less than 0, it indicates clockwise direction))
 ```
 
@@ -437,13 +436,13 @@ The second parameter`270` is the direction angle;
 
 The third parameter `0` is the yaw angular velocity. When it is less than 0, the chassis rotates clockwise.
 
-**(4) Implementation analysis of robotic arm kinematics**
+(4) Implementation analysis of robotic arm kinematics
 
 Before calculating with the inverse kinematics, it is necessary to import  relevant libraries. 
 
 {lineno-start=6}
 
-```
+```python
 	from kinematics import ik_transform
 ```
 
@@ -451,11 +450,11 @@ The position of the robotic arm needs to be calculated with inverse kinematics b
 
 {lineno-start=68}
 
-```
+```python
 	        target = ik.setPitchRanges((0.0, 0.20, 0.20), -90, -180, 0) # 运动学求解(kinematics solving)
 ```
 
-Let’s demonstrate on the code `target = ik.setPitchRanges((0.0, 0.20, 0.20), -90, -180, 0)` for inverse kinematics calculation.
+Let's demonstrate on the code `target = ik.setPitchRanges((0.0, 0.20, 0.20), -90, -180, 0)` for inverse kinematics calculation.
 
  The first parameter `(0, 0.20, 0.20)` represents the position of the end effector in the X, Y, and Z axes respectively. 
 
@@ -467,7 +466,7 @@ Before controlling the movement of the robotic arm, it is necessary to import re
 
 {lineno-start=7}
 
-```
+```python
 	from armpi_pro import bus_servo_control
 from hiwonder_servo_msgs.msg import MultiRawIdPosDur
 ```
@@ -476,7 +475,7 @@ In this program, the robotic arm is controlled to move to the target position by
 
 {lineno-start=42}
 
-```
+```python
 	        # 驱动机械臂移动(drive the robotic arm to move)
         bus_servo_control.set_servos(joints_pub, 1.8, ((1, 200), (2, 500), (3, servo_data['servo3']),
                         (4, servo_data['servo4']),(5, servo_data['servo5']),(6, servo_data['servo6'])))

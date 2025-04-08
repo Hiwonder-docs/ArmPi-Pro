@@ -276,7 +276,7 @@ The table below list function of specific icon.
 <td >Select the color to be adjusted.</td>
 </tr>
 <tr>
-<td ><img src="../_static/media/chapter_2/section_3/image6.png"style="width:200px"  /><img src="../_static/media/chapter_2/section_3/image7.png" style="width:200px" /></td>
+<td ><img src="../_static/media/chapter_2/section_3/image6.png" style="width:200px"  /><img src="../_static/media/chapter_2/section_3/image7.png" style="width:200px" /></td>
 <td ><p>Adjust L component of camera returned image. "**L_min**" is lower limit and "**L_max**" is upper limit.</p>
 </tr>
 <tr>
