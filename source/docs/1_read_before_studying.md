@@ -56,13 +56,13 @@ Furthermore, unless explicitly stated by Hiwonder, we are not responsible for an
 <td>1</td>
 <td>ArmPi FPV</td>
 <td>1</td>
-<td><img src="../_static/media/chapter_1/section_1/image1.png" width="60%" /></td>
+<td><img src="../_static/media/chapter_1/section_1/image1.png" style="width:300px"  /></td>
 </tr>
 <tr>
 <td>2</td>
 <td>ArmPi Pro chassis bracket set<br>(chassis*1<br>Battery Mounting Plate*1)<br></td>
 <td>2</td>
-<td><img src="../_static/media/chapter_1/section_1/image15.0.png" width="30%" /><img src="../_static/media/chapter_1/section_1/image15.1.png" width="30%" /></td>
+<td><img src="../_static/media/chapter_1/section_1/image15.0.png" width="150px" /><img src="../_static/media/chapter_1/section_1/image15.1.png" width="30%" /></td>
 </tr>
 <tr>
 <td>3</td>
