@@ -59,122 +59,123 @@ Furthermore, unless explicitly stated by Hiwonder, we are not responsible for an
 <td><img src="../_static/media/chapter_1/section_1/image1.png" width="60%" /></td>
 </tr>
 <tr>
-<td></td>
+<td>2</td>
 <td>ArmPi Pro chassis bracket set<br>(chassis*1<br>Battery Mounting Plate*1)<br></td>
 <td>2</td>
-<td><img src="../_static/media/chapter_1/section_1/image.png" width="30%" /></td>
+<td><img src="../_static/media/chapter_1/section_1/image15.0.png" width="30%" /><img src="../_static/media/chapter_1/section_1/image15.1.png" width="30%" /></td>
 </tr>
 <tr>
-<td></td>
+<td>3</td>
 <td>4-channel encoder motor driver</td>
 <td>1</td>
-<td><img src="../_static/media/chapter_1/section_1/image.png" width="30%" /></td>
+<td><img src="../_static/media/chapter_1/section_1/image16.png" width="30%" /></td>
 </tr>
 <tr>
-<td></td>
+<td>4</td>
 <td>8V encoder motors</td>
 <td>4</td>
-<td><img src="../_static/media/chapter_1/section_1/image.png" width="30%" /></td>
+<td><img src="../_static/media/chapter_1/section_1/image20.png" width="30%" /></td>
 </tr>
 <tr>
-<td></td>
+<td>5</td>
 <td>Mecanum wheels<br>(Wheel A*2<br>Wheel B*2)<br></td>
 <td>4</td>
-<td><img src="../_static/media/chapter_1/section_1/image.png" width="30%" /></td>
+<td><img src="../_static/media/chapter_1/section_1/image17.png" width="30%" /></td>
 </tr>
 <tr>
-<td>2</td>
+<td>6</td>
 <td>7.5V 6A adapter</td>
 <td>1</td>
 <td><img src="../_static/media/chapter_1/section_1/image2.png" width="40%" /></td>
 </tr>
 <tr>
-<td>3</td>
+<td>7</td>
 <td>7.4V 6000mAh 3C Lipo battery</td>
 <td>1</td>
-<td><img src="../_static/media/chapter_1/section_1/image.png" width="30%" /></td>
+<td><img src="../_static/media/chapter_1/section_1/image18.png" width="30%" /></td>
 </tr>
 <tr>
-<td>3</td>
+<td>8</td>
 <td>Map</td>
 <td>1</td>
 <td><img src="../_static/media/chapter_1/section_1/image3.png" width="50%"/></td>
 </tr>
 <tr>
-<td>4</td>
+<td>9</td>
 <td>4*4 cm Balls</td>
 <td>3</td>
 <td><img src="../_static/media/chapter_1/section_1/image4.png" width="40%"/></td>
 </tr>
 <tr>
-<td>5</td>
+<td>10</td>
 <td>3*3 cm Color blocks</td>
 <td>3</td>
 <td><img src="../_static/media/chapter_1/section_1/image5.png" width="40%"/></td>
 </tr>
 <tr>
-<td>6</td>
+<td>11</td>
 <td>3*3 cm Wooden blocks</td>
 <td>3</td>
 <td><img src="../_static/media/chapter_1/section_1/image6.png" width="40%"/></td>
 </tr>
 <tr>
-<td>7</td>
+<td>12</td>
 <td>3*3 Tags</td>
 <td>3</td>
 <td><img src="../_static/media/chapter_1/section_1/image7.png" width="40%"/></td>
 </tr>
 <tr>
-<td>8</td>
+<td>13</td>
 <td>Card reader</td>
 <td>1</td>
 <td><img src="../_static/media/chapter_1/section_1/image8.png" width="10%" /></td>
 </tr>
 <tr>
-<td>9</td>
+<td>14</td>
 <td>32G card</td>
 <td>1</td>
 <td><img src="../_static/media/chapter_1/section_1/image9.png" width="15%"/></td>
 </tr>
 <tr>
-<td>10</td>
+<td>15</td>
 <td>Cable tie</td>
 <td>5</td>
 <td><img src="../_static/media/chapter_1/section_1/image10.png" width="40%"/></td>
 </tr>
 <tr>
-<td>11</td>
+<td>16</td>
 <td>Screwdriver</td>
 <td>1</td>
 <td><img src="../_static/media/chapter_1/section_1/image11.png" width="50%" /></td>
 </tr>
 <tr>
-<td>12</td>
+<td>17</td>
 <td>Suction cup</td>
 <td>4</td>
-<td><img src="../_static/media/chapter_1/section_1/image12.png" width="30%"/><img src="../_static/media/1.getting_ready/1.1/image28.png" width="30%"></td>
+<td><img src="../_static/media/chapter_1/section_1/image12.png" width="30%"/></td>
 </tr>
 <tr>
-<td>13</td>
+<td>18</td>
 <td>ArmPi Pro user manual</td>
 <td>1</td>
-<td><img src="../_static/media/chapter_1/section_1/image.png" width="50%" /></td>
+<td><img src="../_static/media/chapter_1/section_1/image19.jpg" width="50%" /></td>
 </tr>
 <tr>
-<td>14</td>
+<td>19</td>
 <td>Double sides adhesive tape</td>
 <td>1</td>
 <td><img src="../_static/media/chapter_1/section_1/image14.png" width="30%" /></td>
 </tr>
 <tr>
-<td></td>
+<td>20</td>
 <td>Accessory bag<br>(M3*6 Black round head screw*40<br>M4*6 Headless hexagon screw*5<br>M3*8 Round head screw*6<br>M4*6 Round head screw*40<br>M4*8 Double-pass Copper Column*10<br>M4*5+6 Single-pass nylon column*5<br>30cm 4pin wire*2<br>15cm 4pin wire*5<br>30cm 3pin wire*2<br>M4 Hexagonal Coupling*5<br>2mm Hexagon Socket Key*1<br>Wire Fixation Clamp*4
 )<br></td>
-<td></td>
-<td><img src="../_static/media/chapter_1/section_1/image.png" width="30%" /></td>
+<td>1</td>
+<td><img src="../_static/media/chapter_1/section_1/image20.jpg" width="30%" /></td>
 </tr>
 </tbody>
 </table>
+
 
 
 ##  1.3 Assembly
