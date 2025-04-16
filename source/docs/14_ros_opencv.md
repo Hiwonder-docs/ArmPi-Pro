@@ -1521,6 +1521,8 @@ Before exiting the game, it will keep running when Raspberry Pi is powered on. T
 
 After starting the game, the robotic arm will search for human face from side to side. Then, the human face will be framed in rqt tool after recognition and the gripper of robotic arm will rotate left and right before opening and closing.
 
+<img class="common_img" src="../_static/media/chapter_14/section_6/1.gif"  />
+
 ### 8.6.4 Program Analysis
 
 The source code for the program corresponding to this section is located in the Docker container:
@@ -2100,6 +2102,8 @@ vim visual_patrol_node.py
 ```python
 'purple': (203, 192, 255),
 ```
+
+<img class="common_img" src="../_static/media/chapter_14/section_7/image28.png"  />
 
 (8) Press the "**Esc**", enter "**:wq**", and press "**Enter**" to complete the save and exit operation.
 

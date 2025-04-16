@@ -264,7 +264,7 @@ The table below list function of specific icon.
 <td ><strong>Function</strong></td>
 </tr>
 <tr>
-<td ><img src="../_static/media/chapter_2/section_3/image4.png" style="width:300px" /></td>
+<td ><img src="../_static/media/chapter_2/section_3/image2.png" style="width:300px" /></td>
 <td ><p>Processed camera returned image.</p>
 <p>Target object is white, and other area is black.</p></td>
 </tr>
@@ -310,6 +310,7 @@ The table below list function of specific icon.
 </tr>
 </tbody>
 </table>
+
 
 
 ### 2.3.3 Adjust Color Threshold
