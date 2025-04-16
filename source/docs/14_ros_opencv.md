@@ -78,6 +78,8 @@ Please perform the operation on a pure background and avoid moving the color blo
 
 After running the program, the robotic arm will perform color recognition on objects within its visual range. When an object in the color of red, green, or blue is recognized, it will be highlighted in the live camera feed.
 
+<img class="common_img" src="../_static/media/chapter_14/section_1/1.png"  />
+
 ### 8.1.4 Program Analysis
 
 The source code of program is located in：[/home/ubuntu/course/color_recognition.py](../_static/source_code/color_recognition.zip)
@@ -186,6 +188,8 @@ sudo systemctl restart start_node.service
 ### 8.2.3 Project Outcome
 
 After running the program, the robotic arm moves to aim the camera directly at the front. In the live camera feed, when a red color block is recognized, it will be outlined in a bounding box. The x and y coordinates of the color block's center point will be displayed. The recognized color will be shown in the lower-left corner of the live camera feed.
+
+<img class="common_img" src="../_static/media/chapter_14/section_2/1.png"  />
 
 ### 8.2.4 Program Analysis
 
@@ -354,6 +358,8 @@ Before exiting the game, it will keep running when Raspberry Pi is powered on. T
 ### 8.3.3 Project Outcome
 
 After starting game, place the blue block within the detected range of camera. The target color will be framed in rqt tool after recognition. At this time, move the block slowly. Then the robotic arm will move with the target color.
+
+<img class="common_img" src="../_static/media/chapter_14/section_3/1.gif"  />
 
 ### 8.3.4 Program Analysis
 
@@ -749,6 +755,8 @@ After starting the game, the robotic arm will recognize the tag ID. Then, you ca
 |     2      |     Drawing a circle     |
 |     3      |   Drifting performance   |
 
+<img class="common_img" src="../_static/media/chapter_14/section_4/1.gif"  />
+
 ### 8.4.4 Program Analysis
 
 The source code for the program corresponding to this section is located in the Docker container:
@@ -1090,6 +1098,8 @@ Before exiting the game, it will keep running when Raspberry Pi is powered on. T
 ### 8.5.3 Project Outcome
 
 After starting game, place the blue block within the detected range of camera. The target color will be framed in rqt tool after recognition. At this time, move the block slowly. Then the robotic arm will rotate to the direction of the block and the car will move to the block.
+
+<img class="common_img" src="../_static/media/chapter_14/section_5/1.gif"  />
 
 ### 8.5.4 Program Analysis
 
@@ -1836,6 +1846,8 @@ Before exiting the game, it will keep running when Raspberry Pi is powered on. T
 
 Stick the tape on a flat surface and put ArmPi Pro on the red line. After starting game, robot will follow the red line.
 
+<img class="common_img" src="../_static/media/chapter_14/section_7/1.gif"  />
+
 
 ### 8.7.4 Program Analysis
 
@@ -2223,6 +2235,8 @@ Before exiting the game, it will keep running when Raspberry Pi is powered on. T
 
 After starting the game, the robotic arm will rotate to search the block. We can see that that target block is framed in rqt tool after recognition. Then the robotic arm will slowly move to the block, grip and place it to the specified position.
 
+<img class="common_img" src="../_static/media/chapter_14/section_8/1.gif"  />
+
 ### 8.8.4 Program Analysis
 
 The source code of the program is located in the Docker container:
@@ -2596,6 +2610,8 @@ It is recommended to place the color block in the center of the camera's field o
 
 After starting the game, hold the block within the detected range of camera. When the block is recognized by ArmPi Pro, it will grip it and keep following line. Then place the block with different colors to the corresponding position.
 If you need to modify the time between placing the color block and waiting for the next pick-up, please refer to the "[**8.9.6 Function Extension**](#anchor_8_9_6)" for further learning.
+
+<img class="common_img" src="../_static/media/chapter_14/section_9/1.gif"  />
 
 ### 8.9.5 Program Analysis
 
@@ -3152,6 +3168,8 @@ To ensure proper functionality, it is recommended to place the color block at th
 :::
 
 After starting game, ArmPi Pro will recognize the block tag within the detected range. Then the robotic arm will grip and stack the block at the stacking area. 
+
+<img class="common_img" src="../_static/media/chapter_14/section_10/1.gif"  />
 
 ### 8.10.4 Program Analysis
 

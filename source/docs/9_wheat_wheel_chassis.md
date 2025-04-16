@@ -90,6 +90,8 @@ python3 car_forward_demo.py
 
 After starting the game, ArmPi Pro will move forward.
 
+<img class="common_img" src="../_static/media/chapter_9/section_2/1.gif"  />
+
 
 ### 4.2.4 Program Analysis
 
@@ -212,6 +214,8 @@ python3 car_turn_demo.py
 ### 4.3.3 Project Outcome
 
 After starting the game, ArmPi Pro will be clockwise stationary rotation, and then counterclockwise stationary rotation. 
+
+<img class="common_img" src="../_static/media/chapter_9/section_3/1.gif"  />
 
 
 ### 4.3.4 Program Analysis 
@@ -336,6 +340,8 @@ python3 car_move_demo.py
 
 After starting the game, ArmPi Pro will move forward, shift to right, backwards, shift to the left in sequence.
 
+<img class="common_img" src="../_static/media/chapter_9/section_4/1.gif"  />
+
 ### 4.4.4 Program Analysis 
 
 The source code of program is located in: [home/ubuntu/armpi_pro/src/armpi_pro_demo/chassis_control_demo/car_move_demo.py](../_static/source_code/car_move_demo.zip)
@@ -458,6 +464,8 @@ python3 car_slant_demo.py
 ### 4.5.3 Project Outcome
 
 After starting the game, ArmPi Pro will move to the right front, to the right rear, to the left rear, and to the front left in sequence.
+
+<img class="common_img" src="../_static/media/chapter_9/section_5/1.gif"  />
 
 ### 4.5.4 Program Analysis
 
@@ -583,6 +591,8 @@ python3 car_drifting_demo.py
 ### 4.6.3 Project Outcome
 
 After starting game, ArmPi Pro will drift counterclockwise first, then clockwise. 
+
+<img class="common_img" src="../_static/media/chapter_9/section_6/1.gif"  />
 
 ### 4.6.4 Program Analysis 
 

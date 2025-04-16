@@ -186,29 +186,27 @@ For the users with their own Raspberry Pi board, refer to the content in "[**1.3
 
 <p class="step">Step 1</p>
 
-<img class="common_img"  src="../_static/media/chapter_1/section_2_2/image1.png" style="width:600px"  />
+<img class="common_img"  src="../_static/media/chapter_1/section_2_2/01.jpg" style="width:600px"  />
 
 <p class="step">Step 2</p>
 
-<img class="common_img"  src="../_static/media/chapter_1/section_2_2/image2.jpeg"  />
+<img class="common_img"  src="../_static/media/chapter_1/section_2_2/02.jpg"  />
 
 <p class="step">Step 3</p>
 
-<img class="common_img"  src="../_static/media/chapter_1/section_2_2/image3.jpeg"   />
+<img class="common_img"  src="../_static/media/chapter_1/section_2_2/03.jpg"   />
 
 <p class="step">Step 4</p>
 
-<img class="common_img"  src="../_static/media/chapter_1/section_2_2/image4.png"  />
-
-<img class="common_img"  src="../_static/media/chapter_1/section_2_2/image5.jpg"  />
+<img class="common_img"  src="../_static/media/chapter_1/section_2_2/04.jpg"  />
 
 <p class="step">Step 5</p>
 
-<img class="common_img"  src="../_static/media/chapter_1/section_2_2/image6.png"  />
+<img class="common_img"  src="../_static/media/chapter_1/section_2_2/05.jpg"  />
 
 <p class="step">Step 6</p>
 
-<img class="common_img"  src="../_static/media/chapter_1/section_2_2/image7.png"  />
+<img class="common_img"  src="../_static/media/chapter_1/section_2_2/06.jpg"  />
 
 <p id="anchor_1_3_2"></p>
 
@@ -216,83 +214,43 @@ For the users with their own Raspberry Pi board, refer to the content in "[**1.3
 
 <p class="step">Step 1</p>
 
-<img class="common_img"  src="../_static/media/chapter_1/section_2_1/image1.png"  />
+<img class="common_img"  src="../_static/media/chapter_1/section_2_1/01.jpg"  />
 
 <p class="step">Step 2</p>
 
-<img class="common_img"  src="../_static/media/chapter_1/section_2_1/image2.png"  />
+<img class="common_img"  src="../_static/media/chapter_1/section_2_1/02.jpg"  />
 
 <p class="step">Step 3</p>
 
-<img class="common_img"  src="../_static/media/chapter_1/section_2_1/image3.png"  />
+<img class="common_img"  src="../_static/media/chapter_1/section_2_1/03.jpg"  />
 
 <p class="step">Step 4</p>
 
-<img class="common_img"  src="../_static/media/chapter_1/section_2_1/image4.png"  />
+<img class="common_img"  src="../_static/media/chapter_1/section_2_1/04.jpg"  />
 
 <p class="step">Step 5</p>
 
-<img class="common_img"  src="../_static/media/chapter_1/section_2_1/image5.png"  />
+<img class="common_img"  src="../_static/media/chapter_1/section_2_1/05.jpg"  />
 
 <p class="step">Step 6</p>
 
-<img class="common_img"  src="../_static/media/chapter_1/section_2_1/image6.png"  />
+<img class="common_img"  src="../_static/media/chapter_1/section_2_1/06.jpg"  />
 
 <p class="step">Step 7</p>
 
-<img class="common_img"  src="../_static/media/chapter_1/section_2_1/image7.png"  />
+<img class="common_img"  src="../_static/media/chapter_1/section_2_1/07.jpg"  />
 
 <p class="step">Step 8</p>
 
-<img class="common_img"  src="../_static/media/chapter_1/section_2_1/image8.png"  />
+<img class="common_img"  src="../_static/media/chapter_1/section_2_1/08.jpg"  />
 
 <p class="step">Step 9</p>
 
-<img class="common_img"  src="../_static/media/chapter_1/section_2_1/image9.png"  />
+<img class="common_img"  src="../_static/media/chapter_1/section_2_1/09.jpg"  />
 
 <p class="step">Step 10</p>
 
-<img class="common_img"  src="../_static/media/chapter_1/section_2_1/image10.png"  />
-
-<p class="step">Step 11</p>
-
-<img class="common_img"  src="../_static/media/chapter_1/section_2_1/image11.png"  />
-
-<p class="step">Step 12</p>
-
-<img class="common_img"  src="../_static/media/chapter_1/section_2_1/image12.png"  />
-
-<p class="step">Step 13</p>
-
-<img class="common_img"  src="../_static/media/chapter_1/section_2_1/image13.png"  />
-
-<p class="step">Step 14</p>
-
-<img class="common_img"  src="../_static/media/chapter_1/section_2_1/image14.png"  />
-
-<p class="step">Step 15</p>
-
-<img class="common_img"  src="../_static/media/chapter_1/section_2_1/image15.png"  />
-
-<p class="step">Step 16</p>
-
-<img class="common_img"  src="../_static/media/chapter_1/section_2_1/image16.png"  />
-
-<p class="step">Step 17</p>
-
-<img class="common_img"  src="../_static/media/chapter_1/section_2_1/image17.png"  />
-
-<p class="step">Step 18</p>
-
-<img class="common_img"  src="../_static/media/chapter_1/section_2_1/image18.png"   />
-
-<p class="step">Step 19</p>
-
-<img class="common_img"  src="../_static/media/chapter_1/section_2_1/image19.png"  />
-
-<p class="step">Step 20</p>
-
-<img class="common_img"  src="../_static/media/chapter_1/section_2_1/image20.png"  />
+<img class="common_img"  src="../_static/media/chapter_1/section_2_1/10.jpg"  />
 
 ##  1.4 Charging and Power-On Status Explanation
 

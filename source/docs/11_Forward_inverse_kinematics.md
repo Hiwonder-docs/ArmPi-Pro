@@ -203,6 +203,8 @@ python3 kinematics_demo.py
 
 After starting the game, robotic arm will return to the initial position. Next, Robotic arm will move to 0.15m along the x-axis first and then return to the initial position. Then move to 0.2m along the y-axis first and then return to the initial position. Finally, move to 0.24m along z-axis first and then return to the initial position.
 
+<img class="common_img" src="../_static/media/chapter_11/section_4/1.gif"  />
+
 ### 6.4.4 Program Analysis
 
 The source code corresponding to this lesson is stored in: [/home/ubuntu/armpi_pro/src/armpi_pro_demo/kinematics_demo/kinematics_demo.py](../_static/source_code/kinematics_demo.zip)
@@ -351,6 +353,8 @@ python3 linkage.py
 ### 6.5.3 Project Outcome
 
 After starting game, ArmPi Pro will constantly change the posture of robotic arm in a constant contractions and expansions, which make the end of robotic arm motionless.
+
+<img class="common_img" src="../_static/media/chapter_11/section_5/1.gif"  />
 
 ### 6.5.4 Program Analysis
 
