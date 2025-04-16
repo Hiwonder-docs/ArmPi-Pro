@@ -2245,10 +2245,7 @@ The source code of the program is located in the Docker container:
 
 [/home/ubuntu/armpi_pro/src/intelligent_grasp/scripts/intelligent_grasp_node.py](../_static/source_code/intelligent_grasp_node.zip)(picking control)
 
-The source code of program is located in: [/home/ubuntu/armpi_pro/src/intelligent_grasp/scripts/intelligent_grasp_node.py](../_static/source_code/intelligent_grasp_node.zip)
-
 :::{Note}
-
 please back up the initial program before making any modifications. It is prohibited editing the source code files directly to prevent making changes in an incorrect manner that could lead to robot malfunctions, rendering them irreparable.
 :::
 
@@ -2621,10 +2618,8 @@ The source code of the program is located in the Docker container:
 
 [/home/ubuntu/armpi_pro/src/intelligent_transport/scripts/intelligent_transport_node.py](../_static/source_code/intelligent_transport_node.zip)(function realization)
 
-The source code of program is located in: [/home/ubuntu/armpi_pro/src/intelligent_transport/scripts/intelligent_transport_node.py](../_static/source_code/intelligent_transport_node.zip).
-
 :::{Note}
- please back up the initial program before making any modifications. It is prohibited editing the source code files directly to prevent making changes in an incorrect manner that could lead to robot malfunctions, rendering them irreparable.
+please back up the initial program before making any modifications. It is prohibited editing the source code files directly to prevent making changes in an incorrect manner that could lead to robot malfunctions, rendering them irreparable.
 :::
 
 * **Import Parameter Module**

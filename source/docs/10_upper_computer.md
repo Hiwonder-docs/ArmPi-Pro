@@ -489,7 +489,7 @@ The name must be English and not space is included. It is recommended to replace
 
 ## 5.5  Import and Export Action File
 
-ArmPi Pro has built-in action group before delivery, and its action group file is stored in the path of Docker container `/home/ubuntu/software/armpi_pro_ control/ActionGroups`. The action group file in the container can be imported and exported in the form of terminal command line.
+ArmPi Pro has built-in action group before delivery, and its action group file is stored in the path of Docker container `/home/ubuntu/software/armpi_pro_control/ActionGroups`. The action group file in the container can be imported and exported in the form of terminal command line.
 
 <img class="common_img" src="../_static/media/chapter_10/section_5/image1.png"  />
 

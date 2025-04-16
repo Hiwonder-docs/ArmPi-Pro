@@ -129,7 +129,7 @@ sudo systemctl restart hw_wifi.service
 * To configure the LAN mode using a smartphone, you must first enable the phone's location services.
 
 * Switching to LAN mode cannot be done directly through the system's network settings, as the Wi-Fi has custom configurations. Please follow the instructions in Section 10.3.2 to switch modes using the network configuration file.
-  :::
+:::
 
 ### 9.3.1 Switching via the Mobile App
 
@@ -141,7 +141,7 @@ For LAN mode, please enable location services on your smartphone.
 
 <img class="common_img" src="../_static/media/11.network_configuration/section_1/image23.png" style="width:350px" />
 
-(2) Open the "**WonderPi**" app on your phone, then select **"Basic"** and "MasterPi".
+(2) Open the "**WonderPi**" app on your phone, then select **"Basic"** and "**MasterPi**".
 
 <img class="common_img" src="../_static/media/11.network_configuration/section_1/image1.png" style="width:700px" />
 
