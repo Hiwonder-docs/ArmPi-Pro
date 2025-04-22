@@ -21,3 +21,4 @@ ArmPi Pro
    docs/14_ros_opencv.md
    docs/15_network_configuration.md
    docs/resources_download.md
+   Download <https://drive.google.com/drive/folders/1UNf2xl2Lc8w-Axk9q2BSJ8_6pFhUJMJ0?usp=drive_link>
