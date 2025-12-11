@@ -84,7 +84,7 @@ Furthermore, unless explicitly stated by Hiwonder, we are not responsible for an
 </tr>
 <tr>
 <td>6</td>
-<td>7.5V 6A adapter</td>
+<td>8.4V 2A battery charger</td>
 <td>1</td>
 <td><img src="../_static/media/chapter_1/section_1/image2.png" width="210px" /></td>
 </tr>
@@ -175,6 +175,7 @@ Furthermore, unless explicitly stated by Hiwonder, we are not responsible for an
 </tr>
 </tbody>
 </table>
+
 
 ##  1.3 Assembly
 
