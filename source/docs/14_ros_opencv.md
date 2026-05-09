@@ -599,22 +599,18 @@ python3 /home/ubuntu/software/lab_config/main.py
 (5) Refer to step 2 to open a new terminal. Enter the following command to navigate to the directory where the game program is located, then press "**Enter**". 
 
 ```bash
-cd /home/ubuntu/armpi_pro/src/color_tracking/scripts/
+cd armpi_pro/src/visual_processing/scripts
 ```
-
-<img class="common_img" src="../_static/media/chapter_14/section_3/image25.png"  />
 
 (6) Enter the command below to open the program.
 
 ```bash
-vim color_tracking_node.py
+gedit visual_processing_node.py
 ```
 
-<img class="common_img" src="../_static/media/chapter_14/section_3/image26.png"  />
+(7) Locate the code to be modified.
 
-(7) Locate the code to be modified, press the "**i**" key on the keyboard, and enter the editing mode when the content shown in the following red box in the lower-left corner appears.
-
-<img class="common_img" src="../_static/media/chapter_14/section_3/image27.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_3/image31.png" style="width:800px"  />
 
 (8) Enter the pink's RGB value "**'pink': (203, 192, 255),**" into the source code.
 
@@ -622,11 +618,9 @@ vim color_tracking_node.py
 'pink': (203, 192, 255),
 ```
 
-<img class="common_img" src="../_static/media/chapter_14/section_3/image28.png"  />
+<img class="common_img" src="../_static/media/chapter_14/section_3/image32.png" style="width:800px"  />
 
-(9)  Press the "**Esc**", enter "**:wq**", and press "**Enter**" to complete the save and exit operation.
-
-<img class="common_img" src="../_static/media/chapter_14/section_3/image29.png"  />
+(9)  Press the shortcut **Ctrl + S** to save and exit.
 
 (10)  Follow "[**8.3.2 Operation Steps**](#anchor_8_3_2)" to start the color tracking game.
 
